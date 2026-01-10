@@ -501,7 +501,7 @@ $hot_comic_ids = $wpdb->get_col(
 
         <!-- View More Button -->
         <div class="view-more-section">
-            <a href="/truyen-moi-cap-nhat.html" class="view-more-btn">
+            <a href="<?php echo esc_url(home_url('/truyen-moi-cap-nhat')); ?>" class="view-more-btn">
                 Xem thêm nhiều truyện
             </a>
         </div>

@@ -62,6 +62,22 @@ function toyota_enqueue_assets()
         );
     }
 
+    if (is_page_template('page-truyen-moi-cap-nhat.php')) {
+        wp_enqueue_style(
+            'toyota-update-comic',
+            get_template_directory_uri() . '/css/truyen-moi-cap-nhat.css',
+            array('toyota-global'),
+            '1.0.0'
+        );
+        wp_enqueue_script(
+            'toyota-update-comic',
+            get_template_directory_uri() . '/js/truyen-moi-cap-nhat.js',
+            ['swiper'],
+            '1.0.0',
+            true
+        );
+    }
+
     // Swiper CSS
     wp_enqueue_style(
         'swiper',
@@ -1172,4 +1188,113 @@ function nettruyen_start_session()
     if (!session_id()) {
         session_start();
     }
+}
+
+
+
+// migrate country ============================================================================
+
+/* ==========================================================================
+ * PHẦN 1: TẠO TAXONOMY QUỐC GIA & HIỂN THỊ CỘT QUICK EDIT
+ * ========================================================================== */
+add_action('init', 'custom_register_country_taxonomy');
+function custom_register_country_taxonomy()
+{
+    $labels = array(
+        'name' => 'Quốc gia',
+        'singular_name' => 'Quốc gia',
+        'search_items' => 'Tìm quốc gia',
+        'all_items' => 'Tất cả quốc gia',
+        'edit_item' => 'Sửa quốc gia',
+        'update_item' => 'Cập nhật',
+        'add_new_item' => 'Thêm quốc gia mới',
+        'new_item_name' => 'Tên quốc gia mới',
+        'menu_name' => 'Quốc gia',
+    );
+
+    $args = array(
+        'hierarchical' => true, // Quan trọng: TRUE để hiện dạng checklist (tích chọn)
+        'labels' => $labels,
+        'show_ui' => true,
+        'show_admin_column' => true, // Quan trọng: Tự động hiện cột trong trang Admin
+        'query_var' => true,
+        'show_in_rest' => true,
+        'rewrite' => array('slug' => 'quoc-gia'),
+    );
+
+    // Đăng ký cho Post Type 'nettruyen_comic'
+    register_taxonomy('nettruyen_country', array('nettruyen_comic'), $args);
+}
+
+/* ==========================================================================
+ * PHẦN 2: TOOL TỰ ĐỘNG CHUYỂN DỮ LIỆU TỪ GENRE SANG QUỐC GIA (GIAI ĐOẠN 1)
+ * Cách dùng: Truy cập đường dẫn: yoursite.com/wp-admin/?run_country_migration=1
+ * ========================================================================== */
+add_action('admin_init', 'auto_migrate_genre_to_country');
+function auto_migrate_genre_to_country()
+{
+    // Chỉ chạy khi admin truy cập đúng link và có quyền
+    if (!isset($_GET['run_country_migration']) || $_GET['run_country_migration'] != '1') {
+        return;
+    }
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    // 1. Tạo sẵn các term Quốc gia nếu chưa có
+    $countries = array(
+        'China' => 'Trung Quốc', // Slug mong muốn => Tên hiển thị
+        'Korea' => 'Hàn Quốc',
+        'Japan' => 'Nhật Bản',
+        'Vietnam' => 'Việt Nam'
+    );
+
+    foreach ($countries as $slug => $name) {
+        if (!term_exists($name, 'nettruyen_country')) {
+            wp_insert_term($name, 'nettruyen_country', array('slug' => $slug));
+        }
+    }
+
+    // 2. Lấy toàn bộ truyện (Lưu ý: Nếu web quá lớn >10k truyện, nên chia nhỏ chạy nhiều lần)
+    $args = array(
+        'post_type' => 'nettruyen_comic',
+        'posts_per_page' => -1, // Lấy hết
+        'fields' => 'ids', // Chỉ lấy ID cho nhẹ
+        'no_found_rows' => true,
+    );
+
+    $comics = get_posts($args);
+    $count = 0;
+
+    foreach ($comics as $post_id) {
+        // Lấy danh sách Genre của truyện hiện tại (dùng slug nettruyen_genre bạn cung cấp)
+        $genres = wp_get_post_terms($post_id, 'nettruyen_genre', array('fields' => 'slugs'));
+
+        if (is_wp_error($genres) || empty($genres))
+            continue;
+
+        $target_country = '';
+
+        // Logic map dữ liệu
+        if (in_array('manhua', $genres)) {
+            $target_country = 'China'; // Slug khớp với mảng $countries bên trên
+        } elseif (in_array('manhwa', $genres)) {
+            $target_country = 'Korea';
+        } elseif (in_array('manga', $genres)) {
+            $target_country = 'Japan';
+        }
+
+        // Nếu tìm thấy quốc gia tương ứng, set vào bài viết
+        if (!empty($target_country)) {
+            // Lấy ID của term quốc gia
+            $term = get_term_by('slug', $target_country, 'nettruyen_country');
+            if ($term) {
+                wp_set_object_terms($post_id, (int) $term->term_id, 'nettruyen_country');
+                $count++;
+            }
+        }
+    }
+
+    // Báo kết quả ra màn hình
+    echo '<div class="notice notice-success is-dismissible"><p><strong>Đã xử lý xong!</strong> Tổng cộng ' . $count . ' truyện đã được cập nhật Quốc gia tự động.</p></div>';
 }

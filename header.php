@@ -133,24 +133,6 @@
             </div>
         </div>
 
-        <div class="mobile-menu-overlay" id="mobile-menu-overlay">
-            <div class="mobile-menu-content">
-                <div class="mobile-menu-header">
-                    <span class="site-name">PixelPerfect</span>
-                    <button class="mobile-menu-close" id="mobile-menu-close">&times;</button>
-                </div>
-                <ul class="mobile-menu">
-                    <li><a href="<?php echo esc_url(home_url('/')); ?>"></a></li>
-                </ul>
-                <div class="mobile-hotline">
-                    <a href="tel:0334087540" class="mobile-menu-hotline">
-                        <i class="fa-solid fa-phone"></i>
-                        Gọi ngay: 033 408 7540
-                    </a>
-                </div>
-            </div>
-        </div>
-
     </header>
 
     <?php wp_footer(); ?>

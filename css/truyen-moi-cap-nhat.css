@@ -1,0 +1,567 @@
+/**
+ * Page: Truyện Mới Cập Nhật
+ * Full page listing with filters + pagination
+ * 
+ * @package TruyenQQ
+ * @version 1.0.0
+ */
+
+/* ==================== MAIN CONTAINER ==================== */
+#main_homepage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: var(--bg-primary);
+}
+
+/* ==================== SECTION HEADER ==================== */
+.homepage_tags {
+  margin-bottom: 25px;
+}
+
+.homepage_tags h1 {
+  margin: 0;
+}
+
+.text_list_update {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+body.dark-mode .text_list_update {
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.text_list_update i {
+  color: #00bcd4;
+  font-size: 26px;
+}
+
+/* ==================== FILTER BOX ==================== */
+.story-list-bl01.box {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .story-list-bl01.box {
+  background-color: var(--bg-secondary-dark, #1a1a1a);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.story-list-bl01 table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.story-list-bl01 tr {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .story-list-bl01 tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.story-list-bl01 tr:last-child {
+  border-bottom: none;
+}
+
+.story-list-bl01 th {
+  width: 120px;
+  padding: 15px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-primary);
+  vertical-align: top;
+}
+
+body.dark-mode .story-list-bl01 th {
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.story-list-bl01 td {
+  padding: 15px 10px;
+}
+
+.story-list-bl01 ul.choose {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.story-list-bl01 ul.choose li {
+  margin: 0;
+}
+
+.story-list-bl01 ul.choose a {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .story-list-bl01 ul.choose a {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.story-list-bl01 ul.choose a:hover {
+  background-color: var(--accent-color);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.story-list-bl01 ul.choose a.active {
+  background-color: var(--accent-color);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ==================== COMICS GRID ==================== */
+.list_grid_out {
+  margin-bottom: 30px;
+}
+
+.list_grid.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* Desktop: 6 columns */
+  gap: 20px;
+}
+
+.list_grid.grid li {
+  margin: 0;
+}
+
+/* ==================== COMIC CARD ==================== */
+.list_grid .book_avatar {
+  position: relative;
+  width: 100%;
+  padding-top: 130%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 8px 8px 0 0;
+}
+
+.list_grid .book_avatar a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.list_grid .book_avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.list_grid li:hover .book_avatar img {
+  transform: scale(1.1);
+}
+
+/* Bookmark Badge */
+.list_grid .subscribed-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+body.dark-mode .list_grid .subscribed-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.list_grid .subscribed-badge:hover {
+  background-color: var(--accent-color);
+  transform: scale(1.1);
+}
+
+.list_grid .subscribed-badge.subscribed i {
+  font-weight: 900;
+}
+
+/* Top Notice */
+.list_grid .top-notice {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 30px 10px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  z-index: 1;
+}
+
+.list_grid .time-ago {
+  font-size: 11px;
+  color: #fff;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.list_grid .type-label {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.list_grid .type-label.hot {
+  background-color: var(--accent-color);
+}
+
+.list_grid .type-label.new {
+  background-color: #4caf50;
+}
+
+/* Book Info */
+.list_grid .book_info {
+  padding: 12px;
+  background-color: var(--bg-secondary);
+  border-radius: 0 0 8px 8px;
+  text-align: center;
+}
+
+body.dark-mode .list_grid .book_info {
+  background-color: var(--bg-secondary-dark, #1a1a1a);
+}
+
+.list_grid .book_name h3 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.list_grid .book_name a {
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+  text-decoration: none;
+}
+
+body.dark-mode .list_grid .book_name a {
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.list_grid .book_name a:hover {
+  color: var(--accent-color);
+}
+
+/* Stats */
+.list_grid .text_detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+  margin-bottom: 8px;
+}
+
+body.dark-mode .list_grid .text_detail {
+  color: var(--text-secondary-dark, #999);
+}
+
+.list_grid .text_detail span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.list_grid .text_detail i {
+  font-size: 12px;
+}
+
+/* Latest Chapter */
+.list_grid .last_chapter a {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--accent-color);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.list_grid .last_chapter a:hover {
+  color: var(--hover-color);
+  text-decoration: underline;
+}
+
+/* No Results */
+.list_grid .no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+/* ==================== PAGINATION ==================== */
+.page_redirect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.page_redirect a {
+  text-decoration: none;
+}
+
+.page_redirect p {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+body.dark-mode .page_redirect p {
+  background-color: var(--bg-secondary-dark, #1a1a1a);
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.page_redirect a:hover p {
+  background-color: var(--accent-color);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.page_redirect p.active {
+  background-color: var(--accent-color);
+  color: #fff;
+  font-weight: 700;
+}
+
+.page_redirect .dots {
+  color: var(--text-secondary);
+  padding: 0 5px;
+}
+
+/* ==================== RESPONSIVE: TABLET (768px - 1023px) ==================== */
+@media (max-width: 1023px) {
+  #main_homepage {
+    padding: 30px 15px;
+  }
+
+  .text_list_update {
+    font-size: 22px;
+  }
+
+  .text_list_update i {
+    font-size: 24px;
+  }
+
+  /* Tablet: 4 columns */
+  .list_grid.grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .story-list-bl01 th {
+    width: 100px;
+    font-size: 14px;
+  }
+
+  .story-list-bl01 ul.choose a {
+    font-size: 13px;
+    padding: 7px 14px;
+  }
+
+  .list_grid .book_name h3 {
+    font-size: 14px;
+    min-height: 40px;
+  }
+
+  .list_grid .text_detail {
+    font-size: 12px;
+    gap: 12px;
+  }
+
+  .list_grid .last_chapter a {
+    font-size: 12px;
+  }
+
+  .page_redirect p {
+    min-width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+}
+
+/* ==================== RESPONSIVE: MOBILE (390px - 767px) ==================== */
+@media (max-width: 767px) {
+  #main_homepage {
+    padding: 25px 15px;
+  }
+
+  .text_list_update {
+    font-size: 20px;
+  }
+
+  .text_list_update i {
+    font-size: 22px;
+  }
+
+  /* Mobile: 2 columns */
+  .list_grid.grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  /* Filter Box - Stack vertically */
+  .story-list-bl01.box {
+    padding: 15px;
+  }
+
+  .story-list-bl01 table,
+  .story-list-bl01 tbody,
+  .story-list-bl01 tr,
+  .story-list-bl01 th,
+  .story-list-bl01 td {
+    display: block;
+    width: 100%;
+  }
+
+  .story-list-bl01 th {
+    padding: 10px 0 5px 0;
+    font-size: 14px;
+  }
+
+  .story-list-bl01 td {
+    padding: 0 0 15px 0;
+  }
+
+  .story-list-bl01 ul.choose {
+    gap: 8px;
+  }
+
+  .story-list-bl01 ul.choose a {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .list_grid .book_info {
+    padding: 10px;
+  }
+
+  .list_grid .book_name h3 {
+    font-size: 13px;
+    min-height: 36px;
+    margin-bottom: 6px;
+  }
+
+  .list_grid .text_detail {
+    font-size: 11px;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .list_grid .last_chapter a {
+    font-size: 11px;
+  }
+
+  .list_grid .subscribed-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    top: 6px;
+    right: 6px;
+  }
+
+  .list_grid .time-ago {
+    font-size: 10px;
+  }
+
+  .list_grid .type-label {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+
+  .page_redirect {
+    gap: 6px;
+  }
+
+  .page_redirect p {
+    min-width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+}
+
+/* ==================== EXTRA SMALL MOBILE (≤390px) ==================== */
+@media (max-width: 390px) {
+  .text_list_update {
+    font-size: 18px;
+  }
+
+  .list_grid .book_name h3 {
+    font-size: 12px;
+    min-height: 34px;
+  }
+
+  .list_grid.grid {
+    gap: 12px;
+  }
+
+  .page_redirect p {
+    min-width: 34px;
+    height: 34px;
+  }
+}
