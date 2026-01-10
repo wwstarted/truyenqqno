@@ -1,0 +1,473 @@
+/* ===================================
+   FOOTER SECTION - CSS
+   =================================== */
+
+/* Footer Container */
+.footer-section {
+  position: relative;
+  background: linear-gradient(135deg, #1c1917 0%, #0c0a09 50%, #000000 100%);
+  color: #ffffff;
+  overflow: hidden;
+  padding: 0 40px;
+  margin-top: 60px;
+}
+
+/* Blur Orbs */
+.blur-orb {
+  position: absolute;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.blur-orb-top {
+  top: 5rem;
+  right: 5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(149, 211, 197, 0.1),
+    rgba(0, 159, 211, 0.1)
+  );
+}
+
+.blur-orb-bottom {
+  bottom: 5rem;
+  left: 5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 159, 211, 0.1),
+    rgba(149, 211, 197, 0.1)
+  );
+}
+
+/* Container */
+.footer-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ===================================
+   NEWSLETTER SECTION
+   =================================== */
+
+.newsletter-section {
+  padding: 4rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.newsletter-title {
+  font-size: 1.875rem;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.title-white {
+  color: #ffffff;
+}
+
+.title-gradient {
+  background: linear-gradient(90deg, #95d3c5 0%, #009fd3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.newsletter-description {
+  color: #a8a29e;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.newsletter-form-wrapper {
+  width: 100%;
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 0.75rem;
+  flex-direction: column;
+}
+
+.newsletter-input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.newsletter-input::placeholder {
+  color: #78716c;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: #009fd3;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.newsletter-btn {
+  padding: 1rem 2rem;
+  background: linear-gradient(90deg, #95d3c5 0%, #009fd3 100%);
+  border: none;
+  border-radius: 0.75rem;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.newsletter-btn:hover {
+  box-shadow: 0 20px 40px -12px rgba(0, 159, 211, 0.3);
+  transform: translateY(-2px);
+}
+
+.newsletter-btn .arrow-icon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.newsletter-btn:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+/* ===================================
+   MAIN FOOTER CONTENT
+   =================================== */
+
+.footer-main {
+  padding: 4rem 0 5rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+/* Brand Column */
+.footer-col-brand {
+  grid-column: span 1;
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  text-decoration: none;
+  color: #ffffff;
+  transition: transform 0.3s ease;
+}
+
+.footer-logo:hover {
+  transform: translateY(-2px);
+}
+
+.logo-icon {
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, #95d3c5 0%, #009fd3 100%);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.footer-logo:hover .logo-icon {
+  transform: scale(1.1);
+}
+
+.logo-text {
+  font-weight: 900;
+  font-size: 1.5rem;
+}
+
+.brand-description {
+  color: #a8a29e;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-size: 0.875rem;
+}
+
+/* Contact Info */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #a8a29e;
+  font-size: 0.875rem;
+  transition: color 0.3s ease;
+}
+
+.contact-item:hover {
+  color: #ffffff;
+}
+
+.contact-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.contact-item:hover .contact-icon {
+  background: linear-gradient(135deg, #95d3c5 0%, #009fd3 100%);
+}
+
+.contact-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Footer Headings */
+.footer-heading {
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+}
+
+/* Footer Links */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #a8a29e;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.footer-links a:hover {
+  color: transparent;
+  background: linear-gradient(90deg, #95d3c5 0%, #009fd3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.link-arrow {
+  width: 0.75rem;
+  height: 0.75rem;
+  opacity: 0;
+  margin-left: -1.25rem;
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover .link-arrow {
+  opacity: 1;
+  margin-left: 0;
+}
+
+/* Social Links */
+.social-links {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+}
+
+.social-link {
+  width: 3rem;
+  height: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background: linear-gradient(135deg, #95d3c5 0%, #009fd3 100%);
+  transform: scale(1.1);
+}
+
+.social-link svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* ===================================
+   FOOTER BOTTOM / COPYRIGHT
+   =================================== */
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem 0;
+}
+
+.copyright-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.copyright-text {
+  color: #78716c;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.footer-legal a {
+  color: #78716c;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-legal a:hover {
+  color: #ffffff;
+}
+
+/* ===================================
+   RESPONSIVE STYLES
+   =================================== */
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+  .newsletter-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .newsletter-form {
+    flex-direction: row;
+  }
+
+  .newsletter-title {
+    font-size: 2.25rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .copyright-wrapper {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .newsletter-section {
+    padding: 6rem 0;
+  }
+
+  .newsletter-title {
+    font-size: 3rem;
+  }
+
+  .footer-main {
+    padding: 5rem 0;
+  }
+
+  .footer-grid {
+    grid-template-columns: 2fr repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .footer-col-brand {
+    grid-column: span 1;
+  }
+}
+
+/* Large Desktop (1400px+) */
+@media (min-width: 1400px) {
+  .footer-container {
+    padding: 0 2rem;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .newsletter-section {
+    padding: 3rem 0;
+  }
+
+  .newsletter-title {
+    font-size: 1.5rem;
+  }
+
+  .newsletter-description {
+    font-size: 1rem;
+  }
+
+  .footer-main {
+    padding: 3rem 0;
+  }
+
+  .blur-orb {
+    width: 16rem;
+    height: 16rem;
+  }
+
+  .blur-orb-top {
+    top: 2rem;
+    right: 2rem;
+  }
+
+  .blur-orb-bottom {
+    bottom: 2rem;
+    left: 2rem;
+  }
+}
