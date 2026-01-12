@@ -4,7 +4,7 @@
  * Populate fake views cho tất cả truyện hiện có
  * 
  * @package NetTruyen
- * @version 1.0.0
+ * @version 1.0.1 - Fixed: Always populate, no skip
  */
 
 if (!defined('ABSPATH')) {
@@ -65,14 +65,21 @@ class NetTruyen_View_Population
         $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
         $processed = 0;
         $errors = array();
+        $skipped = array();
 
         foreach ($comic_ids as $post_id) {
             try {
                 // Tính fake views
                 $fake_views = NetTruyen_View_Calculator::calculate_fake_views($post_id);
 
+                // ✅ FIX: KHÔNG skip truyện có 0 views nữa
+                // Calculator đã đảm bảo minimum 500 views
+
+                // ✅ SAFETY CHECK: Nếu vẫn = 0, force minimum
                 if ($fake_views === 0) {
-                    continue; // Skip nếu không có chapter
+                    $fake_views = 500;
+                    $title = get_the_title($post_id);
+                    $skipped[] = "Post {$post_id} ({$title}) - forced 500 views (no data)";
                 }
 
                 // Insert vào stats table
@@ -96,7 +103,7 @@ class NetTruyen_View_Population
                 if ($result !== false) {
                     $processed++;
                 } else {
-                    $errors[] = "Failed to insert post_id {$post_id}";
+                    $errors[] = "Failed to insert post_id {$post_id}: " . $wpdb->last_error;
                 }
 
             } catch (Exception $e) {
@@ -119,6 +126,10 @@ class NetTruyen_View_Population
             $message .= ' with ' . count($errors) . ' errors';
         }
 
+        if (!empty($skipped)) {
+            $message .= ' | ' . count($skipped) . ' forced minimum views';
+        }
+
         return array(
             'success' => true,
             'processed' => $processed,
@@ -126,7 +137,8 @@ class NetTruyen_View_Population
             'offset' => $offset + $batch_size,
             'message' => $message,
             'is_complete' => $is_complete,
-            'errors' => $errors
+            'errors' => $errors,
+            'skipped' => $skipped // ✅ Thêm log để debug
         );
     }
 
@@ -144,8 +156,9 @@ class NetTruyen_View_Population
 
         $fake_views = NetTruyen_View_Calculator::calculate_fake_views($post_id);
 
+        // ✅ FIX: Không skip, force minimum
         if ($fake_views === 0) {
-            return false;
+            $fake_views = 500;
         }
 
         $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
@@ -189,5 +202,33 @@ class NetTruyen_View_Population
         $result = $wpdb->query("TRUNCATE TABLE {$stats_table}");
 
         return $result !== false;
+    }
+
+    /**
+     * ✅ NEW: Debug helper - Liệt kê truyện không có manifest
+     * 
+     * @return array ['post_id' => 'title']
+     */
+    public static function get_comics_without_manifest()
+    {
+        $args = array(
+            'post_type' => 'nettruyen_comic',
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'fields' => 'ids'
+        );
+
+        $all_comics = get_posts($args);
+        $no_manifest = array();
+
+        foreach ($all_comics as $post_id) {
+            $manifest = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
+
+            if (empty($manifest)) {
+                $no_manifest[$post_id] = get_the_title($post_id);
+            }
+        }
+
+        return $no_manifest;
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Comics Listing with AJAX
+ * The Loai (Genre) Listing with AJAX
  *
  * @package TruyenQQ
  * @version 1.0.0
@@ -13,6 +13,8 @@
     currentPage: 1,
     status: "",
     country: "",
+    sort: "2", // Default: Ngày cập nhật giảm dần
+    genreSlug: "", // Will be set from page URL
     isLoading: false,
   };
 
@@ -20,9 +22,11 @@
   let comicsGrid = null;
   let paginationContainer = null;
   let filterLinks = null;
+  let categorySelect = null;
+  let sortSelect = null;
 
   /**
-   * Initialize AJAX Comics Listing
+   * Initialize AJAX Genre Listing
    */
   function init() {
     if (document.readyState === "loading") {
@@ -31,46 +35,73 @@
     }
 
     const mainContainer = document.querySelector("#main_homepage");
-    if (!mainContainer) return;
+    if (!mainContainer || !mainContainer.dataset.ajaxEnabled) return;
 
     // Get DOM elements
     comicsGrid = document.querySelector(".list_grid.grid");
     paginationContainer = document.querySelector(".page_redirect");
     filterLinks = document.querySelectorAll(".story-list-bl01 ul.choose a");
+    categorySelect = document.querySelector("#category");
+    sortSelect = document.querySelector("#category-sort");
 
     if (!comicsGrid) return;
 
+    // Get genre slug from URL
+    state.genreSlug = getGenreSlugFromURL();
+
     // Get initial state from URL
     const urlParams = new URLSearchParams(window.location.search);
-    state.currentPage = parseInt(urlParams.get("paged")) || 1;
+    state.currentPage = parseInt(urlParams.get("page")) || 1;
     state.status = urlParams.get("status") || "";
     state.country = urlParams.get("country") || "";
+    state.sort = urlParams.get("sort") || "2";
 
     // Setup event listeners
     initFilterListeners();
-    initPaginationListeners(); // Add this
+    initSelectListeners();
+    initPaginationListeners();
     initBookmarkButtons();
 
-    console.log("AJAX Comics Listing initialized");
+    console.log("AJAX Genre Listing initialized", state);
   }
 
   /**
-   * Setup filter & pagination listeners
+   * Get genre slug from current URL
+   */
+  function getGenreSlugFromURL() {
+    const path = window.location.pathname;
+    // Extract slug from URL like /the-loai/adventure/ or /genre/action/
+    const match = path.match(/\/([^\/]+)\/?$/);
+    return match ? match[1] : "";
+  }
+
+  /**
+   * Setup filter listeners (Status, Country) - GIỐNG truyen-moi-cap-nhat.js
    */
   function initFilterListeners() {
-    // Filter links
     filterLinks.forEach((link) => {
       link.addEventListener("click", function (e) {
         e.preventDefault();
 
-        const url = new URL(this.href);
-        const newStatus = url.searchParams.get("status") || "";
-        const newCountry = url.searchParams.get("country") || "";
+        // Check if link has data attributes (new template) or href (old template)
+        const filterType = this.getAttribute("data-filter");
+        const filterValue = this.getAttribute("data-value");
 
-        // Update state
-        state.status = newStatus;
-        state.country = newCountry;
-        state.currentPage = 1; // Reset to page 1 on filter change
+        if (filterType) {
+          // NEW TEMPLATE: Using data attributes
+          if (filterType === "status") {
+            state.status = filterValue;
+          } else if (filterType === "country") {
+            state.country = filterValue;
+          }
+        } else {
+          // OLD TEMPLATE: Parse from href (fallback)
+          const url = new URL(this.href, window.location.origin);
+          state.status = url.searchParams.get("status") || "";
+          state.country = url.searchParams.get("country") || "";
+        }
+
+        state.currentPage = 1; // Reset to page 1
 
         // Update active class
         updateFilterActiveClass(this);
@@ -79,9 +110,30 @@
         loadComics();
       });
     });
+  }
 
-    // Initial pagination links (from server-rendered HTML)
-    initPaginationListeners();
+  /**
+   * Setup select dropdown listeners
+   */
+  function initSelectListeners() {
+    // Genre selector - reload page
+    if (categorySelect) {
+      categorySelect.addEventListener("change", function () {
+        const selectedURL = this.value;
+        if (selectedURL) {
+          window.location.href = selectedURL;
+        }
+      });
+    }
+
+    // Sort selector - AJAX
+    if (sortSelect) {
+      sortSelect.addEventListener("change", function () {
+        state.sort = this.value;
+        state.currentPage = 1; // Reset to page 1
+        loadComics();
+      });
+    }
   }
 
   /**
@@ -96,14 +148,22 @@
       link.addEventListener("click", function (e) {
         e.preventDefault();
 
-        // Get page number from href
-        const href = this.getAttribute("href");
-        if (!href || href === "javascript:void(0)") return;
+        // Get page from data-page attribute (AJAX-rendered) or href (server-rendered)
+        let page = this.getAttribute("data-page");
 
-        // Extract page number from URL
-        const url = new URL(href, window.location.origin);
-        const pageParam = url.searchParams.get("paged");
-        const page = pageParam ? parseInt(pageParam) : 1;
+        if (!page) {
+          // Fallback: parse from href
+          const href = this.getAttribute("href");
+          if (href && href !== "javascript:void(0)") {
+            const url = new URL(href, window.location.origin);
+            page =
+              url.searchParams.get("page") ||
+              url.searchParams.get("paged") ||
+              "1";
+          }
+        }
+
+        page = parseInt(page);
 
         if (page && page !== state.currentPage) {
           state.currentPage = page;
@@ -117,7 +177,6 @@
    * Update active class on filter links
    */
   function updateFilterActiveClass(clickedLink) {
-    // Remove active from all links in the same row
     const parentTd = clickedLink.closest("td");
     if (parentTd) {
       parentTd
@@ -128,7 +187,7 @@
   }
 
   /**
-   * Load comics via AJAX
+   * Load comics via REST API
    */
   async function loadComics() {
     if (state.isLoading) return;
@@ -137,35 +196,33 @@
     showLoadingState();
 
     try {
-      // Build API URL - Sử dụng URL từ PHP
-      const baseUrl =
-        typeof nettruyenData !== "undefined"
-          ? nettruyenData.restUrl
-          : "/wp-json/nettruyen/v1/comics";
+      // Build API URL - Use WordPress REST URL base
+      const restBase =
+        typeof nettruyenGenreData !== "undefined"
+          ? nettruyenGenreData.restUrl
+          : window.location.origin + "/wp-json/nettruyen/v1/comics/genre";
 
-      const apiUrl = new URL(baseUrl, window.location.origin);
+      const apiUrl = new URL(restBase);
+
+      apiUrl.searchParams.set("genre", state.genreSlug);
       apiUrl.searchParams.set("page", state.currentPage);
+      apiUrl.searchParams.set("sort", state.sort);
+
       if (state.status) apiUrl.searchParams.set("status", state.status);
       if (state.country) apiUrl.searchParams.set("country", state.country);
+
+      console.log("Fetching:", apiUrl.toString());
 
       // Fetch data
       const response = await fetch(apiUrl.toString());
 
-      // Debug: Check response
       console.log("Response status:", response.status);
-      console.log("Response headers:", response.headers.get("content-type"));
 
-      const responseText = await response.text();
-      console.log("Response text:", responseText.substring(0, 200));
-
-      // Try to parse JSON
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        console.error("JSON Parse Error:", e);
-        throw new Error("Invalid JSON response from server");
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
+
+      const data = await response.json();
 
       if (data.success) {
         renderComics(data.comics);
@@ -177,7 +234,7 @@
       }
     } catch (error) {
       console.error("AJAX Error:", error);
-      showError("Đã xảy ra lỗi khi tải dữ liệu");
+      showError("Đã xảy ra lỗi: " + error.message);
     } finally {
       state.isLoading = false;
       hideLoadingState();
@@ -276,14 +333,14 @@
 
     // Previous button
     if (current_page > 1) {
-      html += `<a href="#" data-page="${
+      html += `<a href="javascript:void(0)" data-page="${
         current_page - 1
       }"><p><span>‹</span></p></a>`;
     }
 
     // First page
     if (start > 1) {
-      html += `<a href="#" data-page="1"><p>1</p></a>`;
+      html += `<a href="javascript:void(0)" data-page="1"><p>1</p></a>`;
       if (start > 2) {
         html += `<span class="dots">...</span>`;
       }
@@ -294,7 +351,7 @@
       if (i === current_page) {
         html += `<a href="javascript:void(0)"><p class="active">${i}</p></a>`;
       } else {
-        html += `<a href="#" data-page="${i}"><p>${i}</p></a>`;
+        html += `<a href="javascript:void(0)" data-page="${i}"><p>${i}</p></a>`;
       }
     }
 
@@ -303,30 +360,21 @@
       if (end < total_pages - 1) {
         html += `<span class="dots">...</span>`;
       }
-      html += `<a href="#" data-page="${total_pages}"><p>${total_pages}</p></a>`;
+      html += `<a href="javascript:void(0)" data-page="${total_pages}"><p>${total_pages}</p></a>`;
     }
 
     // Next button
     if (current_page < total_pages) {
-      html += `<a href="#" data-page="${
+      html += `<a href="javascript:void(0)" data-page="${
         current_page + 1
       }"><p><span>›</span></p></a>`;
-      html += `<a href="#" data-page="${total_pages}"><p><span>»</span></p></a>`;
+      html += `<a href="javascript:void(0)" data-page="${total_pages}"><p><span>»</span></p></a>`;
     }
 
     paginationContainer.innerHTML = html;
 
-    // Add click listeners to pagination links
-    paginationContainer.querySelectorAll("a[data-page]").forEach((link) => {
-      link.addEventListener("click", function (e) {
-        e.preventDefault();
-        const page = parseInt(this.getAttribute("data-page"));
-        if (page && page !== state.currentPage) {
-          state.currentPage = page;
-          loadComics();
-        }
-      });
-    });
+    // Re-initialize pagination listeners after render
+    initPaginationListeners();
   }
 
   /**
@@ -334,9 +382,11 @@
    */
   function updateURL() {
     const params = new URLSearchParams();
+
     if (state.status) params.set("status", state.status);
     if (state.country) params.set("country", state.country);
-    if (state.currentPage > 1) params.set("paged", state.currentPage);
+    if (state.sort !== "2") params.set("sort", state.sort); // Only add if not default
+    if (state.currentPage > 1) params.set("page", state.currentPage);
 
     const newURL =
       window.location.pathname +
@@ -353,23 +403,20 @@
   }
 
   /**
-   * Show loading state
+   * Show/hide loading state
    */
   function showLoadingState() {
     comicsGrid.style.opacity = "0.5";
     comicsGrid.style.pointerEvents = "none";
   }
 
-  /**
-   * Hide loading state
-   */
   function hideLoadingState() {
     comicsGrid.style.opacity = "1";
     comicsGrid.style.pointerEvents = "auto";
   }
 
   /**
-   * Show error message
+   * Show error
    */
   function showError(message) {
     showToast(message);

@@ -7,6 +7,7 @@
 
 function toyota_enqueue_assets()
 {
+
     wp_enqueue_style(
         'toyota-global',
         get_template_directory_uri() . '/css/style.css',
@@ -129,6 +130,28 @@ function toyota_enqueue_assets()
         );
     }
 
+    if (is_tax('nettruyen_genre')) {
+        wp_enqueue_style(
+            'nettruyen-genre-listing',
+            get_template_directory_uri() . '/css/the-loai.css',
+            array('toyota-global'),
+            '1.0.0'
+        );
+
+        wp_enqueue_script(
+            'nettruyen-genre-listing',
+            get_template_directory_uri() . '/js/the-loai.js',
+            array(),
+            '1.0.0',
+            true
+        );
+
+        wp_localize_script('nettruyen-genre-listing', 'nettruyenGenreData', array(
+            'restUrl' => rest_url('nettruyen/v1/comics/genre'),
+            'nonce' => wp_create_nonce('wp_rest'),
+        ));
+    }
+
 
     // Header JS
     wp_enqueue_script(
@@ -164,6 +187,31 @@ function toyota_enqueue_assets()
 add_action('wp_enqueue_scripts', 'toyota_enqueue_assets');
 
 
+require_once get_template_directory() . '/inc/class-nettruyen-comics-rest-api.php';
+
+/**
+ * Enqueue Comics Listing Scripts
+ */
+function nettruyen_enqueue_comics_listing_scripts()
+{
+    // Only load on comics listing page
+    if (is_page_template('page-truyen-moi-cap-nhat.php')) {
+        wp_enqueue_script(
+            'nettruyen-comics-listing',
+            get_template_directory_uri() . '/js/comics-listing.js',
+            array(), // No dependencies
+            '1.0.0',
+            true
+        );
+
+        // Optional: Pass PHP data to JavaScript
+        wp_localize_script('nettruyen-comics-listing', 'nettruyenData', array(
+            'restUrl' => rest_url('nettruyen/v1/comics'),
+            'nonce' => wp_create_nonce('wp_rest'),
+        ));
+    }
+}
+add_action('wp_enqueue_scripts', 'nettruyen_enqueue_comics_listing_scripts');
 
 function toyota_theme_setup()
 {

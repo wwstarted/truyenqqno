@@ -1,8 +1,7 @@
 <?php
 /**
- * Template Name: Truyện Mới Cập Nhật
- * 
- * Trang listing tất cả truyện với filter + pagination
+ * Template Name: Truyện Theo Thể Loại
+ * Template for nettruyen_genre taxonomy
  * 
  * @package TruyenQQ
  * @version 1.0.0
@@ -13,6 +12,12 @@ get_header();
 // Require view tracker
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
 
+// Get current genre
+$current_genre = get_queried_object();
+$genre_slug = $current_genre->slug;
+$genre_name = $current_genre->name;
+$genre_description = $current_genre->description;
+
 // Pagination setup
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 $posts_per_page = 42;
@@ -20,17 +25,19 @@ $posts_per_page = 42;
 // Filter parameters
 $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
+$sort = isset($_GET['sort']) ? absint($_GET['sort']) : 2; // Default: Ngày cập nhật giảm dần
 
-// Status mapping
-// status=ongoing → "Đang tiến hành"
-// status=completed → "Hoàn thành"
-// status=coming_soon → "Sắp ra mắt"
+// Sort mapping
+$sort_options = array(
+    0 => array('orderby' => 'date', 'order' => 'DESC'),           // Ngày đăng giảm dần
+    1 => array('orderby' => 'date', 'order' => 'ASC'),            // Ngày đăng tăng dần
+    2 => array('orderby' => 'modified', 'order' => 'DESC'),       // Ngày cập nhật giảm dần
+    3 => array('orderby' => 'modified', 'order' => 'ASC'),        // Ngày cập nhật tăng dần
+    4 => array('orderby' => 'meta_value_num', 'order' => 'DESC'), // Lượt xem giảm dần
+    5 => array('orderby' => 'meta_value_num', 'order' => 'ASC'),  // Lượt xem tăng dần
+);
 
-// Country mapping (using slugs from migration)
-// country=China → "Trung Quốc"
-// country=Korea → "Hàn Quốc"
-// country=Japan → "Nhật Bản"
-// country=Vietnam → "Việt Nam"
+$sort_config = isset($sort_options[$sort]) ? $sort_options[$sort] : $sort_options[2];
 
 // Query args
 $args = array(
@@ -38,30 +45,38 @@ $args = array(
     'post_status' => 'publish',
     'posts_per_page' => $posts_per_page,
     'paged' => $paged,
-    'orderby' => 'modified',
-    'order' => 'DESC'
+    'tax_query' => array(
+        array(
+            'taxonomy' => 'nettruyen_genre',
+            'field' => 'slug',
+            'terms' => $genre_slug
+        )
+    ),
+    'orderby' => $sort_config['orderby'],
+    'order' => $sort_config['order']
 );
 
 // Apply status filter
 if ($status !== '') {
-    $args['meta_query'] = array(
-        array(
-            'key' => '_nettruyen_status',
-            'value' => $status,
-            'compare' => '='
-        )
+    $args['meta_query'][] = array(
+        'key' => '_nettruyen_status',
+        'value' => $status,
+        'compare' => '='
     );
 }
 
 // Apply country filter
 if ($country !== '') {
-    $args['tax_query'] = array(
-        array(
-            'taxonomy' => 'nettruyen_country',
-            'field' => 'slug',
-            'terms' => $country
-        )
+    $args['tax_query'][] = array(
+        'taxonomy' => 'nettruyen_country',
+        'field' => 'slug',
+        'terms' => $country
     );
+}
+
+// For sort by views
+if ($sort == 4 || $sort == 5) {
+    $args['meta_key'] = '_nettruyen_view_count';
 }
 
 $comics_query = new WP_Query($args);
@@ -77,6 +92,14 @@ $hot_comic_ids = $wpdb->get_col(
     LIMIT 20"
 );
 
+// Get all genres for dropdown
+$all_genres = get_terms(array(
+    'taxonomy' => 'nettruyen_genre',
+    'hide_empty' => true,
+    'orderby' => 'name',
+    'order' => 'ASC'
+));
+
 // Calculate pagination
 $total_pages = $comics_query->max_num_pages;
 $current_page = max(1, $paged);
@@ -87,84 +110,128 @@ $current_page = max(1, $paged);
     <div class="homepage_tags">
         <h1>
             <p class="text_list_update">
-                <i class="fa fa-font-awesome" aria-hidden="true"></i> Truyện Mới Cập Nhật
+                <i class="fa fa-font-awesome" aria-hidden="true"></i> Truyện <?php echo esc_html($genre_name); ?>
             </p>
         </h1>
         <div class="clear"></div>
     </div>
 
+    <!-- Genre Description -->
+    <?php if (!empty($genre_description)): ?>
+    <div class="tags_detail">
+        <?php echo wp_kses_post($genre_description); ?>
+    </div>
+    <?php endif; ?>
+
     <!-- Filter Box -->
     <div class="story-list-bl01 box">
         <table>
             <tbody>
+                <!-- Genre Selector -->
+                <tr>
+                    <th>Thể loại truyện</th>
+                    <td>
+                        <div class="select is-warning">
+                            <select id="category">
+                                <?php foreach ($all_genres as $genre): ?>
+                                <option value="<?php echo esc_attr(get_term_link($genre)); ?>"
+                                    <?php selected($genre->slug, $genre_slug); ?>>
+                                    <?php echo esc_html($genre->name); ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Status Filter -->
                 <tr>
                     <th>Tình trạng</th>
                     <td>
                         <ul class="choose">
                             <li>
-                                <a class="<?php echo ($status === '') ? 'active' : ''; ?>"
-                                    href="<?php echo get_permalink(); ?>">
+                                <a class="<?php echo ($status === '') ? 'active' : ''; ?>" href="javascript:void(0)"
+                                    data-filter="status" data-value="">
                                     Tất cả
                                 </a>
                             </li>
                             <li>
                                 <a class="<?php echo ($status === 'ongoing') ? 'active' : ''; ?>"
-                                    href="<?php echo add_query_arg(array('status' => 'ongoing', 'country' => $country)); ?>">
+                                    href="javascript:void(0)" data-filter="status" data-value="ongoing">
                                     Đang tiến hành
                                 </a>
                             </li>
                             <li>
                                 <a class="<?php echo ($status === 'completed') ? 'active' : ''; ?>"
-                                    href="<?php echo add_query_arg(array('status' => 'completed', 'country' => $country)); ?>">
+                                    href="javascript:void(0)" data-filter="status" data-value="completed">
                                     Hoàn thành
                                 </a>
                             </li>
                             <li>
                                 <a class="<?php echo ($status === 'coming_soon') ? 'active' : ''; ?>"
-                                    href="<?php echo add_query_arg(array('status' => 'coming_soon', 'country' => $country)); ?>">
+                                    href="javascript:void(0)" data-filter="status" data-value="coming_soon">
                                     Sắp ra mắt
                                 </a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+
+                <!-- Country Filter -->
                 <tr>
                     <th>Quốc gia</th>
                     <td>
                         <ul class="choose">
                             <li>
-                                <a class="<?php echo ($country === '') ? 'active' : ''; ?>"
-                                    href="<?php echo get_permalink(); ?>">
+                                <a class="<?php echo ($country === '') ? 'active' : ''; ?>" href="javascript:void(0)"
+                                    data-filter="country" data-value="">
                                     Tất cả
                                 </a>
                             </li>
                             <li>
                                 <a class="<?php echo ($country === 'China') ? 'active' : ''; ?>"
-                                    title="Truyện Trung Quốc"
-                                    href="<?php echo add_query_arg(array('status' => $status, 'country' => 'China')); ?>">
+                                    title="Truyện Trung Quốc" href="javascript:void(0)" data-filter="country"
+                                    data-value="China">
                                     Trung Quốc
                                 </a>
                             </li>
                             <li>
                                 <a class="<?php echo ($country === 'Vietnam') ? 'active' : ''; ?>"
-                                    title="Truyện Việt Nam"
-                                    href="<?php echo add_query_arg(array('status' => $status, 'country' => 'Vietnam')); ?>">
+                                    title="Truyện Việt Nam" href="javascript:void(0)" data-filter="country"
+                                    data-value="Vietnam">
                                     Việt Nam
                                 </a>
                             </li>
                             <li>
                                 <a class="<?php echo ($country === 'Korea') ? 'active' : ''; ?>" title="Truyện Hàn Quốc"
-                                    href="<?php echo add_query_arg(array('status' => $status, 'country' => 'Korea')); ?>">
+                                    href="javascript:void(0)" data-filter="country" data-value="Korea">
                                     Hàn Quốc
                                 </a>
                             </li>
                             <li>
                                 <a class="<?php echo ($country === 'Japan') ? 'active' : ''; ?>" title="Truyện Nhật Bản"
-                                    href="<?php echo add_query_arg(array('status' => $status, 'country' => 'Japan')); ?>">
+                                    href="javascript:void(0)" data-filter="country" data-value="Japan">
                                     Nhật Bản
                                 </a>
                             </li>
                         </ul>
+                    </td>
+                </tr>
+
+                <!-- Sort Filter -->
+                <tr>
+                    <th>Sắp xếp</th>
+                    <td>
+                        <div class="select is-warning">
+                            <select id="category-sort">
+                                <option value="0" <?php selected($sort, 0); ?>>Ngày đăng giảm dần</option>
+                                <option value="1" <?php selected($sort, 1); ?>>Ngày đăng tăng dần</option>
+                                <option value="2" <?php selected($sort, 2); ?>>Ngày cập nhật giảm dần</option>
+                                <option value="3" <?php selected($sort, 3); ?>>Ngày cập nhật tăng dần</option>
+                                <option value="4" <?php selected($sort, 4); ?>>Lượt xem giảm dần</option>
+                                <option value="5" <?php selected($sort, 5); ?>>Lượt xem tăng dần</option>
+                            </select>
+                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -311,21 +378,21 @@ $current_page = max(1, $paged);
             // Previous button
             if ($current_page > 1):
                 ?>
-        <a href="<?php echo get_pagenum_link($current_page - 1); ?>">
+        <a href="javascript:void(0)" data-page="<?php echo $current_page - 1; ?>">
             <p><span aria-hidden="true">‹</span></p>
         </a>
         <?php endif; ?>
 
         <?php
             // Page numbers
-            $range = 2; // Show 2 pages before and after current
+            $range = 2;
             $start = max(1, $current_page - $range);
             $end = min($total_pages, $current_page + $range);
 
             // Always show first page
             if ($start > 1):
                 ?>
-        <a href="<?php echo get_pagenum_link(1); ?>">
+        <a href="javascript:void(0)" data-page="1">
             <p>1</p>
         </a>
         <?php if ($start > 2): ?>
@@ -342,7 +409,7 @@ $current_page = max(1, $paged);
             <p class="active"><?php echo $i; ?></p>
         </a>
         <?php else: ?>
-        <a href="<?php echo get_pagenum_link($i); ?>">
+        <a href="javascript:void(0)" data-page="<?php echo $i; ?>">
             <p><?php echo $i; ?></p>
         </a>
         <?php
@@ -357,7 +424,7 @@ $current_page = max(1, $paged);
                     ?>
         <span class="dots">...</span>
         <?php endif; ?>
-        <a href="<?php echo get_pagenum_link($total_pages); ?>">
+        <a href="javascript:void(0)" data-page="<?php echo $total_pages; ?>">
             <p><?php echo $total_pages; ?></p>
         </a>
         <?php endif; ?>
@@ -366,10 +433,10 @@ $current_page = max(1, $paged);
             // Next button
             if ($current_page < $total_pages):
                 ?>
-        <a href="<?php echo get_pagenum_link($current_page + 1); ?>">
+        <a href="javascript:void(0)" data-page="<?php echo $current_page + 1; ?>">
             <p><span aria-hidden="true">›</span></p>
         </a>
-        <a href="<?php echo get_pagenum_link($total_pages); ?>">
+        <a href="javascript:void(0)" data-page="<?php echo $total_pages; ?>">
             <p><span aria-hidden="true">»</span></p>
         </a>
         <?php endif; ?>

@@ -4,7 +4,7 @@
  * Tính toán fake views theo công thức realistic
  * 
  * @package NetTruyen
- * @version 1.0.0
+ * @version 1.0.1 - Fixed fallback for comics without manifest
  */
 
 if (!defined('ABSPATH')) {
@@ -15,7 +15,7 @@ class NetTruyen_View_Calculator
 {
 
     /**
-     * Tính fake views cho một truyện (Version 2: Global Fake)
+     * Tính fake views cho một truyện (Version 2.1: With Fallback)
      * 
      * Công thức:
      * base_fake = total_chapters * 100
@@ -23,24 +23,60 @@ class NetTruyen_View_Calculator
      * + bonus theo thời gian online
      * + random factor ±20%
      * 
+     * ✅ FIX: Thêm fallback cho truyện không có manifest
+     * 
      * @param int $post_id ID truyện
      * @return int Fake views
      */
     public static function calculate_fake_views($post_id)
     {
-        // 1. Lấy số chapter
+        // 1. Lấy số chapter từ manifest
         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
 
-        if (empty($manifest_json)) {
-            return 0; // Không có chapter = không có fake views
+        $total_chapters = 0;
+
+        if (!empty($manifest_json)) {
+            $manifest = json_decode($manifest_json, true);
+            $total_chapters = !empty($manifest['chapters']) ? count($manifest['chapters']) : 0;
         }
 
-        $manifest = json_decode($manifest_json, true);
-        $total_chapters = !empty($manifest['chapters']) ? count($manifest['chapters']) : 0;
-
+        // ✅ FALLBACK 1: Thử lấy từ meta khác
         if ($total_chapters === 0) {
-            return 0;
+            $chapter_count = get_post_meta($post_id, '_nettruyen_chapter_count', true);
+            if (!empty($chapter_count) && is_numeric($chapter_count)) {
+                $total_chapters = (int) $chapter_count;
+            }
         }
+
+        // ✅ FALLBACK 2: Check post content/excerpt để estimate
+        if ($total_chapters === 0) {
+            $post = get_post($post_id);
+
+            // Nếu có nội dung → estimate 15 chapters
+            if (!empty($post->post_content) || !empty($post->post_excerpt)) {
+                $total_chapters = 15;
+            }
+        }
+
+        // ✅ FALLBACK 3: Dựa vào tuổi của post
+        if ($total_chapters === 0) {
+            $post_date = get_post_field('post_date', $post_id);
+            $days_online = max(1, (time() - strtotime($post_date)) / DAY_IN_SECONDS);
+
+            // Post cũ hơn → giả định có nhiều chapter hơn
+            if ($days_online > 180) {
+                $total_chapters = 20; // 6 tháng+
+            } elseif ($days_online > 90) {
+                $total_chapters = 15; // 3-6 tháng
+            } elseif ($days_online > 30) {
+                $total_chapters = 10; // 1-3 tháng
+            } else {
+                $total_chapters = 5; // Mới đăng
+            }
+        }
+
+        // ✅ MINIMUM: Ít nhất 5 chapters để có views
+        $total_chapters = max(5, $total_chapters);
 
         // 2. Base fake views = chapters * 100
         $base_fake = $total_chapters * 100;
@@ -64,7 +100,10 @@ class NetTruyen_View_Calculator
         $random_factor = rand(80, 120) / 100;
         $base_fake *= $random_factor;
 
-        // 6. Làm tròn và return
+        // 6. Minimum 500 views cho truyện mới
+        $base_fake = max(500, $base_fake);
+
+        // 7. Làm tròn và return
         return (int) round($base_fake);
     }
 
@@ -81,7 +120,27 @@ class NetTruyen_View_Calculator
         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
 
         if (empty($manifest_json)) {
-            return array();
+            // ✅ FALLBACK: Generate dummy chapters
+            $total_chapters = 10;
+            $distribution = array();
+
+            for ($i = 1; $i <= $total_chapters; $i++) {
+                $chapter_slug = 'chapter-' . $i;
+
+                if ($i === 1) {
+                    $views = rand(800, 1200);
+                } elseif ($i <= 3) {
+                    $views = rand(400, 700);
+                } elseif ($i <= 7) {
+                    $views = rand(200, 400);
+                } else {
+                    $views = rand(300, 500);
+                }
+
+                $distribution[$chapter_slug] = $views;
+            }
+
+            return $distribution;
         }
 
         $manifest = json_decode($manifest_json, true);
