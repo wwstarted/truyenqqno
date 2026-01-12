@@ -78,7 +78,6 @@
                 <!-- Results will be populated by JS -->
             </div>
         </div>
-
         <!-- Bottom Navigation -->
         <div class="header-bottom">
             <div class="container">
@@ -132,9 +131,7 @@
                 </nav>
             </div>
         </div>
-
     </header>
-
     <?php wp_footer(); ?>
 </body>
 

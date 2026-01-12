@@ -855,6 +855,9 @@ body.dark-mode .search-icon-btn {
 }
 
 @media (max-width: 390px) {
+  .search-submit {
+    right: 20px !important;
+  }
   .container {
     padding: 0 15px;
   }

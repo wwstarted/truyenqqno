@@ -48,14 +48,14 @@
 
     // Setup event listeners
     initFilterListeners();
-    initPaginationListeners(); // Add this
+    initPaginationListeners();
     initBookmarkButtons();
 
     console.log("AJAX Comics Listing initialized");
   }
 
   /**
-   * Setup filter & pagination listeners
+   * Setup filter listeners
    */
   function initFilterListeners() {
     // Filter links
@@ -85,7 +85,7 @@
   }
 
   /**
-   * Initialize pagination listeners
+   * Initialize pagination listeners - FIXED VERSION
    */
   function initPaginationListeners() {
     if (!paginationContainer) return;
@@ -96,14 +96,32 @@
       link.addEventListener("click", function (e) {
         e.preventDefault();
 
-        // Get page number from href
         const href = this.getAttribute("href");
         if (!href || href === "javascript:void(0)") return;
 
-        // Extract page number from URL
+        // Extract page number từ URL
+        let page = 1;
+
+        // Thử extract từ query param ?paged=X
         const url = new URL(href, window.location.origin);
-        const pageParam = url.searchParams.get("paged");
-        const page = pageParam ? parseInt(pageParam) : 1;
+        const pagedParam = url.searchParams.get("paged");
+
+        if (pagedParam) {
+          page = parseInt(pagedParam);
+        } else {
+          // Thử extract từ permalink /page/X/
+          const pageMatch = href.match(/\/page\/(\d+)\/?/);
+          if (pageMatch) {
+            page = parseInt(pageMatch[1]);
+          }
+        }
+
+        console.log(
+          "Pagination clicked - Page:",
+          page,
+          "Current:",
+          state.currentPage
+        );
 
         if (page && page !== state.currentPage) {
           state.currentPage = page;
@@ -147,6 +165,8 @@
       apiUrl.searchParams.set("page", state.currentPage);
       if (state.status) apiUrl.searchParams.set("status", state.status);
       if (state.country) apiUrl.searchParams.set("country", state.country);
+
+      console.log("Loading comics from:", apiUrl.toString());
 
       // Fetch data
       const response = await fetch(apiUrl.toString());
@@ -321,6 +341,7 @@
       link.addEventListener("click", function (e) {
         e.preventDefault();
         const page = parseInt(this.getAttribute("data-page"));
+        console.log("Pagination clicked (AJAX) - Page:", page);
         if (page && page !== state.currentPage) {
           state.currentPage = page;
           loadComics();
