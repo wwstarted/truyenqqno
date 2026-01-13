@@ -116,7 +116,7 @@ function toyota_enqueue_assets()
     if (is_front_page()) {
         wp_enqueue_style(
             'toyota-front-page',
-            get_template_directory_uri() . '/css/front-page-v2.css',
+            get_template_directory_uri() . '/css/front-page.css',
             array('toyota-global'),
             '1.0.0'
         );
@@ -152,6 +152,35 @@ function toyota_enqueue_assets()
         ));
     }
 
+    if (is_page_template('page-advanced-search.php')) {
+        wp_enqueue_style(
+            'truyen-moi-cap-nhat-base',
+            get_template_directory_uri() . '/css/truyen-moi-cap-nhat.css',
+            array('toyota-global'),
+            '1.0.0'
+        );
+
+        wp_enqueue_style(
+            'advanced-search-css',
+            get_template_directory_uri() . '/css/advanced-search.css',
+            array('truyen-moi-cap-nhat-base'),
+            '1.0.0'
+        );
+
+        wp_enqueue_script(
+            'advanced-search-js',
+            get_template_directory_uri() . '/js/advanced-search.js',
+            array(),
+            '1.0.0',
+            true
+        );
+
+        wp_localize_script('advanced-search-js', 'nettruyenData', array(
+            'restUrl' => rest_url('nettruyen/v1/advanced-search'),
+            'nonce' => wp_create_nonce('wp_rest'),
+        ));
+    }
+
 
     // Header JS
     wp_enqueue_script(
@@ -182,12 +211,23 @@ function toyota_enqueue_assets()
         true
     );
 
+    if (is_singular('nettruyen_comic')) {
+        wp_enqueue_style(
+            'single-comic-css',
+            get_template_directory_uri() . '/css/single-comic.css',
+            array('toyota-global'),
+            '1.0.0'
+        );
+    }
+
 
 }
 add_action('wp_enqueue_scripts', 'toyota_enqueue_assets');
 
 
 require_once get_template_directory() . '/inc/class-nettruyen-comics-rest-api.php';
+require_once get_template_directory() . '/inc/class-advanced-search-api.php';
+require_once get_template_directory() . '/inc/single-nettruyen-comics.php';
 
 /**
  * Enqueue Comics Listing Scripts

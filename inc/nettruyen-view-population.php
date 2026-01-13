@@ -156,7 +156,6 @@ class NetTruyen_View_Population
 
         $fake_views = NetTruyen_View_Calculator::calculate_fake_views($post_id);
 
-        // ✅ FIX: Không skip, force minimum
         if ($fake_views === 0) {
             $fake_views = 500;
         }

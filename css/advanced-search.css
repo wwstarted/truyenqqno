@@ -1,0 +1,464 @@
+/**
+ * Advanced Search Page Styles
+ * 
+ * @package TruyenQQ
+ * @version 1.0.1
+ */
+
+/* ==================== FORM TOGGLE BUTTON ==================== */
+.btn-collapse {
+  margin-bottom: 20px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #00bcd4;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-collapse:hover {
+  background-color: #0097a7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+}
+
+.btn-collapse .show-text,
+.btn-collapse .hide-text {
+  display: inline;
+}
+
+.btn-collapse .show-text.hidden,
+.btn-collapse .hide-text.hidden {
+  display: none;
+}
+
+/* ==================== ADVANCED SEARCH FORM ==================== */
+.advsearch-form {
+  opacity: 1;
+  max-height: 3000px;
+  overflow: visible;
+  transition: all 0.4s ease;
+}
+
+.advsearch-form.hidden {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.advsearch-form .form-group {
+  margin-bottom: 20px;
+}
+
+.advsearch-form .clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* ==================== LEGEND (Icon Explanations) ==================== */
+.advsearch-form .form-group p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 8px 0;
+}
+
+body.dark-mode .advsearch-form .form-group p {
+  color: var(--text-secondary-dark, #999);
+}
+
+.advsearch-form .form-group span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ==================== ICON STATES ==================== */
+.icon-checkbox {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .icon-checkbox {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.icon-tick {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.icon-tick::after {
+  content: "✓";
+}
+
+.icon-cross {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.icon-cross::after {
+  content: "✕";
+}
+
+/* ==================== RESET BUTTON ==================== */
+.btn-reset {
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-reset:hover {
+  background-color: #1976d2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.btn-reset i {
+  font-size: 13px;
+}
+
+/* ==================== GENRE CONTAINER (FIXED GRID LAYOUT) ==================== */
+.label-search {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  padding-right: 20px;
+  min-width: 150px;
+}
+
+body.dark-mode .label-search {
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+/* Desktop: 7 columns */
+.genre-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+/* ==================== GENRE ITEMS ==================== */
+.genre-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: var(--bg-secondary);
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.dark-mode .genre-item {
+  background-color: var(--bg-secondary-dark, #1a1a1a);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.genre-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .genre-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.genre-item span {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.genre-item span:hover {
+  transform: scale(1.1);
+}
+
+/* ==================== SELECT DROPDOWNS ==================== */
+.form-group.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+.select.select-search {
+  position: relative;
+  min-width: 180px;
+}
+
+.select.select-search select,
+.custom-select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 35px;
+}
+
+body.dark-mode .select.select-search select,
+body.dark-mode .custom-select {
+  color: var(--text-primary-dark, #e0e0e0);
+  background-color: var(--bg-secondary-dark, #1a1a1a);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e0e0e0' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+
+.select.select-search select:hover,
+.custom-select:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 2px 8px rgba(0, 188, 212, 0.2);
+}
+
+.select.select-search select:focus,
+.custom-select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.1);
+}
+
+/* ==================== SEARCH BUTTON ==================== */
+.btn-search {
+  padding: 12px 40px;
+  font-size: 16px;
+  font-weight: 700;
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-search:hover {
+  background-color: var(--hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
+}
+
+.btn-search:active {
+  transform: translateY(0);
+}
+
+/* ==================== RESPONSIVE: LARGE TABLET (900px - 1200px) ==================== */
+@media (max-width: 1200px) {
+  /* 6 columns for large tablets */
+  .genre-container {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+
+  .genre-item {
+    font-size: 13px;
+    padding: 7px 10px;
+  }
+}
+
+/* ==================== RESPONSIVE: TABLET (768px - 899px) ==================== */
+@media (max-width: 899px) {
+  /* 5 columns for tablets */
+  .genre-container {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+
+  .btn-collapse {
+    padding: 9px 20px;
+    font-size: 13px;
+  }
+
+  .label-search {
+    font-size: 14px;
+    min-width: 120px;
+  }
+
+  .genre-item {
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+
+  .select.select-search {
+    min-width: 160px;
+  }
+
+  .select.select-search select,
+  .custom-select {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .btn-search {
+    padding: 10px 32px;
+    font-size: 15px;
+  }
+}
+
+/* ==================== RESPONSIVE: MOBILE LANDSCAPE (568px - 767px) ==================== */
+@media (max-width: 767px) {
+  /* 4 columns for mobile landscape */
+  .genre-container {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .btn-collapse {
+    padding: 8px 18px;
+    font-size: 12px;
+    margin-bottom: 15px;
+  }
+
+  .advsearch-form .form-group {
+    margin-bottom: 15px;
+  }
+
+  .advsearch-form .form-group p {
+    font-size: 13px;
+    margin: 6px 0;
+  }
+
+  .advsearch-form .form-group span {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+
+  .btn-reset {
+    padding: 7px 16px;
+    font-size: 13px;
+  }
+
+  /* Stack form groups vertically */
+  .form-group.row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .label-search {
+    font-size: 14px;
+    margin-bottom: 8px;
+    width: 100%;
+    min-width: auto;
+    padding-right: 0;
+  }
+
+  .genre-item {
+    padding: 6px 8px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .select.select-search {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .select.select-search select,
+  .custom-select {
+    padding: 8px 12px;
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .btn-search {
+    padding: 10px 28px;
+    font-size: 14px;
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* ==================== RESPONSIVE: MOBILE PORTRAIT (390px - 567px) ==================== */
+@media (max-width: 567px) {
+  /* 3 columns for mobile portrait */
+  .genre-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .genre-item {
+    font-size: 11px;
+    padding: 6px 6px;
+  }
+}
+
+/* ==================== EXTRA SMALL MOBILE (≤390px) ==================== */
+@media (max-width: 390px) {
+  /* 2 columns for very small screens */
+  .genre-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .btn-collapse {
+    width: 100%;
+  }
+
+  .genre-item {
+    font-size: 11px;
+    padding: 5px 6px;
+  }
+
+  .advsearch-form .form-group span {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+  }
+
+  .btn-search {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.text-center {
+  text-align: center;
+}
+
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}

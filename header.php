@@ -122,7 +122,7 @@
                         </li>
                         <li><a href="#">Con Gái</a></li>
                         <li><a href="#">Con Trai</a></li>
-                        <li><a href="#">Tìm Truyện</a></li>
+                        <li><a href="<?php echo esc_url(home_url('/tim-kiem-nang-cao')); ?>">Tìm Truyện</a></li>
                         <li><a href="#">Lịch Sử</a></li>
                         <li><a href="#">Theo Dõi</a></li>
                         <li><a href="https://discord.gg/t8dQUwsrsj" target="_blank">Discord</a></li>
@@ -131,6 +131,7 @@
                 </nav>
             </div>
         </div>
+
     </header>
     <?php wp_footer(); ?>
 </body>
