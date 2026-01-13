@@ -131,7 +131,6 @@
                 </nav>
             </div>
         </div>
-
     </header>
     <?php wp_footer(); ?>
 </body>

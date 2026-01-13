@@ -220,6 +220,14 @@ function toyota_enqueue_assets()
         );
     }
 
+    if (is_page_template('single-chapter.php')) {
+        wp_enqueue_style(
+            'chapter',
+            get_template_directory_uri() . '/css/single-chapter.css',
+            array('toyota-global'),
+            '1.0.0'
+        );
+    }
 
 }
 add_action('wp_enqueue_scripts', 'toyota_enqueue_assets');

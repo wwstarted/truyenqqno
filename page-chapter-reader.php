@@ -232,13 +232,6 @@ if ($stats) {
 
 
 <?php
-/**
- * ===================================
- * MANUAL TRACK (PHP-based fallback)
- * ===================================
- * 
- * Nếu JavaScript bị disable, track trực tiếp bằng PHP
- */
 
 // Trong chapter reader template
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';

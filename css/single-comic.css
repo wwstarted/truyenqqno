@@ -257,7 +257,7 @@ body.dark-mode .list01 .li03 a {
 }
 
 .story-detail-menu .is-danger {
-  background-color: #ff3860;
+  background-color: var(--accent-color);
   color: #fff;
 }
 

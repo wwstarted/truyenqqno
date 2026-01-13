@@ -72,9 +72,6 @@ class NetTruyen_View_Population
                 // Tính fake views
                 $fake_views = NetTruyen_View_Calculator::calculate_fake_views($post_id);
 
-                // ✅ FIX: KHÔNG skip truyện có 0 views nữa
-                // Calculator đã đảm bảo minimum 500 views
-
                 // ✅ SAFETY CHECK: Nếu vẫn = 0, force minimum
                 if ($fake_views === 0) {
                     $fake_views = 500;
@@ -138,7 +135,7 @@ class NetTruyen_View_Population
             'message' => $message,
             'is_complete' => $is_complete,
             'errors' => $errors,
-            'skipped' => $skipped // ✅ Thêm log để debug
+            'skipped' => $skipped
         );
     }
 
