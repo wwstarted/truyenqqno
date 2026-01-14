@@ -10,20 +10,17 @@
  * @version 1.0.0
  */
 
-// Require view tracker để lấy stats
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
 
-// Query 16 truyện hot nhất
 $args = array(
     'post_type' => 'nettruyen_comic',
     'post_status' => 'publish',
     'posts_per_page' => 16,
     'orderby' => 'meta_value_num',
-    'meta_key' => '_nettruyen_total_views', // Hoặc query từ view_stats table
+    'meta_key' => '_nettruyen_total_views',
     'order' => 'DESC'
 );
 
-// Alternative: Query từ view_stats table (recommend)
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
@@ -36,7 +33,6 @@ $hot_comics_ids = $wpdb->get_col(
 );
 
 if (empty($hot_comics_ids)) {
-    // Fallback: nếu chưa có stats, lấy truyện mới nhất
     $args = array(
         'post_type' => 'nettruyen_comic',
         'post_status' => 'publish',
@@ -46,7 +42,6 @@ if (empty($hot_comics_ids)) {
     );
     $hot_comics = new WP_Query($args);
 } else {
-    // Query với IDs từ stats
     $args = array(
         'post_type' => 'nettruyen_comic',
         'post_status' => 'publish',
@@ -58,7 +53,7 @@ if (empty($hot_comics_ids)) {
 }
 
 if (!$hot_comics->have_posts()) {
-    return; // Không có truyện thì không hiển thị section
+    return;
 }
 ?>
 
@@ -83,7 +78,6 @@ if (!$hot_comics->have_posts()) {
                         $post_id = get_the_ID();
                         $index++;
 
-                        // Get thumbnail
                         $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                         if (empty($thumbnail)) {
                             $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -92,11 +86,9 @@ if (!$hot_comics->have_posts()) {
                             $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                         }
 
-                        // Get chapter manifest
                         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                         $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
-                        // Get latest chapter
                         $latest_chapter = 'Đang cập nhật';
                         if (!empty($manifest['chapters'])) {
                             $chapters = $manifest['chapters'];
@@ -104,11 +96,9 @@ if (!$hot_comics->have_posts()) {
                             $latest_chapter = 'Chương ' . $latest['name'];
                         }
 
-                        // Get time ago (from manifest updated_at)
                         $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                         $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                        // Check if in top 10 for "Hot" badge
                         $is_hot = ($index <= 10);
                         ?>
 
@@ -181,19 +171,18 @@ if (!$hot_comics->have_posts()) {
  * @version 1.0.0
  */
 
-// Query 16 truyện ngẫu nhiên (temporary - sẽ thay đổi logic sau)
 $args = array(
     'post_type' => 'nettruyen_comic',
     'post_status' => 'publish',
     'posts_per_page' => 16,
-    'orderby' => 'rand', // Random cho đến khi có logic taxonomy/meta
+    'orderby' => 'rand',
     'order' => 'DESC'
 );
 
 $exclusive_comics = new WP_Query($args);
 
 if (!$exclusive_comics->have_posts()) {
-    return; // Không có truyện thì không hiển thị section
+    return;
 }
 ?>
 
@@ -220,7 +209,6 @@ if (!$exclusive_comics->have_posts()) {
                         $post_id = get_the_ID();
                         $index++;
 
-                        // Get thumbnail
                         $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                         if (empty($thumbnail)) {
                             $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -229,11 +217,9 @@ if (!$exclusive_comics->have_posts()) {
                             $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                         }
 
-                        // Get chapter manifest
                         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                         $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
-                        // Get latest chapter
                         $latest_chapter = 'Đang cập nhật';
                         if (!empty($manifest['chapters'])) {
                             $chapters = $manifest['chapters'];
@@ -241,11 +227,9 @@ if (!$exclusive_comics->have_posts()) {
                             $latest_chapter = 'Chương ' . $latest['name'];
                         }
 
-                        // Get time ago (from manifest updated_at)
                         $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                         $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                        // Check if in top 10 for "Hot" badge
                         $is_hot = ($index <= 10);
                         ?>
 
@@ -319,10 +303,8 @@ if (!$exclusive_comics->have_posts()) {
  * @version 1.0.0
  */
 
-// Require view tracker để lấy stats
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
 
-// Query 42 truyện mới cập nhật
 $args = array(
     'post_type' => 'nettruyen_comic',
     'post_status' => 'publish',
@@ -337,7 +319,6 @@ if (!$new_comics->have_posts()) {
     return;
 }
 
-// Get top 20 by views for "Hot" badge
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 $hot_comic_ids = $wpdb->get_col(
@@ -377,7 +358,6 @@ $hot_comic_ids = $wpdb->get_col(
                 $post_id = get_the_ID();
                 $index++;
 
-                // Get thumbnail
                 $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                 if (empty($thumbnail)) {
                     $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -386,11 +366,9 @@ $hot_comic_ids = $wpdb->get_col(
                     $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                 }
 
-                // Get chapter manifest
                 $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                 $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
-                // Get latest chapter
                 $latest_chapter = 'Đang cập nhật';
                 if (!empty($manifest['chapters'])) {
                     $chapters = $manifest['chapters'];
@@ -398,11 +376,9 @@ $hot_comic_ids = $wpdb->get_col(
                     $latest_chapter = 'Chapter ' . $latest['name'];
                 }
 
-                // Get time ago
                 $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                 $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                // Get stats (follow count + view count)
                 $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                 if (empty($follow_count)) {
                     $follow_count = 0;
@@ -419,14 +395,11 @@ $hot_comic_ids = $wpdb->get_col(
                     $view_count = $view_stats->total_display_views;
                 }
 
-                // Format numbers
                 $follow_count_formatted = number_format($follow_count);
                 $view_count_formatted = number_format($view_count);
 
-                // Check badge priority: Hot > New
                 $is_hot = in_array($post_id, $hot_comic_ids);
-                $is_new = (current_time('timestamp') - strtotime($updated_at)) <= (7 * 24 * 60 * 60); // 7 days
-            
+                $is_new = (current_time('timestamp') - strtotime($updated_at)) <= (7 * 24 * 60 * 60);
                 $badge_type = '';
                 $badge_text = '';
                 if ($is_hot) {

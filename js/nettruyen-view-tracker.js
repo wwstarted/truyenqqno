@@ -8,7 +8,6 @@
 (function () {
   "use strict";
 
-  // Config từ PHP
   const config = window.NettruyenViewTracker || {};
   const restUrl = config.restUrl || "/wp-json/nettruyen/v1/track-view";
   const nonce = config.nonce || "";
@@ -25,13 +24,11 @@
       return;
     }
 
-    // Prepare data
     const data = {
       post_id: postId,
       chapter_slug: chapterSlug,
     };
 
-    // Track via fetch API
     fetch(restUrl, {
       method: "POST",
       headers: {
@@ -56,12 +53,7 @@
       });
   }
 
-  /**
-   * Auto-detect và track view khi page load
-   * Tìm data attributes: data-comic-id và data-chapter-slug
-   */
   function autoTrackOnLoad() {
-    // Tìm element có attributes
     const readerElement = document.querySelector(
       "[data-comic-id][data-chapter-slug]"
     );
@@ -75,22 +67,15 @@
     const chapterSlug = readerElement.getAttribute("data-chapter-slug");
 
     if (postId && chapterSlug) {
-      // Delay 2s để user actually đọc (không spam)
       setTimeout(() => {
         trackView(postId, chapterSlug);
       }, 2000);
     }
   }
 
-  /**
-   * Manual tracking function (có thể gọi từ custom code)
-   *
-   * Usage: NettruyenViewTracker.track(7, '1')
-   */
   window.NettruyenViewTracker = window.NettruyenViewTracker || {};
   window.NettruyenViewTracker.track = trackView;
 
-  // Auto-track when DOM ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", autoTrackOnLoad);
   } else {

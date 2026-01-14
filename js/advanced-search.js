@@ -8,11 +8,10 @@
 (function () {
   "use strict";
 
-  // State management
   const state = {
     currentPage: 1,
-    genresInclude: [], // Array of genre IDs with tick
-    genresExclude: [], // Array of genre IDs with cross
+    genresInclude: [],
+    genresExclude: [],
     status: "",
     country: "",
     minchapter: 0,
@@ -20,7 +19,6 @@
     isLoading: false,
   };
 
-  // DOM elements
   let comicsGrid = null;
   let paginationContainer = null;
   let searchForm = null;
@@ -28,9 +26,6 @@
   let genreItems = null;
   let searchButton = null;
 
-  /**
-   * Initialize Advanced Search
-   */
   function init() {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", init);
@@ -40,7 +35,6 @@
     const mainContainer = document.querySelector("#main_homepage");
     if (!mainContainer || !mainContainer.dataset.ajaxEnabled) return;
 
-    // Get DOM elements
     comicsGrid = document.querySelector(".list_grid.grid");
     paginationContainer = document.querySelector(".page_redirect");
     searchForm = document.querySelector(".advsearch-form");
@@ -50,7 +44,6 @@
 
     if (!comicsGrid || !searchForm) return;
 
-    // Get initial state from URL
     const urlParams = new URLSearchParams(window.location.search);
     state.currentPage = parseInt(urlParams.get("page")) || 1;
     state.genresInclude = urlParams.get("genres")
@@ -64,7 +57,6 @@
     state.minchapter = parseInt(urlParams.get("minchapter")) || 0;
     state.sort = parseInt(urlParams.get("sort")) || 2;
 
-    // Setup event listeners
     initFormToggle();
     initGenreSelector();
     initSelectListeners();
@@ -72,41 +64,32 @@
     initPaginationListeners();
     initBookmarkButtons();
 
-    // Restore genre states from URL
     restoreGenreStates();
 
     console.log("Advanced Search initialized", state);
   }
 
-  /**
-   * Form Show/Hide Toggle with localStorage
-   */
   function initFormToggle() {
     if (!toggleButton) return;
 
-    // Get saved state from localStorage (default: true = visible)
     const savedState = localStorage.getItem("advSearchFormVisible");
     const isVisible = savedState === null ? true : savedState === "true";
 
-    // Apply initial state
     if (!isVisible) {
       searchForm.classList.add("hidden");
       toggleButton.querySelector(".show-text").classList.remove("hidden");
       toggleButton.querySelector(".hide-text").classList.add("hidden");
     }
 
-    // Toggle button click
     toggleButton.addEventListener("click", function () {
       const isCurrentlyVisible = !searchForm.classList.contains("hidden");
 
       if (isCurrentlyVisible) {
-        // Hide form
         searchForm.classList.add("hidden");
         this.querySelector(".show-text").classList.remove("hidden");
         this.querySelector(".hide-text").classList.add("hidden");
         localStorage.setItem("advSearchFormVisible", "false");
       } else {
-        // Show form
         searchForm.classList.remove("hidden");
         this.querySelector(".show-text").classList.add("hidden");
         this.querySelector(".hide-text").classList.remove("hidden");
@@ -115,9 +98,6 @@
     });
   }
 
-  /**
-   * Genre 3-State Selector (checkbox → tick → cross → checkbox)
-   */
   function initGenreSelector() {
     genreItems.forEach((item) => {
       const icon = item.querySelector("span");
@@ -127,18 +107,15 @@
         const currentClass = this.className;
 
         if (currentClass === "icon-checkbox") {
-          // Change to tick (include)
           this.className = "icon-tick";
           state.genresInclude.push(genreId);
         } else if (currentClass === "icon-tick") {
-          // Change to cross (exclude)
           this.className = "icon-cross";
           state.genresInclude = state.genresInclude.filter(
             (id) => id !== genreId
           );
           state.genresExclude.push(genreId);
         } else if (currentClass === "icon-cross") {
-          // Change back to checkbox (ignore)
           this.className = "icon-checkbox";
           state.genresExclude = state.genresExclude.filter(
             (id) => id !== genreId
@@ -153,9 +130,6 @@
     });
   }
 
-  /**
-   * Restore genre states from URL parameters
-   */
   function restoreGenreStates() {
     genreItems.forEach((item) => {
       const icon = item.querySelector("span");
@@ -169,57 +143,41 @@
     });
   }
 
-  /**
-   * Setup select dropdown listeners
-   */
   function initSelectListeners() {
-    // Country
     const countrySelect = document.querySelector("#country");
     if (countrySelect) {
       countrySelect.value = state.country;
     }
 
-    // Status
     const statusSelect = document.querySelector("#status");
     if (statusSelect) {
       statusSelect.value = state.status;
     }
 
-    // Min Chapter
     const minchapterSelect = document.querySelector("#minchapter");
     if (minchapterSelect) {
       minchapterSelect.value = state.minchapter;
     }
 
-    // Sort
     const sortSelect = document.querySelector("#sort");
     if (sortSelect) {
       sortSelect.value = state.sort;
     }
   }
 
-  /**
-   * Search button click
-   */
   function initSearchButton() {
     if (!searchButton) return;
 
     searchButton.addEventListener("click", function () {
-      // Update state from form
       state.status = document.querySelector("#status").value;
       state.country = document.querySelector("#country").value;
       state.minchapter = parseInt(document.querySelector("#minchapter").value);
       state.sort = parseInt(document.querySelector("#sort").value);
-      state.currentPage = 1; // Reset to page 1
-
-      // Load comics
+      state.currentPage = 1;
       loadComics();
     });
   }
 
-  /**
-   * Initialize pagination listeners
-   */
   function initPaginationListeners() {
     if (!paginationContainer) return;
 
@@ -239,9 +197,6 @@
     });
   }
 
-  /**
-   * Load comics via REST API
-   */
   async function loadComics() {
     if (state.isLoading) return;
 
@@ -249,7 +204,6 @@
     showLoadingState();
 
     try {
-      // Build API URL
       const baseUrl =
         typeof nettruyenData !== "undefined"
           ? nettruyenData.restUrl.replace("/comics", "/advanced-search")
@@ -257,7 +211,6 @@
 
       const apiUrl = new URL(baseUrl, window.location.origin);
 
-      // Add parameters
       apiUrl.searchParams.set("page", state.currentPage);
       apiUrl.searchParams.set("sort", state.sort);
 
@@ -274,7 +227,6 @@
 
       console.log("Fetching:", apiUrl.toString());
 
-      // Fetch data
       const response = await fetch(apiUrl.toString());
 
       console.log("Response status:", response.status);
@@ -302,9 +254,6 @@
     }
   }
 
-  /**
-   * Render comics grid (tái sử dụng từ truyen-moi-cap-nhat.js)
-   */
   function renderComics(comics) {
     if (!comics || comics.length === 0) {
       comicsGrid.innerHTML = `
@@ -370,13 +319,9 @@
 
     comicsGrid.innerHTML = html;
 
-    // Re-initialize bookmark buttons
     initBookmarkButtons();
   }
 
-  /**
-   * Render pagination (tái sử dụng)
-   */
   function renderPagination(pagination) {
     if (!paginationContainer) return;
 
@@ -392,14 +337,12 @@
     const start = Math.max(1, current_page - range);
     const end = Math.min(total_pages, current_page + range);
 
-    // Previous button
     if (current_page > 1) {
       html += `<a href="javascript:void(0)" data-page="${
         current_page - 1
       }"><p><span>‹</span></p></a>`;
     }
 
-    // First page
     if (start > 1) {
       html += `<a href="javascript:void(0)" data-page="1"><p>1</p></a>`;
       if (start > 2) {
@@ -407,7 +350,6 @@
       }
     }
 
-    // Page numbers
     for (let i = start; i <= end; i++) {
       if (i === current_page) {
         html += `<a href="javascript:void(0)"><p class="active">${i}</p></a>`;
@@ -416,7 +358,6 @@
       }
     }
 
-    // Last page
     if (end < total_pages) {
       if (end < total_pages - 1) {
         html += `<span class="dots">...</span>`;
@@ -424,7 +365,6 @@
       html += `<a href="javascript:void(0)" data-page="${total_pages}"><p>${total_pages}</p></a>`;
     }
 
-    // Next button
     if (current_page < total_pages) {
       html += `<a href="javascript:void(0)" data-page="${
         current_page + 1
@@ -434,13 +374,9 @@
 
     paginationContainer.innerHTML = html;
 
-    // Re-initialize pagination listeners
     initPaginationListeners();
   }
 
-  /**
-   * Update URL without page reload
-   */
   function updateURL() {
     const params = new URLSearchParams();
 
@@ -461,9 +397,6 @@
     window.history.pushState({ page: state.currentPage }, "", newURL);
   }
 
-  /**
-   * Helper functions
-   */
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -482,9 +415,6 @@
     showToast(message);
   }
 
-  /**
-   * Initialize bookmark buttons
-   */
   function initBookmarkButtons() {
     const bookmarkButtons = document.querySelectorAll(
       ".list_grid .subscribed-badge"
@@ -510,9 +440,6 @@
     });
   }
 
-  /**
-   * Show toast notification
-   */
   function showToast(message) {
     let toastContainer = document.querySelector(".toast-container");
 
@@ -536,6 +463,5 @@
     }, 2000);
   }
 
-  // Start initialization
   init();
 })();

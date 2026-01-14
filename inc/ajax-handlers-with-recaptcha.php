@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Include required classes
+
 require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
 require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
 
@@ -29,7 +29,7 @@ function truyenqq_verify_recaptcha($response)
     $secret_key = get_option('truyenqq_recaptcha_secret_key');
 
     if (empty($secret_key)) {
-        // If no secret key configured, skip verification (for testing)
+
         error_log('TruyenQQ: reCAPTCHA secret key not configured');
         return true;
     }
@@ -62,7 +62,7 @@ function truyenqq_ajax_register_send_otp()
 {
     check_ajax_referer('truyenqq_auth_nonce', 'nonce');
 
-    // Verify reCAPTCHA
+
     $recaptcha_response = isset($_POST['recaptcha_response']) ? $_POST['recaptcha_response'] : '';
     if (!truyenqq_verify_recaptcha($recaptcha_response)) {
         wp_send_json(array(
@@ -104,7 +104,7 @@ function truyenqq_ajax_login()
 {
     check_ajax_referer('truyenqq_auth_nonce', 'nonce');
 
-    // Verify reCAPTCHA
+
     $recaptcha_response = isset($_POST['recaptcha_response']) ? $_POST['recaptcha_response'] : '';
     if (!truyenqq_verify_recaptcha($recaptcha_response)) {
         wp_send_json(array(
@@ -143,7 +143,7 @@ function truyenqq_ajax_forgot_password_send_otp()
 {
     check_ajax_referer('truyenqq_auth_nonce', 'nonce');
 
-    // Verify reCAPTCHA
+
     $recaptcha_response = isset($_POST['recaptcha_response']) ? $_POST['recaptcha_response'] : '';
     if (!truyenqq_verify_recaptcha($recaptcha_response)) {
         wp_send_json(array(
@@ -213,7 +213,7 @@ add_action('wp_ajax_nopriv_resend_otp', 'truyenqq_ajax_resend_otp');
  */
 function truyenqq_enqueue_auth_scripts()
 {
-    // Check if on auth pages
+
     $is_auth_page = is_page_template('template-login.php') ||
         is_page_template('template-register.php') ||
         is_page_template('template-forgot-password.php');
@@ -222,7 +222,7 @@ function truyenqq_enqueue_auth_scripts()
         return;
     }
 
-    // Enqueue Google reCAPTCHA
+
     wp_enqueue_script(
         'google-recaptcha',
         'https://www.google.com/recaptcha/api.js',
@@ -231,7 +231,7 @@ function truyenqq_enqueue_auth_scripts()
         true
     );
 
-    // Enqueue auth pages CSS
+
     wp_enqueue_style(
         'truyenqq-auth-pages',
         get_template_directory_uri() . '/css/auth-pages.css',
@@ -239,16 +239,16 @@ function truyenqq_enqueue_auth_scripts()
         '1.0.1'
     );
 
-    // Enqueue auth pages JS - DEPENDENCY: jquery AND google-recaptcha
+
     wp_enqueue_script(
         'truyenqq-auth-pages',
         get_template_directory_uri() . '/js/auth-pages.js',
-        array('jquery'), // Removed google-recaptcha from dependency
+        array('jquery'),
         '1.0.1',
-        true // Load in footer
+        true
     );
 
-    // Localize script - MUST be after wp_enqueue_script
+
     wp_localize_script('truyenqq-auth-pages', 'truyenqqAuth', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('truyenqq_auth_nonce'),

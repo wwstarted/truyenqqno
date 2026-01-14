@@ -96,7 +96,6 @@ function toyota_enqueue_assets()
         );
     }
 
-    // Swiper CSS
     wp_enqueue_style(
         'swiper',
         'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
@@ -104,7 +103,6 @@ function toyota_enqueue_assets()
         '11.0.0'
     );
 
-    // Swiper JS
     wp_enqueue_script(
         'swiper',
         'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
@@ -114,21 +112,6 @@ function toyota_enqueue_assets()
     );
 
 
-    // if (is_page_template('front-page.php')) {
-    //     wp_enqueue_style(
-    //         'toyota-front-page',
-    //         get_template_directory_uri() . '/css/front-page.css',
-    //         array('toyota-global'),
-    //         '1.0.0'
-    //     );
-    //     wp_enqueue_script(
-    //         'toyota-front-page',
-    //         get_template_directory_uri() . '/js/front-page.js',
-    //         array(),
-    //         '1.0.0',
-    //         true
-    //     );
-    // }
 
     if (is_front_page()) {
         wp_enqueue_style(
@@ -199,7 +182,6 @@ function toyota_enqueue_assets()
     }
 
 
-    // Header JS
     wp_enqueue_script(
         'toyota-header',
         get_template_directory_uri() . '/js/header.js',
@@ -213,17 +195,7 @@ function toyota_enqueue_assets()
         'nonce' => wp_create_nonce('wp_rest'),
     ));
 
-    // wp_enqueue_script(
-    //     'toyota-view-trackers',
-    //     get_template_directory_uri() . '/js/nettruyen-view-tracker.js',
-    //     array(),
-    //     '1.0.0',
-    //     true
-    // );
 
-    // wp_localize_script('toyota-header', 'TRUYENQQ_CONFIG', [
-    //     'restUrl' => get_rest_url(),
-    // ]);
 
     wp_enqueue_script(
         'toyota-footer',
@@ -258,7 +230,6 @@ function toyota_enqueue_assets()
 add_action('wp_enqueue_scripts', 'toyota_enqueue_assets');
 
 add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $user) {
-    // Trả về URL trang đăng nhập của bạn
     return home_url('/dang-nhap');
 }, 10, 3);
 
@@ -267,13 +238,10 @@ require_once get_template_directory() . '/inc/auth-db-migration.php';
 
 require_once get_template_directory() . '/inc/api-user-auth.php';
 
-// OTP Manager
 require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
 
-// Auth Handler
 require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
 
-// AJAX Handlers with reCAPTCHA
 require_once get_template_directory() . '/inc/ajax-handlers-with-recaptcha.php';
 
 
@@ -281,26 +249,20 @@ require_once get_template_directory() . '/inc/class-nettruyen-comics-rest-api.ph
 require_once get_template_directory() . '/inc/class-advanced-search-api.php';
 require_once get_template_directory() . '/inc/single-nettruyen-comics.php';
 
-// Include auth files
 require_once get_template_directory() . '/inc/auth-db-migration.php';
-// require_once get_template_directory() . '/inc/auth-ajax-handlers.php';
 
-/**
- * Enqueue Comics Listing Scripts
- */
+
 function nettruyen_enqueue_comics_listing_scripts()
 {
-    // Only load on comics listing page
     if (is_page_template('page-truyen-moi-cap-nhat.php')) {
         wp_enqueue_script(
             'nettruyen-comics-listing',
             get_template_directory_uri() . '/js/comics-listing.js',
-            array(), // No dependencies
+            array(),
             '1.0.0',
             true
         );
 
-        // Optional: Pass PHP data to JavaScript
         wp_localize_script('nettruyen-comics-listing', 'nettruyenData', array(
             'restUrl' => rest_url('nettruyen/v1/comics'),
             'nonce' => wp_create_nonce('wp_rest'),
@@ -311,7 +273,6 @@ add_action('wp_enqueue_scripts', 'nettruyen_enqueue_comics_listing_scripts');
 
 function toyota_theme_setup()
 {
-    // Add theme support
     add_theme_support('title-tag');
     add_theme_support('post-thumbnails');
     add_theme_support('custom-logo', array(
@@ -336,7 +297,6 @@ function toyota_theme_setup()
 add_action('after_setup_theme', 'toyota_theme_setup');
 
 
-// Register Custom Post Type: Products (Xe Toyota)
 function toyota_register_products_cpt()
 {
     $labels = array(
@@ -373,7 +333,6 @@ add_action('init', 'toyota_register_products_cpt');
 
 function toyota_add_featured_image_to_rest()
 {
-    // For Products
     register_rest_field('product', 'featured_media_url', array(
         'get_callback' => function ($post) {
             $image_id = get_post_thumbnail_id($post['id']);
@@ -389,7 +348,6 @@ function toyota_add_featured_image_to_rest()
         ),
     ));
 
-    // For Posts
     register_rest_field('post', 'featured_media_url', array(
         'get_callback' => function ($post) {
             $image_id = get_post_thumbnail_id($post['id']);
@@ -428,14 +386,12 @@ function toyota_search_callback($request)
         return new WP_Error('empty_query', 'Search query is required', array('status' => 400));
     }
 
-    // Search in products
     $products = get_posts(array(
         'post_type' => 'product',
         'posts_per_page' => 5,
         's' => $query,
     ));
 
-    // Search in posts
     $posts = get_posts(array(
         'post_type' => 'post',
         'posts_per_page' => 5,
@@ -450,7 +406,6 @@ function toyota_search_callback($request)
 
 function toyota_register_sidebars()
 {
-    // Sidebar cho blog
     register_sidebar(array(
         'name' => 'Blog Sidebar',
         'id' => 'sidebar-blog',
@@ -461,7 +416,6 @@ function toyota_register_sidebars()
         'after_title' => '</h3>',
     ));
 
-    // Footer widgets
     register_sidebar(array(
         'name' => 'Footer Widget 1',
         'id' => 'footer-1',
@@ -495,14 +449,12 @@ function toyota_register_sidebars()
 add_action('widgets_init', 'toyota_register_sidebars');
 
 
-// Get product price (custom field)
 function toyota_get_product_price($post_id)
 {
     $price = get_post_meta($post_id, 'product_price', true);
     return $price ? number_format($price) . ' VNĐ' : '';
 }
 
-// Format phone number
 function toyota_format_phone($phone)
 {
     return preg_replace('/(\d{4})(\d{3})(\d{3,4})/', '$1 $2 $3', $phone);
@@ -510,17 +462,13 @@ function toyota_format_phone($phone)
 
 function toyota_remove_wp_defaults()
 {
-    // Remove emoji scripts
     remove_action('wp_head', 'print_emoji_detection_script', 7);
     remove_action('wp_print_styles', 'print_emoji_styles');
 
-    // Remove WordPress version
     remove_action('wp_head', 'wp_generator');
 
-    // Remove RSD link
     remove_action('wp_head', 'rsd_link');
 
-    // Remove wlwmanifest link
     remove_action('wp_head', 'wlwmanifest_link');
 }
 add_action('init', 'toyota_remove_wp_defaults');
@@ -538,7 +486,6 @@ function toyota_excerpt_more($more)
 add_filter('excerpt_more', 'toyota_excerpt_more');
 
 
-// ================================== register search endpoint and features =====================================
 add_action('rest_api_init', 'nettruyen_register_search_endpoint');
 
 function nettruyen_register_search_endpoint()
@@ -580,11 +527,9 @@ function nettruyen_search_comics($request)
             $query->the_post();
             $post_id = get_the_ID();
 
-            // Get chapter manifest
             $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
             $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
-            // Get latest chapter
             $latest_chapter = '';
             if (!empty($manifest['chapters'])) {
                 $chapters = $manifest['chapters'];
@@ -592,15 +537,12 @@ function nettruyen_search_comics($request)
                 $latest_chapter = 'Chương ' . $latest['name'];
             }
 
-            // Get thumbnail from custom meta key
             $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
 
-            // Fallback to WordPress featured image if custom thumbnail not found
             if (empty($thumbnail)) {
                 $thumbnail = get_the_post_thumbnail_url($post_id, 'thumbnail');
             }
 
-            // Get alternative title
             $alternative_title = get_post_meta($post_id, '_nettruyen_alternative_title', true);
 
             $results[] = array(
@@ -620,52 +562,38 @@ function nettruyen_search_comics($request)
     return rest_ensure_response($results);
 }
 
-//  ========================= view count system =========================================
-// ============================================
-// NetTruyen View System - Auto Migration
-// ============================================
 require_once get_template_directory() . '/inc/nettruyen-view-migration.php';
 
-/**
- * Chạy migration và hiển thị kết quả
- */
+
 function nettruyen_run_view_migration()
 {
-    // Check nếu đã chạy rồi thì skip
     if (!NetTruyen_View_Migration::needs_migration()) {
         return;
     }
 
-    // Chạy migration
     $result = NetTruyen_View_Migration::run();
 
     if ($result) {
-        // Thành công
         set_transient('nettruyen_migration_success', true, 60);
         error_log('NetTruyen Migration: SUCCESS');
     } else {
-        // Thất bại
         set_transient('nettruyen_migration_error', true, 60);
         error_log('NetTruyen Migration: FAILED');
     }
 }
 
-// Hook 1: Chạy khi switch theme
 add_action('after_switch_theme', 'nettruyen_run_view_migration');
 
-// Hook 2: Chạy khi vào admin (lần đầu tiên)
 add_action('admin_init', function () {
     if (NetTruyen_View_Migration::needs_migration()) {
         nettruyen_run_view_migration();
     }
 });
 
-// Hiển thị thông báo admin
 add_action('admin_notices', 'nettruyen_migration_notices');
 
 function nettruyen_migration_notices()
 {
-    // Thông báo thành công
     if (get_transient('nettruyen_migration_success')) {
         ?>
 <div class="notice notice-success is-dismissible">
@@ -680,7 +608,6 @@ function nettruyen_migration_notices()
         delete_transient('nettruyen_migration_success');
     }
 
-    // Thông báo lỗi
     if (get_transient('nettruyen_migration_error')) {
         ?>
 <div class="notice notice-error is-dismissible">
@@ -697,9 +624,6 @@ function nettruyen_migration_notices()
     }
 }
 
-// ============================================
-// Debug Tool - Migration Status Page
-// ============================================
 add_action('admin_menu', 'nettruyen_migration_debug_menu');
 
 function nettruyen_migration_debug_menu()
@@ -717,9 +641,7 @@ function nettruyen_migration_debug_page()
 {
     global $wpdb;
 
-    // Handle actions
     if (isset($_POST['force_migration']) && check_admin_referer('nettruyen_migration_debug')) {
-        // Xóa flag để force chạy lại
         delete_option('nettruyen_view_migration_version');
         nettruyen_run_view_migration();
         echo '<div class="notice notice-info"><p>🔄 Migration re-run triggered!</p></div>';
@@ -730,12 +652,10 @@ function nettruyen_migration_debug_page()
         echo '<div class="notice notice-warning"><p>⚠️ Tables dropped!</p></div>';
     }
 
-    // Get status
     $needs_migration = NetTruyen_View_Migration::needs_migration();
     $version = get_option('nettruyen_view_migration_version', 'Not installed');
     $date = get_option('nettruyen_view_migration_date', 'N/A');
 
-    // Check tables
     $tables = array(
         'Chapter Views' => $wpdb->prefix . 'nettruyen_chapter_views',
         'Comic Views' => $wpdb->prefix . 'nettruyen_comic_views',
@@ -862,11 +782,7 @@ function nettruyen_migration_debug_page()
 <?php
 }
 
-// add inc ======================================================
 
-// ============================================
-// NetTruyen View Population Tool
-// ============================================
 add_action('admin_menu', 'nettruyen_population_tool_menu');
 
 function nettruyen_population_tool_menu()
@@ -886,7 +802,6 @@ function nettruyen_population_tool_page()
 
     require_once get_template_directory() . '/inc/nettruyen-view-population.php';
 
-    // Handle AJAX populate
     if (isset($_POST['start_populate']) && check_admin_referer('nettruyen_population')) {
         $batch_size = 50;
         $offset = isset($_POST['offset']) ? (int) $_POST['offset'] : 0;
@@ -897,7 +812,6 @@ function nettruyen_population_tool_page()
             if ($result['is_complete']) {
                 echo '<div class="notice notice-success"><p>✅ Population completed! Processed ' . $result['processed'] . ' comics.</p></div>';
             } else {
-                // Continue with next batch
                 ?>
 <div class="notice notice-info">
     <p>⏳ Processing...
@@ -917,13 +831,11 @@ setTimeout(function() {
         }
     }
 
-    // Handle reset
     if (isset($_POST['reset_all']) && check_admin_referer('nettruyen_population')) {
         NetTruyen_View_Population::reset_all();
         echo '<div class="notice notice-warning"><p>⚠️ All fake views data has been reset!</p></div>';
     }
 
-    // Get stats
     $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
     $total_in_db = $wpdb->get_var("SELECT COUNT(*) FROM {$stats_table}");
     $total_comics = wp_count_posts('nettruyen_comic')->publish;
@@ -1059,36 +971,18 @@ setTimeout(function() {
 }
 
 
-/**
- * ============================================
- * NetTruyen View Tracking System - Integration
- * ============================================
- * 
- * THÊM CODE NÀY VÀO FILE functions.php
- */
 
-// ============================================
-// 1. Require Classes
-// ============================================
+
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
 require_once get_template_directory() . '/inc/class-nettruyen-view-api.php';
 
-// ============================================
-// 2. Enqueue Frontend JS
-// ============================================
 add_action('wp_enqueue_scripts', 'nettruyen_enqueue_view_tracker');
 
 function nettruyen_enqueue_view_tracker()
 {
-    // Chỉ load trên chapter reader pages (customize condition này)
-    // Option 1: Load everywhere
     $should_load = true;
 
-    // Option 2: Chỉ load trên single comic post
-    // $should_load = is_singular('nettruyen_comic');
 
-    // Option 3: Chỉ load khi có chapter param
-    // $should_load = is_singular('nettruyen_comic') && !empty(get_query_var('chapter'));
 
     if (!$should_load) {
         return;
@@ -1102,16 +996,12 @@ function nettruyen_enqueue_view_tracker()
         true
     );
 
-    // Localize script với config
     wp_localize_script('nettruyen-view-tracker', 'NettruyenViewTracker', array(
         'restUrl' => rest_url('nettruyen/v1/track-view'),
         'nonce' => wp_create_nonce('wp_rest')
     ));
 }
 
-// ============================================
-// 3. Add Query Var for Chapter
-// ============================================
 add_filter('query_vars', 'nettruyen_add_chapter_query_var');
 
 function nettruyen_add_chapter_query_var($vars)
@@ -1120,9 +1010,6 @@ function nettruyen_add_chapter_query_var($vars)
     return $vars;
 }
 
-// ============================================
-// 4. Helper Functions
-// ============================================
 
 /**
  * Get và display view count
@@ -1232,9 +1119,6 @@ function nettruyen_track_view_php($post_id, $chapter_slug)
     NetTruyen_View_Tracker::track_chapter_view($post_id, $chapter_slug);
 }
 
-// ============================================
-// 5. Admin Column - Show Views in Post List
-// ============================================
 add_filter('manage_nettruyen_comic_posts_columns', 'nettruyen_add_views_column');
 
 function nettruyen_add_views_column($columns)
@@ -1244,7 +1128,6 @@ function nettruyen_add_views_column($columns)
     foreach ($columns as $key => $value) {
         $new_columns[$key] = $value;
 
-        // Add after title
         if ($key === 'title') {
             $new_columns['views'] = '<i class="dashicons dashicons-visibility"></i> Views';
         }
@@ -1276,7 +1159,6 @@ function nettruyen_show_views_column($column, $post_id)
     }
 }
 
-// Make column sortable
 add_filter('manage_edit-nettruyen_comic_sortable_columns', 'nettruyen_make_views_sortable');
 
 function nettruyen_make_views_sortable($columns)
@@ -1285,10 +1167,6 @@ function nettruyen_make_views_sortable($columns)
     return $columns;
 }
 
-// ============================================
-// 6. Cron Job - Auto Cleanup Old Data (Optional)
-// ============================================
-// Tự động xóa view data cũ hơn 1 năm để giảm DB size
 
 add_action('wp', 'nettruyen_schedule_view_cleanup');
 
@@ -1308,7 +1186,6 @@ function nettruyen_do_cleanup_old_views()
     $chapter_table = $wpdb->prefix . 'nettruyen_chapter_views';
     $comic_table = $wpdb->prefix . 'nettruyen_comic_views';
 
-    // Delete views older than 1 year
     $wpdb->query("
         DELETE FROM {$chapter_table} 
         WHERE view_date < DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
@@ -1322,9 +1199,6 @@ function nettruyen_do_cleanup_old_views()
     error_log('NetTruyen: Old view data cleaned up');
 }
 
-// ============================================
-// 7. Session Init
-// ============================================
 add_action('init', 'nettruyen_start_session');
 
 function nettruyen_start_session()
@@ -1336,11 +1210,8 @@ function nettruyen_start_session()
 
 
 
-// migrate country ============================================================================
 
-/* ==========================================================================
- * PHẦN 1: TẠO TAXONOMY QUỐC GIA & HIỂN THỊ CỘT QUICK EDIT
- * ========================================================================== */
+
 add_action('init', 'custom_register_country_taxonomy');
 function custom_register_country_taxonomy()
 {
@@ -1357,27 +1228,22 @@ function custom_register_country_taxonomy()
     );
 
     $args = array(
-        'hierarchical' => true, // Quan trọng: TRUE để hiện dạng checklist (tích chọn)
+        'hierarchical' => true,
         'labels' => $labels,
         'show_ui' => true,
-        'show_admin_column' => true, // Quan trọng: Tự động hiện cột trong trang Admin
+        'show_admin_column' => true,
         'query_var' => true,
         'show_in_rest' => true,
         'rewrite' => array('slug' => 'quoc-gia'),
     );
 
-    // Đăng ký cho Post Type 'nettruyen_comic'
     register_taxonomy('nettruyen_country', array('nettruyen_comic'), $args);
 }
 
-/* ==========================================================================
- * PHẦN 2: TOOL TỰ ĐỘNG CHUYỂN DỮ LIỆU TỪ GENRE SANG QUỐC GIA (GIAI ĐOẠN 1)
- * Cách dùng: Truy cập đường dẫn: yoursite.com/wp-admin/?run_country_migration=1
- * ========================================================================== */
+
 add_action('admin_init', 'auto_migrate_genre_to_country');
 function auto_migrate_genre_to_country()
 {
-    // Chỉ chạy khi admin truy cập đúng link và có quyền
     if (!isset($_GET['run_country_migration']) || $_GET['run_country_migration'] != '1') {
         return;
     }
@@ -1385,9 +1251,8 @@ function auto_migrate_genre_to_country()
         return;
     }
 
-    // 1. Tạo sẵn các term Quốc gia nếu chưa có
     $countries = array(
-        'China' => 'Trung Quốc', // Slug mong muốn => Tên hiển thị
+        'China' => 'Trung Quốc',
         'Korea' => 'Hàn Quốc',
         'Japan' => 'Nhật Bản',
         'Vietnam' => 'Việt Nam'
@@ -1399,11 +1264,10 @@ function auto_migrate_genre_to_country()
         }
     }
 
-    // 2. Lấy toàn bộ truyện (Lưu ý: Nếu web quá lớn >10k truyện, nên chia nhỏ chạy nhiều lần)
     $args = array(
         'post_type' => 'nettruyen_comic',
-        'posts_per_page' => -1, // Lấy hết
-        'fields' => 'ids', // Chỉ lấy ID cho nhẹ
+        'posts_per_page' => -1,
+        'fields' => 'ids',
         'no_found_rows' => true,
     );
 
@@ -1411,7 +1275,6 @@ function auto_migrate_genre_to_country()
     $count = 0;
 
     foreach ($comics as $post_id) {
-        // Lấy danh sách Genre của truyện hiện tại (dùng slug nettruyen_genre bạn cung cấp)
         $genres = wp_get_post_terms($post_id, 'nettruyen_genre', array('fields' => 'slugs'));
 
         if (is_wp_error($genres) || empty($genres))
@@ -1419,18 +1282,15 @@ function auto_migrate_genre_to_country()
 
         $target_country = '';
 
-        // Logic map dữ liệu
         if (in_array('manhua', $genres)) {
-            $target_country = 'China'; // Slug khớp với mảng $countries bên trên
+            $target_country = 'China';
         } elseif (in_array('manhwa', $genres)) {
             $target_country = 'Korea';
         } elseif (in_array('manga', $genres)) {
             $target_country = 'Japan';
         }
 
-        // Nếu tìm thấy quốc gia tương ứng, set vào bài viết
         if (!empty($target_country)) {
-            // Lấy ID của term quốc gia
             $term = get_term_by('slug', $target_country, 'nettruyen_country');
             if ($term) {
                 wp_set_object_terms($post_id, (int) $term->term_id, 'nettruyen_country');
@@ -1439,6 +1299,5 @@ function auto_migrate_genre_to_country()
         }
     }
 
-    // Báo kết quả ra màn hình
     echo '<div class="notice notice-success is-dismissible"><p><strong>Đã xử lý xong!</strong> Tổng cộng ' . $count . ' truyện đã được cập nhật Quốc gia tự động.</p></div>';
 }

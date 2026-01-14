@@ -7,16 +7,16 @@
  * @version 1.0.0
  */
 
-// Register REST API endpoints
+
 add_action('rest_api_init', function () {
-    // Get current user info
+
     register_rest_route('nettruyen/v1', '/user/info', array(
         'methods' => 'GET',
         'callback' => 'truyenqq_api_get_user_info',
         'permission_callback' => '__return_true'
     ));
 
-    // Get user notifications (for future)
+
     register_rest_route('nettruyen/v1', '/user/notifications', array(
         'methods' => 'GET',
         'callback' => 'truyenqq_api_get_notifications',
@@ -31,7 +31,7 @@ add_action('rest_api_init', function () {
  */
 function truyenqq_api_get_user_info()
 {
-    // Check if user is logged in
+
     if (!is_user_logged_in()) {
         return array(
             'is_logged_in' => false,
@@ -41,7 +41,7 @@ function truyenqq_api_get_user_info()
 
     $current_user = wp_get_current_user();
 
-    // Get avatar URL (fallback to default)
+
     $avatar_url = get_avatar_url($current_user->ID, array('size' => 100));
     if (empty($avatar_url) || strpos($avatar_url, 'gravatar') !== false) {
         $avatar_url = 'https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
@@ -80,8 +80,8 @@ function truyenqq_api_get_notifications()
         );
     }
 
-    // TODO: Implement notification system in future
-    // For now, return empty array
+
+
 
     return array(
         'success' => true,

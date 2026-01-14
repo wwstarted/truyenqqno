@@ -873,11 +873,6 @@ body.dark-mode .search-icon-btn {
   }
 }
 
-/* ===================== add css for user info ==================================== */
-
-/* ==================== USER MENU STYLES - IMPROVED ==================== */
-
-/* User Menu Container */
 .user-menu {
   display: flex;
   align-items: center;
@@ -891,8 +886,6 @@ body.dark-mode .search-icon-btn {
   margin: 0;
   padding: 0;
 }
-
-/* ==================== NOTIFICATION BELL ==================== */
 
 .notification-bell {
   position: relative;
@@ -938,7 +931,6 @@ body.dark-mode .icon-notification {
   text-align: center;
 }
 
-/* Notification Dropdown */
 .notification-dropdown {
   position: absolute;
   top: calc(100% + 15px);
@@ -994,7 +986,6 @@ body.dark-mode .notification-header {
   overflow-y: auto;
 }
 
-/* Custom scrollbar for dark mode */
 body.dark-mode .notification-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -1069,8 +1060,6 @@ body.dark-mode .notification-list li:hover {
   color: var(--accent-color);
 }
 
-/* ==================== USER PROFILE ==================== */
-
 .user-profile {
   position: relative;
 }
@@ -1102,7 +1091,6 @@ body.dark-mode .user-avatar {
   object-fit: cover;
 }
 
-/* User Dropdown */
 .user-dropdown {
   position: absolute;
   top: calc(100% + 15px);
@@ -1230,8 +1218,6 @@ body.dark-mode .user-menu-links a:hover {
   color: #ff4757;
 }
 
-/* ==================== RESPONSIVE - TABLET ==================== */
-
 @media (max-width: 1024px) {
   .notification-dropdown,
   .user-dropdown {
@@ -1243,15 +1229,12 @@ body.dark-mode .user-menu-links a:hover {
     top: 80px;
   }
 
-  /* Click to toggle on tablet */
   .notification-bell:hover .notification-dropdown,
   .user-profile:hover .user-dropdown {
     opacity: 0;
     visibility: hidden;
   }
 }
-
-/* ==================== RESPONSIVE - MOBILE ==================== */
 
 @media (max-width: 767px) {
   .user-menu-list {
@@ -1332,8 +1315,6 @@ body.dark-mode .user-menu-links a:hover {
   }
 }
 
-/* ==================== RESPONSIVE - SMALL MOBILE ==================== */
-
 @media (max-width: 480px) {
   .notification-dropdown,
   .user-dropdown {
@@ -1355,8 +1336,6 @@ body.dark-mode .user-menu-links a:hover {
   }
 }
 
-/* ==================== LOADING STATE ==================== */
-
 .user-menu.loading .user-avatar img {
   opacity: 0.5;
   animation: pulse 1.5s infinite;
@@ -1377,8 +1356,6 @@ body.dark-mode .user-menu-links a:hover {
   }
 }
 
-/* ==================== ANIMATION IMPROVEMENTS ==================== */
-
 .notification-dropdown,
 .user-dropdown {
   animation-duration: 0.3s;
@@ -1396,13 +1373,10 @@ body.dark-mode .user-menu-links a:hover {
   }
 }
 
-/* Apply animation when visible */
 .notification-bell:hover .notification-dropdown,
 .user-profile:hover .user-dropdown {
   animation-name: fadeInDown;
 }
-
-/* ==================== ACCESSIBILITY ==================== */
 
 .user-avatar:focus,
 .icon-notification:focus {
@@ -1415,8 +1389,6 @@ body.dark-mode .user-menu-links a:hover {
   outline: 2px solid var(--accent-color);
   outline-offset: -2px;
 }
-
-/* ==================== DARK MODE SPECIFIC ENHANCEMENTS ==================== */
 
 body.dark-mode .user-avatar {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
@@ -1438,8 +1410,6 @@ body.dark-mode .user-dropdown::before {
   border-right: 8px solid transparent;
   border-bottom: 8px solid #333;
 }
-
-/* ==================== PRINT STYLES ==================== */
 
 @media print {
   .user-menu,

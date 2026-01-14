@@ -8,18 +8,14 @@
 
 get_header();
 
-// Require view tracker
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
 
-// Pagination setup
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 $posts_per_page = 42;
 
-// Filter parameters - Đổi sang sanitize_text_field để nhận slug (china, korea...) thay vì số ID
 $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
 
-// Query args
 $args = array(
     'post_type' => 'nettruyen_comic',
     'post_status' => 'publish',
@@ -28,10 +24,9 @@ $args = array(
     'orderby' => 'modified',
     'order' => 'DESC',
     'meta_query' => array(),
-    'tax_query' => array('relation' => 'AND'), // Thêm để kết hợp nhiều filter
+    'tax_query' => array('relation' => 'AND'),
 );
 
-// 1. Giữ nguyên Apply status filter
 if ($status !== '') {
     $args['meta_query'][] = array(
         'key' => '_nettruyen_status',
@@ -40,18 +35,16 @@ if ($status !== '') {
     );
 }
 
-// 2. Mở khóa và Fix Country filter theo SLUG
 if ($country !== '') {
     $args['tax_query'][] = array(
         'taxonomy' => 'nettruyen_country',
-        'field' => 'slug', // Dùng slug cho chuyên nghiệp và khớp với data migration
+        'field' => 'slug',
         'terms' => $country
     );
 }
 
 $comics_query = new WP_Query($args);
 
-// Giữ nguyên logic lấy truyện Hot từ bảng thống kê riêng của bạn
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 $hot_comic_ids = $wpdb->get_col(
@@ -62,7 +55,6 @@ $hot_comic_ids = $wpdb->get_col(
     LIMIT 20"
 );
 
-// Calculate pagination
 $total_pages = $comics_query->max_num_pages;
 $current_page = max(1, $paged);
 ?>
@@ -128,14 +120,12 @@ $current_page = max(1, $paged);
                     $comics_query->the_post();
                     $post_id = get_the_ID();
 
-                    // Lấy thumbnail (Original logic)
                     $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                     if (empty($thumbnail))
                         $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
                     if (empty($thumbnail))
                         $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
 
-                    // Lấy chapter manifest (Original logic)
                     $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                     $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
@@ -146,11 +136,9 @@ $current_page = max(1, $paged);
                         $latest_chapter = 'Chapter ' . $latest['name'];
                     }
 
-                    // Time ago (Original logic)
                     $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                     $time_ago = human_time_diff(is_numeric($updated_at) ? $updated_at : strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                    // Stats (Original logic)
                     $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                     $follow_count_formatted = number_format(empty($follow_count) ? 0 : $follow_count);
 
@@ -160,7 +148,6 @@ $current_page = max(1, $paged);
                         $view_count = $view_stats->total_display_views;
                     $view_count_formatted = number_format($view_count);
 
-                    // Badge (Original logic)
                     $is_hot = in_array($post_id, $hot_comic_ids);
                     $is_new = (current_time('timestamp') - (is_numeric($updated_at) ? $updated_at : strtotime($updated_at))) <= (7 * 24 * 60 * 60);
 

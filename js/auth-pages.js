@@ -9,13 +9,11 @@
 (function ($) {
   "use strict";
 
-  // ==================== INIT ====================
   $(document).ready(function () {
     initAuthPages();
   });
 
   function initAuthPages() {
-    // Toggle password visibility
     $(document).on("click", ".toggle-password", function () {
       const input = $(this).siblings("input");
       const icon = $(this).find("i");
@@ -29,12 +27,10 @@
       }
     });
 
-    // Password strength checker
     $("#register-password, #new-password").on("input", function () {
       checkPasswordStrength($(this));
     });
 
-    // Form submissions
     $("#login-form").on("submit", handleLogin);
     $("#register-form").on("submit", handleRegisterSendOTP);
     $("#register-verify-form").on("submit", handleRegisterVerifyOTP);
@@ -42,7 +38,6 @@
     $("#forgot-verify-form").on("submit", handleForgotPasswordVerifyOTP);
     $("#reset-password-form").on("submit", handleResetPassword);
 
-    // Resend OTP
     $("#register-resend-otp").on("click", function (e) {
       e.preventDefault();
       resendOTP("register");
@@ -53,7 +48,6 @@
       resendOTP("reset_password");
     });
 
-    // Back to register button
     $("#back-to-register").on("click", function () {
       $(".auth-step").removeClass("active");
       $('.auth-step[data-step="1"]').addClass("active");
@@ -61,13 +55,11 @@
       $('.step[data-step="1"]').addClass("active");
     });
 
-    // Password confirmation validation
     $("#register-confirm-password, #confirm-password").on("input", function () {
       validatePasswordMatch($(this));
     });
   }
 
-  // ==================== PASSWORD STRENGTH ====================
   function checkPasswordStrength($input) {
     const password = $input.val();
     const $container = $input.closest(".form-group");
@@ -82,16 +74,13 @@
 
     let strength = 0;
 
-    // Length check
     if (password.length >= 6) strength++;
     if (password.length >= 10) strength++;
 
-    // Complexity checks
     if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
     if (/\d/.test(password)) strength++;
     if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
 
-    // Update UI
     $strengthBar.removeClass("weak medium strong");
     $strengthText.removeClass("weak medium strong");
 
@@ -107,7 +96,6 @@
     }
   }
 
-  // ==================== PASSWORD MATCH VALIDATION ====================
   function validatePasswordMatch($input) {
     const password = $("#register-password").val() || $("#new-password").val();
     const confirmPassword = $input.val();
@@ -124,7 +112,6 @@
     }
   }
 
-  // ==================== LOGIN ====================
   function handleLogin(e) {
     e.preventDefault();
 
@@ -132,7 +119,6 @@
     const $btn = $form.find('button[type="submit"]');
     const $message = $form.find(".form-message");
 
-    // Validate reCAPTCHA
     if (typeof grecaptcha === "undefined") {
       showMessage(
         $message,
@@ -193,7 +179,6 @@
     });
   }
 
-  // ==================== REGISTER - SEND OTP ====================
   function handleRegisterSendOTP(e) {
     e.preventDefault();
 
@@ -201,7 +186,6 @@
     const $btn = $form.find('button[type="submit"]');
     const $message = $form.find(".form-message");
 
-    // Validate reCAPTCHA
     if (typeof grecaptcha === "undefined") {
       showMessage(
         $message,
@@ -223,13 +207,11 @@
     const confirmPassword = $("#register-confirm-password").val();
     const agreeTerms = $("#agree-terms").is(":checked");
 
-    // Validate password match
     if (password !== confirmPassword) {
       showMessage($message, "error", "Mật khẩu xác nhận không khớp");
       return;
     }
 
-    // Validate terms
     if (!agreeTerms) {
       showMessage($message, "error", "Vui lòng đồng ý với điều khoản sử dụng");
       return;
@@ -253,7 +235,6 @@
         setLoadingState($btn, false);
 
         if (response.success) {
-          // Move to step 2
           $(".auth-step").removeClass("active");
           $('.auth-step[data-step="2"]').addClass("active");
           $(".step").removeClass("active");
@@ -285,7 +266,6 @@
     });
   }
 
-  // ==================== REGISTER - VERIFY OTP ====================
   function handleRegisterVerifyOTP(e) {
     e.preventDefault();
 
@@ -296,7 +276,6 @@
     const email = $("#register-email").val().trim();
     const otp_code = $("#register-otp").val().trim();
 
-    // Validate OTP format
     if (!/^\d{6}$/.test(otp_code)) {
       showMessage($message, "error", "Mã OTP phải là 6 chữ số");
       return;
@@ -333,7 +312,6 @@
     });
   }
 
-  // ==================== FORGOT PASSWORD - SEND OTP ====================
   function handleForgotPasswordSendOTP(e) {
     e.preventDefault();
 
@@ -341,7 +319,6 @@
     const $btn = $form.find('button[type="submit"]');
     const $message = $form.find(".form-message");
 
-    // Validate reCAPTCHA
     if (typeof grecaptcha === "undefined") {
       showMessage(
         $message,
@@ -375,7 +352,6 @@
         setLoadingState($btn, false);
 
         if (response.success) {
-          // Move to step 2
           $(".auth-step").removeClass("active");
           $('.auth-step[data-step="2"]').addClass("active");
           $(".step").removeClass("active");
@@ -407,7 +383,6 @@
     });
   }
 
-  // ==================== FORGOT PASSWORD - VERIFY OTP ====================
   function handleForgotPasswordVerifyOTP(e) {
     e.preventDefault();
 
@@ -418,7 +393,6 @@
     const email = $("#forgot-email").val().trim();
     const otp_code = $("#forgot-otp").val().trim();
 
-    // Validate OTP format
     if (!/^\d{6}$/.test(otp_code)) {
       showMessage($message, "error", "Mã OTP phải là 6 chữ số");
       return;
@@ -440,7 +414,6 @@
         setLoadingState($btn, false);
 
         if (response.success) {
-          // Move to step 3
           $(".auth-step").removeClass("active");
           $('.auth-step[data-step="3"]').addClass("active");
           $(".step").removeClass("active");
@@ -463,7 +436,6 @@
     });
   }
 
-  // ==================== RESET PASSWORD ====================
   function handleResetPassword(e) {
     e.preventDefault();
 
@@ -475,7 +447,6 @@
     const new_password = $("#new-password").val();
     const confirm_password = $("#confirm-password").val();
 
-    // Validate password match
     if (new_password !== confirm_password) {
       showMessage($message, "error", "Mật khẩu xác nhận không khớp");
       return;
@@ -512,7 +483,6 @@
     });
   }
 
-  // ==================== RESEND OTP ====================
   function resendOTP(purpose) {
     let email;
     if (purpose === "register") {
@@ -544,7 +514,6 @@
     });
   }
 
-  // ==================== OTP TIMER ====================
   function startOTPTimer(prefix, seconds) {
     const $resendLink = $("#" + prefix + "-resend-otp");
     const $timer = $("#" + prefix + "-timer");
@@ -568,7 +537,6 @@
     }, 1000);
   }
 
-  // ==================== HELPERS ====================
   function setLoadingState($btn, loading) {
     if (loading) {
       $btn.prop("disabled", true);
@@ -592,7 +560,6 @@
           message
       );
 
-    // Auto hide after 5 seconds
     setTimeout(function () {
       $element.removeClass("show");
     }, 5000);

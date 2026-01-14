@@ -9,37 +9,24 @@
 
 get_header();
 
-// Require view tracker
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
 
-// Get current genre
 $current_genre = get_queried_object();
 $genre_slug = $current_genre->slug;
 $genre_name = $current_genre->name;
 $genre_description = $current_genre->description;
 
-// Pagination setup
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 $posts_per_page = 42;
 
-// Filter parameters
 $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
-$sort = isset($_GET['sort']) ? absint($_GET['sort']) : 2; // Default: Ngày cập nhật giảm dần
-
-// Sort mapping
+$sort = isset($_GET['sort']) ? absint($_GET['sort']) : 2; 
 $sort_options = array(
-    0 => array('orderby' => 'date', 'order' => 'DESC'),           // Ngày đăng giảm dần
-    1 => array('orderby' => 'date', 'order' => 'ASC'),            // Ngày đăng tăng dần
-    2 => array('orderby' => 'modified', 'order' => 'DESC'),       // Ngày cập nhật giảm dần
-    3 => array('orderby' => 'modified', 'order' => 'ASC'),        // Ngày cập nhật tăng dần
-    4 => array('orderby' => 'meta_value_num', 'order' => 'DESC'), // Lượt xem giảm dần
-    5 => array('orderby' => 'meta_value_num', 'order' => 'ASC'),  // Lượt xem tăng dần
-);
+    0 => array('orderby' => 'date', 'order' => 'DESC'),               1 => array('orderby' => 'date', 'order' => 'ASC'),                2 => array('orderby' => 'modified', 'order' => 'DESC'),           3 => array('orderby' => 'modified', 'order' => 'ASC'),            4 => array('orderby' => 'meta_value_num', 'order' => 'DESC'),     5 => array('orderby' => 'meta_value_num', 'order' => 'ASC'),  );
 
 $sort_config = isset($sort_options[$sort]) ? $sort_options[$sort] : $sort_options[2];
 
-// Query args
 $args = array(
     'post_type' => 'nettruyen_comic',
     'post_status' => 'publish',
@@ -56,7 +43,6 @@ $args = array(
     'order' => $sort_config['order']
 );
 
-// Apply status filter
 if ($status !== '') {
     $args['meta_query'][] = array(
         'key' => '_nettruyen_status',
@@ -65,7 +51,6 @@ if ($status !== '') {
     );
 }
 
-// Apply country filter
 if ($country !== '') {
     $args['tax_query'][] = array(
         'taxonomy' => 'nettruyen_country',
@@ -74,14 +59,12 @@ if ($country !== '') {
     );
 }
 
-// For sort by views
 if ($sort == 4 || $sort == 5) {
     $args['meta_key'] = '_nettruyen_view_count';
 }
 
 $comics_query = new WP_Query($args);
 
-// Get hot comics (top 20 by views)
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 $hot_comic_ids = $wpdb->get_col(
@@ -92,7 +75,6 @@ $hot_comic_ids = $wpdb->get_col(
     LIMIT 20"
 );
 
-// Get all genres for dropdown
 $all_genres = get_terms(array(
     'taxonomy' => 'nettruyen_genre',
     'hide_empty' => true,
@@ -100,7 +82,6 @@ $all_genres = get_terms(array(
     'order' => 'ASC'
 ));
 
-// Calculate pagination
 $total_pages = $comics_query->max_num_pages;
 $current_page = max(1, $paged);
 ?>
@@ -247,8 +228,7 @@ $current_page = max(1, $paged);
                     $comics_query->the_post();
                     $post_id = get_the_ID();
 
-                    // Get thumbnail
-                    $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
+                                        $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                     if (empty($thumbnail)) {
                         $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
                     }
@@ -256,24 +236,20 @@ $current_page = max(1, $paged);
                         $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                     }
 
-                    // Get chapter manifest
-                    $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
+                                        $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                     $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
-                    // Get latest chapter
-                    $latest_chapter = 'Đang cập nhật';
+                                        $latest_chapter = 'Đang cập nhật';
                     if (!empty($manifest['chapters'])) {
                         $chapters = $manifest['chapters'];
                         $latest = end($chapters);
                         $latest_chapter = 'Chapter ' . $latest['name'];
                     }
 
-                    // Get time ago
-                    $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
+                                        $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                     $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                    // Get stats
-                    $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
+                                        $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                     if (empty($follow_count)) {
                         $follow_count = 0;
                     }
@@ -289,12 +265,10 @@ $current_page = max(1, $paged);
                         $view_count = $view_stats->total_display_views;
                     }
 
-                    // Format numbers
-                    $follow_count_formatted = number_format($follow_count);
+                                        $follow_count_formatted = number_format($follow_count);
                     $view_count_formatted = number_format($view_count);
 
-                    // Badge priority: Hot > New
-                    $is_hot = in_array($post_id, $hot_comic_ids);
+                                        $is_hot = in_array($post_id, $hot_comic_ids);
                     $is_new = (current_time('timestamp') - strtotime($updated_at)) <= (7 * 24 * 60 * 60);
 
                     $badge_type = '';
@@ -375,8 +349,7 @@ $current_page = max(1, $paged);
     <?php if ($total_pages > 1): ?>
     <div class="page_redirect">
         <?php
-            // Previous button
-            if ($current_page > 1):
+                        if ($current_page > 1):
                 ?>
         <a href="javascript:void(0)" data-page="<?php echo $current_page - 1; ?>">
             <p><span aria-hidden="true">‹</span></p>
@@ -384,13 +357,11 @@ $current_page = max(1, $paged);
         <?php endif; ?>
 
         <?php
-            // Page numbers
-            $range = 2;
+                        $range = 2;
             $start = max(1, $current_page - $range);
             $end = min($total_pages, $current_page + $range);
 
-            // Always show first page
-            if ($start > 1):
+                        if ($start > 1):
                 ?>
         <a href="javascript:void(0)" data-page="1">
             <p>1</p>
@@ -401,8 +372,7 @@ $current_page = max(1, $paged);
         <?php endif; ?>
 
         <?php
-            // Show page numbers in range
-            for ($i = $start; $i <= $end; $i++):
+                        for ($i = $start; $i <= $end; $i++):
                 if ($i == $current_page):
                     ?>
         <a href="javascript:void(0)">
@@ -418,8 +388,7 @@ $current_page = max(1, $paged);
             ?>
 
         <?php
-            // Always show last page
-            if ($end < $total_pages):
+                        if ($end < $total_pages):
                 if ($end < $total_pages - 1):
                     ?>
         <span class="dots">...</span>
@@ -430,8 +399,7 @@ $current_page = max(1, $paged);
         <?php endif; ?>
 
         <?php
-            // Next button
-            if ($current_page < $total_pages):
+                        if ($current_page < $total_pages):
                 ?>
         <a href="javascript:void(0)" data-page="<?php echo $current_page + 1; ?>">
             <p><span aria-hidden="true">›</span></p>

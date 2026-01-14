@@ -23,7 +23,7 @@ function truyenqq_create_auth_tables()
 
     $charset_collate = $wpdb->get_charset_collate();
 
-    // 1. OTP Codes Table
+
     $otp_table = $wpdb->prefix . 'nettruyen_otp_codes';
     $otp_sql = "CREATE TABLE IF NOT EXISTS {$otp_table} (
         id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -41,7 +41,7 @@ function truyenqq_create_auth_tables()
 
     dbDelta($otp_sql);
 
-    // 2. User Login History (optional, for security tracking)
+
     $login_history_table = $wpdb->prefix . 'nettruyen_login_history';
     $login_sql = "CREATE TABLE IF NOT EXISTS {$login_history_table} (
         id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -57,7 +57,7 @@ function truyenqq_create_auth_tables()
 
     dbDelta($login_sql);
 
-    // 3. User Meta for additional fields (nếu cần thêm fields ngoài WP User)
+
     $user_meta_table = $wpdb->prefix . 'nettruyen_user_meta';
     $meta_sql = "CREATE TABLE IF NOT EXISTS {$user_meta_table} (
         id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -74,7 +74,7 @@ function truyenqq_create_auth_tables()
 
     dbDelta($meta_sql);
 
-    // Update version
+
     update_option('truyenqq_auth_db_version', '1.0.0');
 }
 
@@ -100,7 +100,7 @@ function truyenqq_cleanup_expired_otps()
     }
 }
 
-// Schedule daily cleanupa
+
 if (!wp_next_scheduled('truyenqq_cleanup_otps_hook')) {
     wp_schedule_event(time(), 'daily', 'truyenqq_cleanup_otps_hook');
 }

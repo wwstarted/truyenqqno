@@ -1,8 +1,6 @@
-/* Import Google Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
 :root {
-  /* Brand Colors - Matching Design */
   --color-brand-primary: #009fd3;
   --color-brand-secondary: #95d3c5;
   --color-brand-gradient: linear-gradient(90deg, #95d3c5 0%, #009fd3 100%);
@@ -12,7 +10,6 @@
     #95d3c5 100%
   );
 
-  /* Text Colors - Matching Design */
   --color-text: #1a1a1a;
   --color-text-dark: #403e4d;
   --color-text-light: #666;
@@ -23,31 +20,26 @@
   --color-text-stone-900: #1c1917;
   --color-text-stone-950: #0c0a09;
 
-  /* Background Colors */
   --color-bg: #fff;
   --color-bg-light: #f5f5f5;
   --color-bg-gray: #fafafa;
   --color-bg-stone-50: #fafaf9;
   --color-bg-stone-100: #f5f5f4;
 
-  /* Border Colors */
   --color-border: #e5e5e5;
   --color-border-stone-200: #e7e5e4;
   --color-border-stone-300: #d6d3d1;
 
-  /* Status Colors */
   --color-success: #28a745;
   --color-warning: #ffc107;
   --color-error: #dc3545;
   --color-info: #17a2b8;
 
-  /* Typography - Inter font family */
   --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   --font-heading: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
 
-  /* Font sizes */
   --font-size-xs: 12px;
   --font-size-sm: 14px;
   --font-size-base: 16px;
@@ -59,7 +51,6 @@
   --font-size-5xl: 48px;
   --font-size-6xl: 60px;
 
-  /* Spacing */
   --spacing-xs: 8px;
   --spacing-sm: 12px;
   --spacing-md: 16px;
@@ -69,12 +60,10 @@
   --spacing-3xl: 64px;
   --spacing-4xl: 80px;
 
-  /* Layout */
   --container-max-width: 1280px;
   --container-padding: 24px;
   --section-padding: 80px;
 
-  /* Border radius */
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -82,19 +71,16 @@
   --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* Shadows */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.12);
 
-  /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;
   --transition-slow: 0.3s ease;
 
-  /* Z-index */
   --z-dropdown: 1000;
   --z-sticky: 1020;
   --z-fixed: 1030;
@@ -104,7 +90,6 @@
   --z-tooltip: 1070;
 }
 
-/* Reset & Base Styles */
 *,
 *::before,
 *::after {
@@ -130,7 +115,6 @@ body {
   font-weight: 400;
 }
 
-/* Typography */
 h1,
 h2,
 h3,
@@ -181,7 +165,6 @@ p {
   color: var(--color-text-light);
 }
 
-/* Link Styles */
 a {
   color: var(--color-brand-primary);
   text-decoration: none;
@@ -206,7 +189,6 @@ small {
   font-size: var(--font-size-sm);
 }
 
-/* Layout Containers */
 .container {
   max-width: var(--container-max-width);
   margin: 0 auto;
@@ -226,7 +208,6 @@ small {
   padding: calc(var(--section-padding) * 1.5) 0;
 }
 
-/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -297,7 +278,6 @@ small {
   font-size: var(--font-size-lg);
 }
 
-/* Card Components */
 .card {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -312,7 +292,6 @@ small {
   transform: translateY(-4px);
 }
 
-/* Flexbox Grid */
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -325,7 +304,6 @@ small {
   min-width: 0;
 }
 
-/* Utility Classes */
 .text-center {
   text-align: center;
 }
@@ -362,7 +340,6 @@ small {
   font-weight: 800;
 }
 
-/* Utility Classes - Colors */
 .text-brand-primary {
   color: var(--color-brand-primary);
 }
@@ -415,7 +392,6 @@ small {
   border-color: var(--color-border-stone-200);
 }
 
-/* Display */
 .d-none {
   display: none;
 }
@@ -452,7 +428,6 @@ small {
   gap: var(--spacing-lg);
 }
 
-/* Margin & Padding Utilities */
 .mt-0 {
   margin-top: 0;
 }
@@ -474,12 +449,10 @@ small {
   margin-right: auto;
 }
 
-/* Width */
 .w-100 {
   width: 100%;
 }
 
-/* Border */
 .rounded {
   border-radius: var(--radius-md);
 }
@@ -496,7 +469,6 @@ small {
   border-radius: var(--radius-full);
 }
 
-/* Shadow */
 .shadow-sm {
   box-shadow: var(--shadow-sm);
 }
@@ -509,7 +481,6 @@ small {
   box-shadow: var(--shadow-lg);
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -568,7 +539,6 @@ small {
   animation: slideInRight 0.6s ease;
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
   :root {
     --container-padding: 20px;
@@ -602,7 +572,6 @@ small {
   }
 }
 
-/* Additional Design System Classes */
 .gradient-text {
   background: var(--color-brand-gradient);
   -webkit-background-clip: text;
@@ -615,7 +584,6 @@ small {
   color: white;
 }
 
-/* Input Focus States */
 input:focus,
 textarea:focus,
 select:focus {
@@ -624,14 +592,12 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(0, 159, 211, 0.1);
 }
 
-/* Card Hover Effects */
 .card-hover:hover {
   border-color: var(--color-brand-primary);
   box-shadow: 0 8px 24px rgba(0, 159, 211, 0.12);
   transform: translateY(-2px);
 }
 
-/* Glass Effect */
 .glass-effect {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);

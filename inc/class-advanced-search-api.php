@@ -41,7 +41,7 @@ class NetTruyen_Advanced_Search_API
     {
         global $wpdb;
 
-        // Get parameters
+
         $page = max(1, intval($request->get_param('page')));
         $genres_include = $request->get_param('genres') ? array_map('intval', explode(',', $request->get_param('genres'))) : array();
         $genres_exclude = $request->get_param('exclude') ? array_map('intval', explode(',', $request->get_param('exclude'))) : array();
@@ -52,19 +52,19 @@ class NetTruyen_Advanced_Search_API
 
         $posts_per_page = 42;
 
-        // Sort mapping
+
         $sort_options = array(
             0 => array('orderby' => 'date', 'order' => 'DESC'),
             1 => array('orderby' => 'date', 'order' => 'ASC'),
             2 => array('orderby' => 'modified', 'order' => 'DESC'),
             3 => array('orderby' => 'modified', 'order' => 'ASC'),
-            4 => array('orderby' => 'view_count', 'order' => 'DESC'), // Custom handling
-            5 => array('orderby' => 'view_count', 'order' => 'ASC'),  // Custom handling
+            4 => array('orderby' => 'view_count', 'order' => 'DESC'),
+            5 => array('orderby' => 'view_count', 'order' => 'ASC'),
         );
 
         $sort_config = $sort_options[$sort];
 
-        // Build query args
+
         $args = array(
             'post_type' => 'nettruyen_comic',
             'post_status' => 'publish',
@@ -72,10 +72,10 @@ class NetTruyen_Advanced_Search_API
             'paged' => $page,
         );
 
-        // Build tax_query for genres and country
+
         $tax_query = array('relation' => 'AND');
 
-        // Include genres (must have ALL)
+
         if (!empty($genres_include)) {
             $tax_query[] = array(
                 'taxonomy' => 'nettruyen_genre',
@@ -85,7 +85,7 @@ class NetTruyen_Advanced_Search_API
             );
         }
 
-        // Exclude genres (must NOT have ANY)
+
         if (!empty($genres_exclude)) {
             $tax_query[] = array(
                 'taxonomy' => 'nettruyen_genre',
@@ -95,7 +95,7 @@ class NetTruyen_Advanced_Search_API
             );
         }
 
-        // Country filter
+
         if (!empty($country)) {
             $tax_query[] = array(
                 'taxonomy' => 'nettruyen_country',
@@ -108,10 +108,10 @@ class NetTruyen_Advanced_Search_API
             $args['tax_query'] = $tax_query;
         }
 
-        // Build meta_query for status and min chapters
+
         $meta_query = array();
 
-        // Status filter
+
         if (!empty($status)) {
             $meta_query[] = array(
                 'key' => '_nettruyen_status',
@@ -120,7 +120,7 @@ class NetTruyen_Advanced_Search_API
             );
         }
 
-        // Min chapter filter
+
         if ($minchapter > 0) {
             $meta_query[] = array(
                 'key' => '_nettruyen_chapter_count',
@@ -134,37 +134,37 @@ class NetTruyen_Advanced_Search_API
             $args['meta_query'] = $meta_query;
         }
 
-        // ===== FIX: Sort by view count using JOIN =====
+
         if ($sort == 4 || $sort == 5) {
             $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-            // Add custom filter for JOIN
+
             add_filter('posts_join', function ($join) use ($wpdb, $stats_table) {
                 $join .= " LEFT JOIN {$stats_table} ON {$wpdb->posts}.ID = {$stats_table}.post_id";
                 return $join;
             });
 
-            // Add custom filter for ORDER BY
+
             add_filter('posts_orderby', function ($orderby) use ($sort) {
                 $order = ($sort == 4) ? 'DESC' : 'ASC';
                 return "COALESCE({$GLOBALS['wpdb']->prefix}nettruyen_view_stats.total_display_views, 0) {$order}";
             });
 
-            // Execute query
+
             $query = new WP_Query($args);
 
-            // Remove filters after query
+
             remove_all_filters('posts_join');
             remove_all_filters('posts_orderby');
 
         } else {
-            // Normal sort (date, modified)
+
             $args['orderby'] = $sort_config['orderby'];
             $args['order'] = $sort_config['order'];
             $query = new WP_Query($args);
         }
 
-        // Get hot comics (top 20 by views)
+
         $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
         $hot_comic_ids = $wpdb->get_col(
             "SELECT post_id 
@@ -174,7 +174,7 @@ class NetTruyen_Advanced_Search_API
             LIMIT 20"
         );
 
-        // Format comics
+
         $comics = array();
 
         if ($query->have_posts()) {
@@ -182,7 +182,7 @@ class NetTruyen_Advanced_Search_API
                 $query->the_post();
                 $post_id = get_the_ID();
 
-                // Get thumbnail
+
                 $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                 if (empty($thumbnail)) {
                     $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -191,11 +191,11 @@ class NetTruyen_Advanced_Search_API
                     $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                 }
 
-                // Get chapter manifest
+
                 $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                 $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
-                // Get latest chapter
+
                 $latest_chapter = 'Đang cập nhật';
                 if (!empty($manifest['chapters'])) {
                     $chapters = $manifest['chapters'];
@@ -203,11 +203,11 @@ class NetTruyen_Advanced_Search_API
                     $latest_chapter = 'Chapter ' . $latest['name'];
                 }
 
-                // Get time ago
+
                 $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                 $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                // Get stats
+
                 $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                 if (empty($follow_count)) {
                     $follow_count = 0;
@@ -224,11 +224,11 @@ class NetTruyen_Advanced_Search_API
                     $view_count = $view_stats->total_display_views;
                 }
 
-                // Format numbers
+
                 $follow_count_formatted = number_format($follow_count);
                 $view_count_formatted = number_format($view_count);
 
-                // Badge priority: Hot > New
+
                 $is_hot = in_array($post_id, $hot_comic_ids);
                 $is_new = (current_time('timestamp') - strtotime($updated_at)) <= (7 * 24 * 60 * 60);
 
@@ -259,7 +259,7 @@ class NetTruyen_Advanced_Search_API
             wp_reset_postdata();
         }
 
-        // Pagination
+
         $total_pages = $query->max_num_pages;
         $current_page = max(1, $page);
 
@@ -275,5 +275,5 @@ class NetTruyen_Advanced_Search_API
     }
 }
 
-// Initialize the API
+
 new NetTruyen_Advanced_Search_API();

@@ -1,23 +1,3 @@
-/**
- * Page: Truyện Theo Thể Loại
- * Full page listing with filters + pagination
- * 
- * @package TruyenQQ
- * @version 1.0.0
- */
-
-/* Import base styles from truyen-moi-cap-nhat.css */
-/* Hoặc copy toàn bộ styles, tôi sẽ thêm phần riêng cho page này */
-
-/**
- * Page: Truyện Mới Cập Nhật
- * Full page listing with filters + pagination
- * 
- * @package TruyenQQ
- * @version 1.0.0
- */
-
-/* ==================== MAIN CONTAINER ==================== */
 #main_homepage {
   max-width: 1200px;
   margin: 0 auto;
@@ -25,7 +5,6 @@
   background-color: var(--bg-primary);
 }
 
-/* ==================== SECTION HEADER ==================== */
 .homepage_tags {
   margin-bottom: 25px;
 }
@@ -53,7 +32,6 @@ body.dark-mode .text_list_update {
   font-size: 26px;
 }
 
-/* ==================== FILTER BOX ==================== */
 .story-list-bl01.box {
   background-color: var(--bg-secondary);
   border-radius: 8px;
@@ -143,7 +121,6 @@ body.dark-mode .story-list-bl01 ul.choose a {
   font-weight: 600;
 }
 
-/* ==================== COMICS GRID ==================== */
 .list_grid_out {
   margin-bottom: 30px;
 }
@@ -153,7 +130,7 @@ body.dark-mode .story-list-bl01 ul.choose a {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(6, 1fr); /* Desktop: 6 columns */
+  grid-template-columns: repeat(6, 1fr);
   gap: 20px;
 }
 
@@ -161,7 +138,6 @@ body.dark-mode .story-list-bl01 ul.choose a {
   margin: 0;
 }
 
-/* ==================== COMIC CARD ==================== */
 .list_grid .book_avatar {
   position: relative;
   width: 100%;
@@ -190,7 +166,6 @@ body.dark-mode .story-list-bl01 ul.choose a {
   transform: scale(1.1);
 }
 
-/* Bookmark Badge */
 .list_grid .subscribed-badge {
   position: absolute;
   top: 8px;
@@ -222,7 +197,6 @@ body.dark-mode .list_grid .subscribed-badge {
   font-weight: 900;
 }
 
-/* Top Notice */
 .list_grid .top-notice {
   position: absolute;
   bottom: 0;
@@ -262,7 +236,6 @@ body.dark-mode .list_grid .subscribed-badge {
   background-color: #4caf50;
 }
 
-/* Book Info */
 .list_grid .book_info {
   padding: 12px;
   background-color: var(--bg-secondary);
@@ -304,7 +277,6 @@ body.dark-mode .list_grid .book_name a {
   color: var(--accent-color);
 }
 
-/* Stats */
 .list_grid .text_detail {
   display: flex;
   align-items: center;
@@ -329,7 +301,6 @@ body.dark-mode .list_grid .text_detail {
   font-size: 12px;
 }
 
-/* Latest Chapter */
 .list_grid .last_chapter a {
   display: inline-block;
   font-size: 13px;
@@ -344,7 +315,6 @@ body.dark-mode .list_grid .text_detail {
   text-decoration: underline;
 }
 
-/* No Results */
 .list_grid .no-results {
   grid-column: 1 / -1;
   text-align: center;
@@ -352,7 +322,6 @@ body.dark-mode .list_grid .text_detail {
   color: var(--text-secondary);
 }
 
-/* ==================== PAGINATION ==================== */
 .page_redirect {
   display: flex;
   align-items: center;
@@ -405,7 +374,6 @@ body.dark-mode .page_redirect p {
   padding: 0 5px;
 }
 
-/* ==================== RESPONSIVE: TABLET (768px - 1023px) ==================== */
 @media (max-width: 1023px) {
   #main_homepage {
     padding: 30px 15px;
@@ -419,7 +387,6 @@ body.dark-mode .page_redirect p {
     font-size: 24px;
   }
 
-  /* Tablet: 4 columns */
   .list_grid.grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
@@ -456,7 +423,6 @@ body.dark-mode .page_redirect p {
   }
 }
 
-/* ==================== RESPONSIVE: MOBILE (390px - 767px) ==================== */
 @media (max-width: 767px) {
   #main_homepage {
     padding: 25px 15px;
@@ -470,13 +436,11 @@ body.dark-mode .page_redirect p {
     font-size: 22px;
   }
 
-  /* Mobile: 2 columns */
   .list_grid.grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
 
-  /* Filter Box - Stack vertically */
   .story-list-bl01.box {
     padding: 15px;
   }
@@ -556,7 +520,6 @@ body.dark-mode .page_redirect p {
   }
 }
 
-/* ==================== EXTRA SMALL MOBILE (≤390px) ==================== */
 @media (max-width: 390px) {
   .text_list_update {
     font-size: 18px;
@@ -577,20 +540,10 @@ body.dark-mode .page_redirect p {
   }
 }
 
-/* ====================== loading state ==================== */
-/**
- * Loading State & Toast Notifications
- * 
- * @package TruyenQQ
- * @version 1.0.0
- */
-
-/* ==================== LOADING STATE ==================== */
 .list_grid.grid {
   transition: opacity 0.3s ease;
 }
 
-/* Optional: Add loading spinner */
 #main_homepage.loading::before {
   content: "";
   position: fixed;
@@ -613,7 +566,6 @@ body.dark-mode .page_redirect p {
   }
 }
 
-/* ==================== TOAST NOTIFICATIONS ==================== */
 .toast-container {
   position: fixed;
   bottom: 20px;
@@ -649,7 +601,6 @@ body.dark-mode .toast {
   transform: translateY(0);
 }
 
-/* ==================== SMOOTH TRANSITIONS ==================== */
 .list_grid li {
   animation: fadeInUp 0.4s ease;
 }
@@ -665,7 +616,6 @@ body.dark-mode .toast {
   }
 }
 
-/* Stagger animation for grid items */
 .list_grid li:nth-child(1) {
   animation-delay: 0.05s;
 }
@@ -685,12 +635,10 @@ body.dark-mode .toast {
   animation-delay: 0.3s;
 }
 
-/* For subsequent items, don't delay too much */
 .list_grid li:nth-child(n + 7) {
   animation-delay: 0.35s;
 }
 
-/* ==================== MOBILE RESPONSIVE ==================== */
 @media (max-width: 767px) {
   .toast-container {
     bottom: 15px;
@@ -704,7 +652,6 @@ body.dark-mode .toast {
   }
 }
 
-/* ==================== GENRE DESCRIPTION ==================== */
 .tags_detail {
   background-color: var(--bg-secondary);
   border-radius: 8px;
@@ -720,7 +667,6 @@ body.dark-mode .tags_detail {
   color: var(--text-secondary-dark, #999);
 }
 
-/* ==================== SELECT DROPDOWN STYLE ==================== */
 .story-list-bl01 .select {
   position: relative;
   display: inline-block;
@@ -759,7 +705,6 @@ body.dark-mode .story-list-bl01 select {
   box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.15);
 }
 
-/* Dropdown arrow */
 .story-list-bl01 .select::after {
   content: "▼";
   position: absolute;
@@ -780,7 +725,6 @@ body.dark-mode .story-list-bl01 .select::after {
   transform: translateY(-50%) rotate(180deg);
 }
 
-/* ==================== MOBILE: Stack select vertically ==================== */
 @media (max-width: 767px) {
   .story-list-bl01 .select {
     max-width: 100%;
@@ -791,6 +735,3 @@ body.dark-mode .story-list-bl01 .select::after {
     font-size: 13px;
   }
 }
-
-/* Copy toàn bộ phần còn lại từ truyen-moi-cap-nhat.css */
-/* Hoặc tôi có thể tạo file hoàn chỉnh nếu bạn muốn */

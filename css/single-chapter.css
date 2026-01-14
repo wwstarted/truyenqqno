@@ -1,9 +1,3 @@
-/* ==================== SINGLE CHAPTER READER - FIXED ==================== */
-/* @package TruyenQQ | @version 1.0.0
- * ✅ Dark mode support | ✅ Fully responsive | ✅ Mobile optimized
- */
-
-/* ==================== GLOBAL + DARK MODE ==================== */
 #chapter_reader {
   background-color: #f5f5f5;
   min-height: 100vh;
@@ -20,7 +14,6 @@ body.dark-mode #chapter_reader {
   padding: 0 15px 40px;
 }
 
-/* ==================== ALERT NOTICE ==================== */
 .alert-note {
   background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
   border: 1px solid rgba(33, 150, 243, 0.3);
@@ -56,7 +49,6 @@ body.dark-mode .alert-note strong {
   color: #00bcd4;
 }
 
-/* ==================== BREADCRUMB ==================== */
 .path-top .breadcrumb {
   list-style: none;
   padding: 15px 0;
@@ -117,7 +109,6 @@ body.dark-mode .path-top .breadcrumb li:last-child {
   color: #e0e0e0;
 }
 
-/* ==================== CHAPTER HEADER ==================== */
 .chapter-header {
   text-align: center;
   padding: 20px 0;
@@ -180,7 +171,6 @@ body.dark-mode .chapter-header time {
   color: #999;
 }
 
-/* ==================== CHAPTER CONTROLS ==================== */
 .chapter-control {
   background: #fff;
   border-radius: 8px;
@@ -288,7 +278,6 @@ body.dark-mode .chapter-navigation .chapter-info {
   color: #fff;
 }
 
-/* ==================== CHAPTER IMAGES ==================== */
 .chapter_content {
   background: transparent;
   padding: 0;
@@ -334,7 +323,6 @@ body.dark-mode .page-chapter img.chapter-image {
   filter: blur(0);
 }
 
-/* No images message */
 .no-images-message {
   text-align: center;
   padding: 60px 20px;
@@ -387,7 +375,6 @@ body.dark-mode .no-images-message .btn:hover {
   background: #00acc1;
 }
 
-/* ==================== BOTTOM CONTROLS ==================== */
 .bottom-chap {
   background: #fff;
   border-radius: 8px;
@@ -444,7 +431,6 @@ body.dark-mode .bottom-chap .breadcrumb a {
   color: #00bcd4;
 }
 
-/* ==================== COMMENT SECTION ==================== */
 .comment-container {
   background: #fff;
   border-radius: 8px;
@@ -519,7 +505,6 @@ body.dark-mode .comments-placeholder {
   color: #999;
 }
 
-/* ==================== FLOATING STICKY CONTROLS ==================== */
 .chapter-control-fixed {
   position: fixed;
   bottom: -100px;
@@ -592,7 +577,6 @@ body.dark-mode .chapter-control-fixed .control-btn:hover {
   font-weight: 600;
 }
 
-/* ==================== CHAPTER LIST POPUP ==================== */
 .chapter-list-popup {
   position: fixed;
   top: 0;
@@ -791,7 +775,6 @@ body.popup-open {
   overflow: hidden;
 }
 
-/* ==================== RESPONSIVE: TABLET ==================== */
 @media (max-width: 1023px) {
   .chapter-header h1.detail-title {
     font-size: 20px;
@@ -815,7 +798,6 @@ body.popup-open {
   }
 }
 
-/* ==================== RESPONSIVE: MOBILE - KEY FIXES ==================== */
 @media (max-width: 767px) {
   #chapter_reader .main_content {
     padding: 0 10px 30px;
@@ -847,7 +829,6 @@ body.popup-open {
     padding: 10px 12px;
   }
 
-  /* ✅ FIX: Navigation buttons trong 1 hàng, giảm size */
   .chapter-navigation {
     gap: 8px;
     width: 100%;
@@ -871,7 +852,6 @@ body.popup-open {
     flex-shrink: 0;
   }
 
-  /* ✅ FIX: Sticky controls gọn hơn, trong 1 hàng, căn giữa */
   .chapter-control-fixed {
     width: auto;
     max-width: calc(100% - 30px);
@@ -905,7 +885,6 @@ body.popup-open {
     font-weight: 600;
   }
 
-  /* Popup adjustments */
   .chapter-list-popup .popup-content {
     width: 95%;
     max-height: 85vh;
@@ -938,7 +917,6 @@ body.popup-open {
   }
 }
 
-/* ==================== EXTRA SMALL MOBILE ==================== */
 @media (max-width: 390px) {
   .chapter-header h1.detail-title {
     font-size: 16px;
@@ -979,7 +957,6 @@ body.popup-open {
   }
 }
 
-/* ==================== PRINT STYLES ==================== */
 @media print {
   .chapter-control,
   .chapter-control-fixed,

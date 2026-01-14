@@ -19,7 +19,7 @@ class NetTruyen_View_API
      */
     public static function register_routes()
     {
-        // Track view endpoint
+
         register_rest_route('nettruyen/v1', '/track-view', array(
             'methods' => 'POST',
             'callback' => array(__CLASS__, 'track_view_callback'),
@@ -41,7 +41,7 @@ class NetTruyen_View_API
             ),
         ));
 
-        // Get stats endpoint
+
         register_rest_route('nettruyen/v1', '/comic/(?P<id>\d+)/stats', array(
             'methods' => 'GET',
             'callback' => array(__CLASS__, 'get_stats_callback'),
@@ -55,7 +55,7 @@ class NetTruyen_View_API
             ),
         ));
 
-        // Get chapter chart endpoint
+
         register_rest_route('nettruyen/v1', '/comic/(?P<id>\d+)/chapter-chart', array(
             'methods' => 'GET',
             'callback' => array(__CLASS__, 'get_chapter_chart_callback'),
@@ -73,7 +73,7 @@ class NetTruyen_View_API
             ),
         ));
 
-        // Get daily trend endpoint
+
         register_rest_route('nettruyen/v1', '/comic/(?P<id>\d+)/daily-trend', array(
             'methods' => 'GET',
             'callback' => array(__CLASS__, 'get_daily_trend_callback'),
@@ -172,5 +172,5 @@ class NetTruyen_View_API
     }
 }
 
-// Hook to register routes
+
 add_action('rest_api_init', array('NetTruyen_View_API', 'register_routes'));

@@ -1,7 +1,3 @@
-// ===================================
-// FOOTER SECTION - JAVASCRIPT
-// ===================================
-
 (function ($) {
   "use strict";
 
@@ -23,7 +19,6 @@
         const submitBtn = this.querySelector('button[type="submit"]');
         const email = emailInput.value.trim();
 
-        // Validate email
         if (!isValidEmail(email)) {
           console.warn("Invalid email address");
           showNotification("Vui lòng nhập email hợp lệ", "error");
@@ -31,38 +26,17 @@
           return;
         }
 
-        // Disable button and show loading state
         submitBtn.disabled = true;
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = "<span>Đang xử lý...</span>";
 
-        // Simulate API call (replace with your actual API endpoint)
         setTimeout(() => {
-          // Success
           console.log("Email subscribed:", email);
           showNotification("Đăng ký thành công! Cảm ơn bạn.", "success");
           emailInput.value = "";
 
-          // Reset button
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
-
-          // Here you would typically send data to your backend
-          // Example:
-          // fetch('/api/newsletter', {
-          //   method: 'POST',
-          //   headers: { 'Content-Type': 'application/json' },
-          //   body: JSON.stringify({ email: email })
-          // })
-          // .then(response => response.json())
-          // .then(data => {
-          //   console.log('Success:', data);
-          //   showNotification('Đăng ký thành công!', 'success');
-          // })
-          // .catch(error => {
-          //   console.error('Error:', error);
-          //   showNotification('Có lỗi xảy ra. Vui lòng thử lại.', 'error');
-          // });
         }, 1500);
       });
     } else {
@@ -89,7 +63,6 @@
       });
     });
 
-    // Intersection Observer for footer animations
     const observerOptions = {
       threshold: 0.1,
       rootMargin: "0px 0px -50px 0px",
@@ -103,7 +76,6 @@
       });
     }, observerOptions);
 
-    // Observe footer columns for fade-in animation
     const footerCols = document.querySelectorAll(".footer-col");
     footerCols.forEach((col, index) => {
       col.style.opacity = "0";
@@ -115,7 +87,6 @@
       observer.observe(col);
     });
 
-    // Add visible class styles dynamically
     const style = document.createElement("style");
     style.textContent = `
       .footer-col.visible {

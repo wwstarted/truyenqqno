@@ -1,12 +1,3 @@
-/**
- * Authentication Pages CSS
- * Responsive, Dark Mode Ready
- * 
- * @package TruyenQQ
- * @version 1.0.0
- */
-
-/* ==================== PAGE CONTAINER ==================== */
 .auth-page-container {
   min-height: 100vh;
   display: flex;
@@ -67,7 +58,6 @@ body.dark-mode .auth-page-content {
   background: #1a1a1a;
 }
 
-/* ==================== LEFT SIDE - BRANDING ==================== */
 .auth-page-left {
   background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
   padding: 60px 40px;
@@ -153,7 +143,6 @@ body.dark-mode .auth-page-left {
   }
 }
 
-/* ==================== RIGHT SIDE - FORM ==================== */
 .auth-page-right {
   padding: 60px 40px;
   display: flex;
@@ -166,7 +155,6 @@ body.dark-mode .auth-page-left {
   max-width: 450px;
 }
 
-/* ==================== AUTH HEADER ==================== */
 .auth-header {
   text-align: center;
   margin-bottom: 30px;
@@ -197,7 +185,6 @@ body.dark-mode .auth-header p {
   color: #999;
 }
 
-/* ==================== STEP INDICATOR ==================== */
 .step-indicator {
   display: flex;
   align-items: center;
@@ -271,7 +258,6 @@ body.dark-mode .step-line {
   background: #3a3a3a;
 }
 
-/* ==================== AUTH STEPS ==================== */
 .auth-step {
   display: none;
 }
@@ -292,7 +278,6 @@ body.dark-mode .step-line {
   }
 }
 
-/* ==================== FORM STYLES ==================== */
 .auth-form {
   margin-top: 30px;
 }
@@ -358,7 +343,6 @@ body.dark-mode .form-hint {
   color: #999;
 }
 
-/* ==================== PASSWORD INPUT ==================== */
 .password-input {
   position: relative;
 }
@@ -392,7 +376,6 @@ body.dark-mode .toggle-password:hover {
   color: #00bcd4;
 }
 
-/* ==================== PASSWORD STRENGTH ==================== */
 .password-strength {
   margin-top: 8px;
 }
@@ -454,7 +437,6 @@ body.dark-mode .strength-bar {
   color: #4caf50;
 }
 
-/* ==================== INLINE FORM GROUP ==================== */
 .form-group-inline {
   display: flex;
   justify-content: space-between;
@@ -509,7 +491,6 @@ body.dark-mode .link-text:hover {
   color: #00acc1;
 }
 
-/* ==================== BUTTONS ==================== */
 .btn {
   padding: 14px 24px;
   font-size: 15px;
@@ -575,7 +556,6 @@ body.dark-mode .btn-outline:hover {
   transform: none !important;
 }
 
-/* ==================== FORM MESSAGE ==================== */
 .form-message {
   margin-top: 20px;
   padding: 14px 16px;
@@ -622,7 +602,6 @@ body.dark-mode .form-message.error {
   color: #ef5350;
 }
 
-/* ==================== OTP INFO ==================== */
 .otp-info {
   text-align: center;
   padding: 25px;
@@ -667,7 +646,6 @@ body.dark-mode .otp-info strong {
   color: #00bcd4;
 }
 
-/* ==================== OTP RESEND ==================== */
 .otp-resend {
   text-align: center;
   margin-top: 20px;
@@ -702,7 +680,6 @@ body.dark-mode .otp-resend a {
   font-weight: 600;
 }
 
-/* ==================== AUTH FOOTER ==================== */
 .auth-footer {
   text-align: center;
   padding: 25px 0 0;
@@ -738,7 +715,6 @@ body.dark-mode .auth-footer a {
   text-decoration: underline;
 }
 
-/* ==================== AUTH DIVIDER ==================== */
 .auth-divider {
   display: flex;
   align-items: center;
@@ -764,7 +740,6 @@ body.dark-mode .auth-divider::after {
   font-size: 14px;
 }
 
-/* ==================== SOCIAL LOGIN ==================== */
 .social-login {
   display: flex;
   gap: 15px;
@@ -805,7 +780,6 @@ body.dark-mode .btn-social {
   border-color: #1877f2;
 }
 
-/* ==================== RECAPTCHA ==================== */
 .recaptcha-container {
   display: flex;
   justify-content: center;
@@ -816,7 +790,6 @@ body.dark-mode .btn-social {
   display: inline-block;
 }
 
-/* Force reCAPTCHA to be responsive */
 @media (max-width: 767px) {
   .recaptcha-container {
     overflow: hidden;
@@ -839,14 +812,12 @@ body.dark-mode .btn-social {
   }
 }
 
-/* Dark mode support for reCAPTCHA */
 body.dark-mode .recaptcha-container {
   background: rgba(255, 255, 255, 0.05);
   padding: 15px;
   border-radius: 8px;
 }
 
-/* ==================== RESPONSIVE ==================== */
 @media (max-width: 991px) {
   .auth-page-content {
     grid-template-columns: 1fr;
@@ -897,7 +868,7 @@ body.dark-mode .recaptcha-container {
   }
 
   .form-group input {
-    font-size: 16px; /* Prevent zoom on iOS */
+    font-size: 16px;
   }
 
   .social-login {

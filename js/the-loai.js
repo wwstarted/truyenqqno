@@ -8,26 +8,21 @@
 (function () {
   "use strict";
 
-  // State management
   const state = {
     currentPage: 1,
     status: "",
     country: "",
-    sort: "2", // Default: Ngày cập nhật giảm dần
-    genreSlug: "", // Will be set from page URL
+    sort: "2",
+    genreSlug: "",
     isLoading: false,
   };
 
-  // DOM elements
   let comicsGrid = null;
   let paginationContainer = null;
   let filterLinks = null;
   let categorySelect = null;
   let sortSelect = null;
 
-  /**
-   * Initialize AJAX Genre Listing
-   */
   function init() {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", init);
@@ -37,7 +32,6 @@
     const mainContainer = document.querySelector("#main_homepage");
     if (!mainContainer || !mainContainer.dataset.ajaxEnabled) return;
 
-    // Get DOM elements
     comicsGrid = document.querySelector(".list_grid.grid");
     paginationContainer = document.querySelector(".page_redirect");
     filterLinks = document.querySelectorAll(".story-list-bl01 ul.choose a");
@@ -46,17 +40,14 @@
 
     if (!comicsGrid) return;
 
-    // Get genre slug from URL
     state.genreSlug = getGenreSlugFromURL();
 
-    // Get initial state from URL
     const urlParams = new URLSearchParams(window.location.search);
     state.currentPage = parseInt(urlParams.get("page")) || 1;
     state.status = urlParams.get("status") || "";
     state.country = urlParams.get("country") || "";
     state.sort = urlParams.get("sort") || "2";
 
-    // Setup event listeners
     initFilterListeners();
     initSelectListeners();
     initPaginationListeners();
@@ -65,58 +56,41 @@
     console.log("AJAX Genre Listing initialized", state);
   }
 
-  /**
-   * Get genre slug from current URL
-   */
   function getGenreSlugFromURL() {
     const path = window.location.pathname;
-    // Extract slug from URL like /the-loai/adventure/ or /genre/action/
     const match = path.match(/\/([^\/]+)\/?$/);
     return match ? match[1] : "";
   }
 
-  /**
-   * Setup filter listeners (Status, Country) - GIỐNG truyen-moi-cap-nhat.js
-   */
   function initFilterListeners() {
     filterLinks.forEach((link) => {
       link.addEventListener("click", function (e) {
         e.preventDefault();
 
-        // Check if link has data attributes (new template) or href (old template)
         const filterType = this.getAttribute("data-filter");
         const filterValue = this.getAttribute("data-value");
 
         if (filterType) {
-          // NEW TEMPLATE: Using data attributes
           if (filterType === "status") {
             state.status = filterValue;
           } else if (filterType === "country") {
             state.country = filterValue;
           }
         } else {
-          // OLD TEMPLATE: Parse from href (fallback)
           const url = new URL(this.href, window.location.origin);
           state.status = url.searchParams.get("status") || "";
           state.country = url.searchParams.get("country") || "";
         }
 
-        state.currentPage = 1; // Reset to page 1
-
-        // Update active class
+        state.currentPage = 1;
         updateFilterActiveClass(this);
 
-        // Load comics
         loadComics();
       });
     });
   }
 
-  /**
-   * Setup select dropdown listeners
-   */
   function initSelectListeners() {
-    // Genre selector - reload page
     if (categorySelect) {
       categorySelect.addEventListener("change", function () {
         const selectedURL = this.value;
@@ -126,19 +100,15 @@
       });
     }
 
-    // Sort selector - AJAX
     if (sortSelect) {
       sortSelect.addEventListener("change", function () {
         state.sort = this.value;
-        state.currentPage = 1; // Reset to page 1
+        state.currentPage = 1;
         loadComics();
       });
     }
   }
 
-  /**
-   * Initialize pagination listeners
-   */
   function initPaginationListeners() {
     if (!paginationContainer) return;
 
@@ -148,11 +118,9 @@
       link.addEventListener("click", function (e) {
         e.preventDefault();
 
-        // Get page from data-page attribute (AJAX-rendered) or href (server-rendered)
         let page = this.getAttribute("data-page");
 
         if (!page) {
-          // Fallback: parse from href
           const href = this.getAttribute("href");
           if (href && href !== "javascript:void(0)") {
             const url = new URL(href, window.location.origin);
@@ -173,9 +141,6 @@
     });
   }
 
-  /**
-   * Update active class on filter links
-   */
   function updateFilterActiveClass(clickedLink) {
     const parentTd = clickedLink.closest("td");
     if (parentTd) {
@@ -186,9 +151,6 @@
     clickedLink.classList.add("active");
   }
 
-  /**
-   * Load comics via REST API
-   */
   async function loadComics() {
     if (state.isLoading) return;
 
@@ -196,7 +158,6 @@
     showLoadingState();
 
     try {
-      // Build API URL - Use WordPress REST URL base
       const restBase =
         typeof nettruyenGenreData !== "undefined"
           ? nettruyenGenreData.restUrl
@@ -213,7 +174,6 @@
 
       console.log("Fetching:", apiUrl.toString());
 
-      // Fetch data
       const response = await fetch(apiUrl.toString());
 
       console.log("Response status:", response.status);
@@ -241,9 +201,6 @@
     }
   }
 
-  /**
-   * Render comics grid
-   */
   function renderComics(comics) {
     if (!comics || comics.length === 0) {
       comicsGrid.innerHTML = `
@@ -309,13 +266,9 @@
 
     comicsGrid.innerHTML = html;
 
-    // Re-initialize bookmark buttons
     initBookmarkButtons();
   }
 
-  /**
-   * Render pagination
-   */
   function renderPagination(pagination) {
     if (!paginationContainer) return;
 
@@ -331,14 +284,12 @@
     const start = Math.max(1, current_page - range);
     const end = Math.min(total_pages, current_page + range);
 
-    // Previous button
     if (current_page > 1) {
       html += `<a href="javascript:void(0)" data-page="${
         current_page - 1
       }"><p><span>‹</span></p></a>`;
     }
 
-    // First page
     if (start > 1) {
       html += `<a href="javascript:void(0)" data-page="1"><p>1</p></a>`;
       if (start > 2) {
@@ -346,7 +297,6 @@
       }
     }
 
-    // Page numbers
     for (let i = start; i <= end; i++) {
       if (i === current_page) {
         html += `<a href="javascript:void(0)"><p class="active">${i}</p></a>`;
@@ -355,7 +305,6 @@
       }
     }
 
-    // Last page
     if (end < total_pages) {
       if (end < total_pages - 1) {
         html += `<span class="dots">...</span>`;
@@ -363,7 +312,6 @@
       html += `<a href="javascript:void(0)" data-page="${total_pages}"><p>${total_pages}</p></a>`;
     }
 
-    // Next button
     if (current_page < total_pages) {
       html += `<a href="javascript:void(0)" data-page="${
         current_page + 1
@@ -373,19 +321,15 @@
 
     paginationContainer.innerHTML = html;
 
-    // Re-initialize pagination listeners after render
     initPaginationListeners();
   }
 
-  /**
-   * Update URL without page reload
-   */
   function updateURL() {
     const params = new URLSearchParams();
 
     if (state.status) params.set("status", state.status);
     if (state.country) params.set("country", state.country);
-    if (state.sort !== "2") params.set("sort", state.sort); // Only add if not default
+    if (state.sort !== "2") params.set("sort", state.sort);
     if (state.currentPage > 1) params.set("page", state.currentPage);
 
     const newURL =
@@ -395,16 +339,10 @@
     window.history.pushState({ page: state.currentPage }, "", newURL);
   }
 
-  /**
-   * Smooth scroll to top
-   */
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  /**
-   * Show/hide loading state
-   */
   function showLoadingState() {
     comicsGrid.style.opacity = "0.5";
     comicsGrid.style.pointerEvents = "none";
@@ -415,16 +353,10 @@
     comicsGrid.style.pointerEvents = "auto";
   }
 
-  /**
-   * Show error
-   */
   function showError(message) {
     showToast(message);
   }
 
-  /**
-   * Initialize bookmark buttons
-   */
   function initBookmarkButtons() {
     const bookmarkButtons = document.querySelectorAll(
       ".list_grid .subscribed-badge"
@@ -450,9 +382,6 @@
     });
   }
 
-  /**
-   * Show toast notification
-   */
   function showToast(message) {
     let toastContainer = document.querySelector(".toast-container");
 
@@ -476,6 +405,5 @@
     }, 2000);
   }
 
-  // Start initialization
   init();
 })();

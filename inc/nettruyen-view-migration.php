@@ -29,7 +29,7 @@ class NetTruyen_View_Migration
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-        // Table 1: Chapter Views (Chi tiết)
+
         $table_chapter_views = $wpdb->prefix . 'nettruyen_chapter_views';
         $sql1 = "CREATE TABLE {$table_chapter_views} (
             id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -47,7 +47,7 @@ class NetTruyen_View_Migration
 
         dbDelta($sql1);
 
-        // Table 2: Comic Views Summary (Aggregate)
+
         $table_comic_views = $wpdb->prefix . 'nettruyen_comic_views';
         $sql2 = "CREATE TABLE {$table_comic_views} (
             id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -63,7 +63,7 @@ class NetTruyen_View_Migration
 
         dbDelta($sql2);
 
-        // Table 3: View Statistics Cache
+
         $table_stats = $wpdb->prefix . 'nettruyen_view_stats';
         $sql3 = "CREATE TABLE {$table_stats} (
             post_id BIGINT UNSIGNED PRIMARY KEY,
@@ -85,7 +85,7 @@ class NetTruyen_View_Migration
 
         dbDelta($sql3);
 
-        // Verify tables created
+
         $tables = array($table_chapter_views, $table_comic_views, $table_stats);
         $success = true;
 
@@ -97,7 +97,7 @@ class NetTruyen_View_Migration
         }
 
         if ($success) {
-            // Set migration flag
+
             update_option('nettruyen_view_migration_version', '1.0.0');
             update_option('nettruyen_view_migration_date', current_time('mysql'));
 

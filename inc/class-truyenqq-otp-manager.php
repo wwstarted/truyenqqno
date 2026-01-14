@@ -44,7 +44,7 @@ class TruyenQQ_OTP_Manager
     {
         global $wpdb;
 
-        // Validate email
+
         if (!is_email($email)) {
             error_log('OTP SEND ERROR: Invalid email - ' . $email);
             return array(
@@ -53,7 +53,7 @@ class TruyenQQ_OTP_Manager
             );
         }
 
-        // Check rate limiting
+
         if (!self::check_rate_limit($email)) {
             error_log('OTP SEND ERROR: Rate limit exceeded for ' . $email);
             return array(
@@ -62,10 +62,10 @@ class TruyenQQ_OTP_Manager
             );
         }
 
-        // Generate OTP
+
         $otp_code = self::generate_otp();
 
-        // FIX: Dùng gmdate thay vì date để lưu theo UTC
+
         $expires_at = gmdate('Y-m-d H:i:s', strtotime('+' . self::OTP_EXPIRY_MINUTES . ' minutes'));
         $created_at = gmdate('Y-m-d H:i:s');
         $user_ip = self::get_user_ip();
@@ -77,7 +77,7 @@ class TruyenQQ_OTP_Manager
         error_log('Expires At (UTC): ' . $expires_at);
         error_log('Created At (UTC): ' . $created_at);
 
-        // Save to database
+
         $otp_table = $wpdb->prefix . 'nettruyen_otp_codes';
         $inserted = $wpdb->insert(
             $otp_table,
@@ -103,7 +103,7 @@ class TruyenQQ_OTP_Manager
         $otp_id = $wpdb->insert_id;
         error_log('OTP saved to database with ID: ' . $otp_id);
 
-        // Send email
+
         $email_sent = self::send_otp_email($email, $otp_code, $purpose);
 
         if (!$email_sent) {
@@ -152,7 +152,7 @@ class TruyenQQ_OTP_Manager
 
         $otp_table = $wpdb->prefix . 'nettruyen_otp_codes';
 
-        // DEBUG: Kiểm tra tất cả OTP của email này
+
         $all_otps = $wpdb->get_results($wpdb->prepare(
             "SELECT id, email, otp_code, purpose, expires_at, verified_at, created_at 
             FROM {$otp_table} 
@@ -164,7 +164,7 @@ class TruyenQQ_OTP_Manager
         error_log('All OTPs for this email:');
         error_log(print_r($all_otps, true));
 
-        // FIX: Dùng UTC_TIMESTAMP() thay vì NOW()
+
         $sql = $wpdb->prepare(
             "SELECT * FROM {$otp_table} 
             WHERE email = %s 
@@ -193,7 +193,7 @@ class TruyenQQ_OTP_Manager
         if (!$otp) {
             error_log('VERIFY ERROR: No valid OTP found');
 
-            // Kiểm tra các trường hợp cụ thể
+
             $check_otp_code = $wpdb->get_row($wpdb->prepare(
                 "SELECT *, 
                 UTC_TIMESTAMP() as current_utc,
@@ -229,7 +229,7 @@ class TruyenQQ_OTP_Manager
             );
         }
 
-        // Mark as verified - FIX: Dùng gmdate
+
         $updated = $wpdb->update(
             $otp_table,
             array('verified_at' => gmdate('Y-m-d H:i:s')),
@@ -267,7 +267,7 @@ class TruyenQQ_OTP_Manager
 
         $otp_table = $wpdb->prefix . 'nettruyen_otp_codes';
 
-        // FIX: Dùng UTC_TIMESTAMP()
+
         $count = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$otp_table} 
             WHERE email = %s 
@@ -292,7 +292,7 @@ class TruyenQQ_OTP_Manager
     {
         $site_name = get_bloginfo('name');
 
-        // Subject based on purpose
+
         if ($purpose === 'register') {
             $subject = "[{$site_name}] Mã xác thực đăng ký tài khoản";
             $action = "đăng ký tài khoản";
@@ -301,7 +301,7 @@ class TruyenQQ_OTP_Manager
             $action = "đặt lại mật khẩu";
         }
 
-        // Email body
+
         $message = "
         <html>
         <head>
@@ -344,13 +344,13 @@ class TruyenQQ_OTP_Manager
         </html>
         ";
 
-        // Headers
+
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
             'From: ' . $site_name . ' <noreply@' . parse_url(home_url(), PHP_URL_HOST) . '>'
         );
 
-        // Send email
+
         $sent = wp_mail($email, $subject, $message, $headers);
 
         error_log('Email send result: ' . ($sent ? 'SUCCESS' : 'FAILED'));

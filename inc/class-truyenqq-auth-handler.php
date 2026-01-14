@@ -23,7 +23,7 @@ class TruyenQQ_Auth_Handler
      */
     public static function register_send_otp($username, $email, $password)
     {
-        // Validate inputs
+
         if (empty($username) || empty($email) || empty($password)) {
             return array(
                 'success' => false,
@@ -31,7 +31,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Validate username
+
         if (username_exists($username)) {
             return array(
                 'success' => false,
@@ -46,7 +46,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Validate email
+
         if (!is_email($email)) {
             return array(
                 'success' => false,
@@ -61,7 +61,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Validate password
+
         if (strlen($password) < 6) {
             return array(
                 'success' => false,
@@ -69,7 +69,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Store registration data in transient (10 minutes)
+
         $reg_data = array(
             'username' => $username,
             'email' => $email,
@@ -77,7 +77,7 @@ class TruyenQQ_Auth_Handler
         );
         set_transient('truyenqq_reg_' . md5($email), $reg_data, 600);
 
-        // Send OTP
+
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $otp_result = TruyenQQ_OTP_Manager::send_otp($email, 'register');
 
@@ -93,7 +93,7 @@ class TruyenQQ_Auth_Handler
      */
     public static function register_verify_otp($email, $otp_code)
     {
-        // Verify OTP
+
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $verify_result = TruyenQQ_OTP_Manager::verify_otp($email, $otp_code, 'register');
 
@@ -101,7 +101,7 @@ class TruyenQQ_Auth_Handler
             return $verify_result;
         }
 
-        // Get registration data from transient
+
         $reg_data = get_transient('truyenqq_reg_' . md5($email));
 
         if (!$reg_data) {
@@ -111,7 +111,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Create user
+
         $user_id = wp_create_user(
             $reg_data['username'],
             $reg_data['password'],
@@ -125,11 +125,11 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Set user role
+
         $user = new WP_User($user_id);
         $user->set_role('subscriber');
 
-        // Update user meta
+
         global $wpdb;
         $user_meta_table = $wpdb->prefix . 'nettruyen_user_meta';
         $wpdb->insert(
@@ -143,14 +143,14 @@ class TruyenQQ_Auth_Handler
             array('%d', '%d', '%s', '%s')
         );
 
-        // Delete transient
+
         delete_transient('truyenqq_reg_' . md5($email));
 
-        // Auto login
+
         wp_set_auth_cookie($user_id, true);
         do_action('wp_login', $reg_data['username'], $user);
 
-        // Log login history
+
         self::log_login_history($user_id, 'success');
 
         return array(
@@ -171,7 +171,7 @@ class TruyenQQ_Auth_Handler
      */
     public static function login($username, $password, $remember = false)
     {
-        // Validate inputs
+
         if (empty($username) || empty($password)) {
             return array(
                 'success' => false,
@@ -179,7 +179,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Try to login
+
         $credentials = array(
             'user_login' => $username,
             'user_password' => $password,
@@ -189,7 +189,7 @@ class TruyenQQ_Auth_Handler
         $user = wp_signon($credentials, is_ssl());
 
         if (is_wp_error($user)) {
-            // Log failed attempt
+
             self::log_login_history(0, 'failed');
 
             return array(
@@ -198,7 +198,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Log successful login
+
         self::log_login_history($user->ID, 'success');
 
         return array(
@@ -233,7 +233,7 @@ class TruyenQQ_Auth_Handler
      */
     public static function forgot_password_send_otp($email)
     {
-        // Validate email
+
         if (empty($email) || !is_email($email)) {
             return array(
                 'success' => false,
@@ -241,7 +241,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Check if email exists
+
         $user = get_user_by('email', $email);
         if (!$user) {
             return array(
@@ -250,7 +250,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Send OTP
+
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $otp_result = TruyenQQ_OTP_Manager::send_otp($email, 'reset_password');
 
@@ -266,7 +266,7 @@ class TruyenQQ_Auth_Handler
      */
     public static function forgot_password_verify_otp($email, $otp_code)
     {
-        // Verify OTP
+
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $verify_result = TruyenQQ_OTP_Manager::verify_otp($email, $otp_code, 'reset_password');
 
@@ -274,7 +274,7 @@ class TruyenQQ_Auth_Handler
             return $verify_result;
         }
 
-        // Generate reset token (valid for 10 minutes)
+
         $reset_token = wp_generate_password(32, false);
         set_transient('truyenqq_reset_' . $reset_token, $email, 600);
 
@@ -294,7 +294,7 @@ class TruyenQQ_Auth_Handler
      */
     public static function reset_password($reset_token, $new_password)
     {
-        // Validate inputs
+
         if (empty($reset_token) || empty($new_password)) {
             return array(
                 'success' => false,
@@ -302,7 +302,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Get email from token
+
         $email = get_transient('truyenqq_reset_' . $reset_token);
         if (!$email) {
             return array(
@@ -311,7 +311,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Validate password
+
         if (strlen($new_password) < 6) {
             return array(
                 'success' => false,
@@ -319,7 +319,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Get user
+
         $user = get_user_by('email', $email);
         if (!$user) {
             return array(
@@ -328,13 +328,13 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Reset password
+
         wp_set_password($new_password, $user->ID);
 
-        // Delete token
+
         delete_transient('truyenqq_reset_' . $reset_token);
 
-        // Auto login
+
         wp_set_auth_cookie($user->ID, true);
 
         return array(

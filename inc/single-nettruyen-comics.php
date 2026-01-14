@@ -16,8 +16,8 @@
  */
 function nettruyen_add_chapter_rewrite_rules()
 {
-    // Pattern: /truyen-tranh/{comic-slug}-chap-{chapter-slug}.html
-    // ([^\.]+) matches any character except dot (to not consume .html)
+
+
     add_rewrite_rule(
         '^truyen-tranh/([^/]+)-chap-([^\.]+)\.html$',
         'index.php?nettruyen_comic=$matches[1]&chapter=$matches[2]',
@@ -49,30 +49,30 @@ function nettruyen_chapter_template_redirect()
     $chapter_slug = get_query_var('chapter');
     $comic_slug = get_query_var('nettruyen_comic');
 
-    // Check if both query vars are present
+
     if (!empty($chapter_slug) && !empty($comic_slug)) {
 
-        // Load comic post by slug
+
         $comic_post = get_page_by_path($comic_slug, OBJECT, 'nettruyen_comic');
 
         if ($comic_post) {
-            // Setup global $post so get_the_ID(), get_the_title() work
+
             global $post;
             $post = $comic_post;
             setup_postdata($post);
 
-            // Load chapter reading template
+
             $template = locate_template('single-chapter.php');
 
             if ($template) {
                 include $template;
                 exit;
             } else {
-                // Template not found, show error
+
                 wp_die('Template single-chapter.php not found. Please create this file in your theme.');
             }
         } else {
-            // Comic not found, redirect to 404
+
             global $wp_query;
             $wp_query->set_404();
             status_header(404);
@@ -90,20 +90,20 @@ add_action('template_redirect', 'nettruyen_chapter_template_redirect', 1);
  */
 function nettruyen_activate_rewrite_rules()
 {
-    // Check if already flushed
+
     $flushed = get_option('nettruyen_rewrite_flushed');
 
     if (!$flushed) {
-        // Add rules first
+
         nettruyen_add_chapter_rewrite_rules();
 
-        // Flush rewrite rules
+
         flush_rewrite_rules();
 
-        // Set flag to prevent repeated flushes
+
         update_option('nettruyen_rewrite_flushed', '1');
 
-        // Log for debugging (optional)
+
         error_log('TruyenQQ: Rewrite rules flushed successfully');
     }
 }
@@ -142,7 +142,7 @@ function nettruyen_get_chapter_url($post_id, $chapter_slug)
  */
 function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
 {
-    // Get chapter manifest
+
     $chapters_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
     $chapters = [];
 
@@ -153,7 +153,7 @@ function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
         }
     }
 
-    // If JSON fails, try serialized data
+
     if (empty($chapters)) {
         $chapters_data = get_post_meta($post_id, '_nettruyen_chapter_manifest', true);
         if (!empty($chapters_data)) {
@@ -164,7 +164,7 @@ function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
         }
     }
 
-    // Find current chapter index
+
     $current_index = -1;
     foreach ($chapters as $index => $chapter) {
         if (isset($chapter['slug']) && $chapter['slug'] == $chapter_slug) {
@@ -176,12 +176,12 @@ function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
     $prev_url = null;
     $next_url = null;
 
-    // Previous chapter (index - 1)
+
     if ($current_index > 0 && isset($chapters[$current_index - 1]['slug'])) {
         $prev_url = nettruyen_get_chapter_url($post_id, $chapters[$current_index - 1]['slug']);
     }
 
-    // Next chapter (index + 1)
+
     if ($current_index >= 0 && isset($chapters[$current_index + 1]['slug'])) {
         $next_url = nettruyen_get_chapter_url($post_id, $chapters[$current_index + 1]['slug']);
     }
@@ -200,7 +200,7 @@ function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
  */
 function nettruyen_enqueue_chapter_styles()
 {
-    // Check if we're on a chapter page
+
     $chapter_slug = get_query_var('chapter');
     $comic_slug = get_query_var('nettruyen_comic');
 

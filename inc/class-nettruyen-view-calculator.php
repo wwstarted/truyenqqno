@@ -30,7 +30,7 @@ class NetTruyen_View_Calculator
      */
     public static function calculate_fake_views($post_id)
     {
-        // 1. Lấy số chapter từ manifest
+
         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
 
         $total_chapters = 0;
@@ -40,7 +40,7 @@ class NetTruyen_View_Calculator
             $total_chapters = !empty($manifest['chapters']) ? count($manifest['chapters']) : 0;
         }
 
-        // ✅ FALLBACK 1: Thử lấy từ meta khác
+
         if ($total_chapters === 0) {
             $chapter_count = get_post_meta($post_id, '_nettruyen_chapter_count', true);
             if (!empty($chapter_count) && is_numeric($chapter_count)) {
@@ -48,62 +48,62 @@ class NetTruyen_View_Calculator
             }
         }
 
-        // ✅ FALLBACK 2: Check post content/excerpt để estimate
+
         if ($total_chapters === 0) {
             $post = get_post($post_id);
 
-            // Nếu có nội dung → estimate 15 chapters
+
             if (!empty($post->post_content) || !empty($post->post_excerpt)) {
                 $total_chapters = 15;
             }
         }
 
-        // ✅ FALLBACK 3: Dựa vào tuổi của post
+
         if ($total_chapters === 0) {
             $post_date = get_post_field('post_date', $post_id);
             $days_online = max(1, (time() - strtotime($post_date)) / DAY_IN_SECONDS);
 
-            // Post cũ hơn → giả định có nhiều chapter hơn
+
             if ($days_online > 180) {
-                $total_chapters = 20; // 6 tháng+
+                $total_chapters = 20;
             } elseif ($days_online > 90) {
-                $total_chapters = 15; // 3-6 tháng
+                $total_chapters = 15;
             } elseif ($days_online > 30) {
-                $total_chapters = 10; // 1-3 tháng
+                $total_chapters = 10;
             } else {
-                $total_chapters = 5; // Mới đăng
+                $total_chapters = 5;
             }
         }
 
-        // ✅ MINIMUM: Ít nhất 5 chapters để có views
+
         $total_chapters = max(5, $total_chapters);
 
-        // 2. Base fake views = chapters * 100
+
         $base_fake = $total_chapters * 100;
 
-        // 3. Bonus theo số chapter (truyện nhiều chapter = hot hơn)
+
         if ($total_chapters > 100) {
-            $base_fake *= 1.5; // +50% nếu > 100 chapters
+            $base_fake *= 1.5;
         } elseif ($total_chapters > 50) {
-            $base_fake *= 1.2; // +20% nếu > 50 chapters
+            $base_fake *= 1.2;
         }
 
-        // 4. Bonus theo thời gian online (càng lâu càng nhiều view)
+
         $post_date = get_post_field('post_date', $post_id);
         $days_online = max(1, (time() - strtotime($post_date)) / DAY_IN_SECONDS);
 
-        // Mỗi năm online tăng 100% views
+
         $time_multiplier = 1 + ($days_online / 365);
         $base_fake *= $time_multiplier;
 
-        // 5. Random factor ±20% để không đều quá
+
         $random_factor = rand(80, 120) / 100;
         $base_fake *= $random_factor;
 
-        // 6. Minimum 500 views cho truyện mới
+
         $base_fake = max(500, $base_fake);
 
-        // 7. Làm tròn và return
+
         return (int) round($base_fake);
     }
 
@@ -120,7 +120,7 @@ class NetTruyen_View_Calculator
         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
 
         if (empty($manifest_json)) {
-            // ✅ FALLBACK: Generate dummy chapters
+
             $total_chapters = 10;
             $distribution = array();
 
@@ -156,20 +156,14 @@ class NetTruyen_View_Calculator
         foreach ($chapters as $index => $chapter) {
             $chapter_slug = $chapter['slug'];
 
-            // Chapter đầu: 800-1200 views (nhiều người thử đọc)
+
             if ($index === 0) {
                 $views = rand(800, 1200);
-            }
-            // 30% đầu: Drop rate, giảm dần
-            elseif ($index < $total_chapters * 0.3) {
+            } elseif ($index < $total_chapters * 0.3) {
                 $views = rand(400, 700);
-            }
-            // 30-70%: Giữa truyện, ít người đọc
-            elseif ($index < $total_chapters * 0.7) {
+            } elseif ($index < $total_chapters * 0.7) {
                 $views = rand(200, 400);
-            }
-            // 30% cuối: Tăng lại (người theo dõi đến cuối)
-            else {
+            } else {
                 $views = rand(300, 500);
             }
 
@@ -203,16 +197,16 @@ class NetTruyen_View_Calculator
      */
     public static function should_use_fake_views($post_id, $real_views = 0)
     {
-        // Lấy settings
+
         $threshold = (int) get_option('nettruyen_fake_views_threshold', 10000);
         $days_limit = (int) get_option('nettruyen_fake_views_days', 180);
 
-        // Tắt nếu real views đã đủ
+
         if ($real_views >= $threshold) {
             return false;
         }
 
-        // Tắt nếu truyện quá cũ
+
         $post_date = get_post_field('post_date', $post_id);
         $days_online = (time() - strtotime($post_date)) / DAY_IN_SECONDS;
 

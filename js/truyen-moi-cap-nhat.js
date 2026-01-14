@@ -8,7 +8,6 @@
 (function () {
   "use strict";
 
-  // State management
   const state = {
     currentPage: 1,
     status: "",
@@ -16,14 +15,10 @@
     isLoading: false,
   };
 
-  // DOM elements
   let comicsGrid = null;
   let paginationContainer = null;
   let filterLinks = null;
 
-  /**
-   * Initialize AJAX Comics Listing
-   */
   function init() {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", init);
@@ -33,20 +28,17 @@
     const mainContainer = document.querySelector("#main_homepage");
     if (!mainContainer) return;
 
-    // Get DOM elements
     comicsGrid = document.querySelector(".list_grid.grid");
     paginationContainer = document.querySelector(".page_redirect");
     filterLinks = document.querySelectorAll(".story-list-bl01 ul.choose a");
 
     if (!comicsGrid) return;
 
-    // Get initial state from URL
     const urlParams = new URLSearchParams(window.location.search);
     state.currentPage = parseInt(urlParams.get("paged")) || 1;
     state.status = urlParams.get("status") || "";
     state.country = urlParams.get("country") || "";
 
-    // Setup event listeners
     initFilterListeners();
     initPaginationListeners();
     initBookmarkButtons();
@@ -54,11 +46,7 @@
     console.log("AJAX Comics Listing initialized");
   }
 
-  /**
-   * Setup filter listeners
-   */
   function initFilterListeners() {
-    // Filter links
     filterLinks.forEach((link) => {
       link.addEventListener("click", function (e) {
         e.preventDefault();
@@ -67,26 +55,18 @@
         const newStatus = url.searchParams.get("status") || "";
         const newCountry = url.searchParams.get("country") || "";
 
-        // Update state
         state.status = newStatus;
         state.country = newCountry;
-        state.currentPage = 1; // Reset to page 1 on filter change
-
-        // Update active class
+        state.currentPage = 1;
         updateFilterActiveClass(this);
 
-        // Load comics
         loadComics();
       });
     });
 
-    // Initial pagination links (from server-rendered HTML)
     initPaginationListeners();
   }
 
-  /**
-   * Initialize pagination listeners - FIXED VERSION
-   */
   function initPaginationListeners() {
     if (!paginationContainer) return;
 
@@ -99,17 +79,14 @@
         const href = this.getAttribute("href");
         if (!href || href === "javascript:void(0)") return;
 
-        // Extract page number từ URL
         let page = 1;
 
-        // Thử extract từ query param ?paged=X
         const url = new URL(href, window.location.origin);
         const pagedParam = url.searchParams.get("paged");
 
         if (pagedParam) {
           page = parseInt(pagedParam);
         } else {
-          // Thử extract từ permalink /page/X/
           const pageMatch = href.match(/\/page\/(\d+)\/?/);
           if (pageMatch) {
             page = parseInt(pageMatch[1]);
@@ -131,11 +108,7 @@
     });
   }
 
-  /**
-   * Update active class on filter links
-   */
   function updateFilterActiveClass(clickedLink) {
-    // Remove active from all links in the same row
     const parentTd = clickedLink.closest("td");
     if (parentTd) {
       parentTd
@@ -145,9 +118,6 @@
     clickedLink.classList.add("active");
   }
 
-  /**
-   * Load comics via AJAX
-   */
   async function loadComics() {
     if (state.isLoading) return;
 
@@ -155,7 +125,6 @@
     showLoadingState();
 
     try {
-      // Build API URL - Sử dụng URL từ PHP
       const baseUrl =
         typeof nettruyenData !== "undefined"
           ? nettruyenData.restUrl
@@ -168,17 +137,14 @@
 
       console.log("Loading comics from:", apiUrl.toString());
 
-      // Fetch data
       const response = await fetch(apiUrl.toString());
 
-      // Debug: Check response
       console.log("Response status:", response.status);
       console.log("Response headers:", response.headers.get("content-type"));
 
       const responseText = await response.text();
       console.log("Response text:", responseText.substring(0, 200));
 
-      // Try to parse JSON
       let data;
       try {
         data = JSON.parse(responseText);
@@ -204,9 +170,6 @@
     }
   }
 
-  /**
-   * Render comics grid
-   */
   function renderComics(comics) {
     if (!comics || comics.length === 0) {
       comicsGrid.innerHTML = `
@@ -272,13 +235,9 @@
 
     comicsGrid.innerHTML = html;
 
-    // Re-initialize bookmark buttons
     initBookmarkButtons();
   }
 
-  /**
-   * Render pagination
-   */
   function renderPagination(pagination) {
     if (!paginationContainer) return;
 
@@ -294,14 +253,12 @@
     const start = Math.max(1, current_page - range);
     const end = Math.min(total_pages, current_page + range);
 
-    // Previous button
     if (current_page > 1) {
       html += `<a href="#" data-page="${
         current_page - 1
       }"><p><span>‹</span></p></a>`;
     }
 
-    // First page
     if (start > 1) {
       html += `<a href="#" data-page="1"><p>1</p></a>`;
       if (start > 2) {
@@ -309,7 +266,6 @@
       }
     }
 
-    // Page numbers
     for (let i = start; i <= end; i++) {
       if (i === current_page) {
         html += `<a href="javascript:void(0)"><p class="active">${i}</p></a>`;
@@ -318,7 +274,6 @@
       }
     }
 
-    // Last page
     if (end < total_pages) {
       if (end < total_pages - 1) {
         html += `<span class="dots">...</span>`;
@@ -326,7 +281,6 @@
       html += `<a href="#" data-page="${total_pages}"><p>${total_pages}</p></a>`;
     }
 
-    // Next button
     if (current_page < total_pages) {
       html += `<a href="#" data-page="${
         current_page + 1
@@ -336,7 +290,6 @@
 
     paginationContainer.innerHTML = html;
 
-    // Add click listeners to pagination links
     paginationContainer.querySelectorAll("a[data-page]").forEach((link) => {
       link.addEventListener("click", function (e) {
         e.preventDefault();
@@ -350,9 +303,6 @@
     });
   }
 
-  /**
-   * Update URL without page reload
-   */
   function updateURL() {
     const params = new URLSearchParams();
     if (state.status) params.set("status", state.status);
@@ -366,39 +316,24 @@
     window.history.pushState({ page: state.currentPage }, "", newURL);
   }
 
-  /**
-   * Smooth scroll to top
-   */
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  /**
-   * Show loading state
-   */
   function showLoadingState() {
     comicsGrid.style.opacity = "0.5";
     comicsGrid.style.pointerEvents = "none";
   }
 
-  /**
-   * Hide loading state
-   */
   function hideLoadingState() {
     comicsGrid.style.opacity = "1";
     comicsGrid.style.pointerEvents = "auto";
   }
 
-  /**
-   * Show error message
-   */
   function showError(message) {
     showToast(message);
   }
 
-  /**
-   * Initialize bookmark buttons
-   */
   function initBookmarkButtons() {
     const bookmarkButtons = document.querySelectorAll(
       ".list_grid .subscribed-badge"
@@ -424,9 +359,6 @@
     });
   }
 
-  /**
-   * Show toast notification
-   */
   function showToast(message) {
     let toastContainer = document.querySelector(".toast-container");
 
@@ -450,6 +382,5 @@
     }, 2000);
   }
 
-  // Start initialization
   init();
 })();

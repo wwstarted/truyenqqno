@@ -25,7 +25,7 @@ class NetTruyen_View_Tracker
     {
         global $wpdb;
 
-        // Validate inputs
+
         if (empty($post_id) || empty($chapter_slug)) {
             return array(
                 'success' => false,
@@ -34,7 +34,7 @@ class NetTruyen_View_Tracker
             );
         }
 
-        // Verify post exists and is published
+
         $post = get_post($post_id);
         if (!$post || $post->post_status !== 'publish' || $post->post_type !== 'nettruyen_comic') {
             return array(
@@ -44,7 +44,7 @@ class NetTruyen_View_Tracker
             );
         }
 
-        // Verify chapter exists in manifest
+
         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
         if (empty($manifest_json)) {
             return array(
@@ -71,7 +71,7 @@ class NetTruyen_View_Tracker
             );
         }
 
-        // Check anti-spam (IP + Session based)
+
         if (!self::should_count_view($post_id, $chapter_slug)) {
             return array(
                 'success' => true,
@@ -80,7 +80,7 @@ class NetTruyen_View_Tracker
             );
         }
 
-        // Count the view!
+
         $today = current_time('Y-m-d');
         $chapter_table = $wpdb->prefix . 'nettruyen_chapter_views';
         $comic_table = $wpdb->prefix . 'nettruyen_comic_views';
@@ -89,7 +89,7 @@ class NetTruyen_View_Tracker
         try {
             $wpdb->query('START TRANSACTION');
 
-            // 1. Update chapter_views table
+
             $wpdb->query($wpdb->prepare(
                 "INSERT INTO {$chapter_table} 
                 (post_id, chapter_slug, view_date, view_count) 
@@ -100,7 +100,7 @@ class NetTruyen_View_Tracker
                 $today
             ));
 
-            // 2. Update comic_views table (daily aggregate)
+
             $wpdb->query($wpdb->prepare(
                 "INSERT INTO {$comic_table} 
                 (post_id, view_date, view_count) 
@@ -110,12 +110,12 @@ class NetTruyen_View_Tracker
                 $today
             ));
 
-            // 3. Update stats table (cache)
+
             self::update_stats_cache($post_id);
 
             $wpdb->query('COMMIT');
 
-            // Mark as counted (anti-spam)
+
             self::mark_view_counted($post_id, $chapter_slug);
 
             return array(
@@ -146,27 +146,27 @@ class NetTruyen_View_Tracker
      */
     private static function should_count_view($post_id, $chapter_slug)
     {
-        // Get user IP
+
         $user_ip = self::get_user_ip();
 
-        // Session key
+
         $session_key = 'nettruyen_view_' . $post_id . '_' . $chapter_slug;
 
-        // Check session first (fast)
+
         if (isset($_SESSION[$session_key])) {
             $last_view = $_SESSION[$session_key];
             if ((time() - $last_view) < DAY_IN_SECONDS) {
-                return false; // Đã view trong 24h
+                return false;
             }
         }
 
-        // Check transient (IP-based, for logged out users)
+
         $transient_key = 'nettruyen_view_' . md5($user_ip . $post_id . $chapter_slug);
         if (get_transient($transient_key)) {
-            return false; // Đã view trong 24h
+            return false;
         }
 
-        return true; // OK để count
+        return true;
     }
 
     /**
@@ -177,16 +177,16 @@ class NetTruyen_View_Tracker
      */
     private static function mark_view_counted($post_id, $chapter_slug)
     {
-        // Start session if not started
+
         if (!session_id()) {
             session_start();
         }
 
-        // Set session
+
         $session_key = 'nettruyen_view_' . $post_id . '_' . $chapter_slug;
         $_SESSION[$session_key] = time();
 
-        // Set transient (IP-based)
+
         $user_ip = self::get_user_ip();
         $transient_key = 'nettruyen_view_' . md5($user_ip . $post_id . $chapter_slug);
         set_transient($transient_key, true, DAY_IN_SECONDS);
@@ -237,7 +237,7 @@ class NetTruyen_View_Tracker
         $chapter_table = $wpdb->prefix . 'nettruyen_chapter_views';
         $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-        // Calculate real views
+
         $total_real = $wpdb->get_var($wpdb->prepare(
             "SELECT SUM(view_count) FROM {$chapter_table} WHERE post_id = %d",
             $post_id
@@ -261,7 +261,7 @@ class NetTruyen_View_Tracker
             $post_id
         ));
 
-        // Get current fake views
+
         $current = $wpdb->get_row($wpdb->prepare(
             "SELECT total_fake_views, use_fake_views FROM {$stats_table} WHERE post_id = %d",
             $post_id
@@ -270,15 +270,15 @@ class NetTruyen_View_Tracker
         $fake_views = $current ? (int) $current->total_fake_views : 0;
         $use_fake = $current ? (int) $current->use_fake_views : 1;
 
-        // Check nếu nên tắt fake views
+
         if ($use_fake) {
             $use_fake = NetTruyen_View_Calculator::should_use_fake_views($post_id, $total_real) ? 1 : 0;
         }
 
-        // Calculate display views
+
         $display_views = $use_fake ? ($total_real + $fake_views) : $total_real;
 
-        // Update or insert stats
+
         $wpdb->replace(
             $stats_table,
             array(

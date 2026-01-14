@@ -27,7 +27,7 @@ class NetTruyen_View_Population
 
         require_once get_template_directory() . '/inc/class-nettruyen-view-calculator.php';
 
-        // Đếm tổng số truyện
+
         $total_comics = wp_count_posts('nettruyen_comic')->publish;
 
         if ($total_comics === 0) {
@@ -39,7 +39,7 @@ class NetTruyen_View_Population
             );
         }
 
-        // Lấy batch truyện
+
         $args = array(
             'post_type' => 'nettruyen_comic',
             'post_status' => 'publish',
@@ -47,7 +47,7 @@ class NetTruyen_View_Population
             'offset' => $offset,
             'orderby' => 'ID',
             'order' => 'ASC',
-            'fields' => 'ids' // Chỉ lấy ID để nhanh
+            'fields' => 'ids'
         );
 
         $comic_ids = get_posts($args);
@@ -69,17 +69,17 @@ class NetTruyen_View_Population
 
         foreach ($comic_ids as $post_id) {
             try {
-                // Tính fake views
+
                 $fake_views = NetTruyen_View_Calculator::calculate_fake_views($post_id);
 
-                // ✅ SAFETY CHECK: Nếu vẫn = 0, force minimum
+
                 if ($fake_views === 0) {
                     $fake_views = 500;
                     $title = get_the_title($post_id);
                     $skipped[] = "Post {$post_id} ({$title}) - forced 500 views (no data)";
                 }
 
-                // Insert vào stats table
+
                 $result = $wpdb->replace(
                     $stats_table,
                     array(
@@ -108,7 +108,7 @@ class NetTruyen_View_Population
             }
         }
 
-        // Check xem đã xong chưa
+
         $is_complete = ($offset + $batch_size) >= $total_comics;
 
         $message = sprintf(
@@ -159,7 +159,7 @@ class NetTruyen_View_Population
 
         $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-        // Lấy real views hiện tại
+
         $current = $wpdb->get_row($wpdb->prepare(
             "SELECT total_real_views FROM {$stats_table} WHERE post_id = %d",
             $post_id
@@ -167,7 +167,7 @@ class NetTruyen_View_Population
 
         $real_views = $current ? (int) $current->total_real_views : 0;
 
-        // Update
+
         $result = $wpdb->replace(
             $stats_table,
             array(

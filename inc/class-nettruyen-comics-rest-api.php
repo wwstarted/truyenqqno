@@ -17,7 +17,7 @@ class NetTruyen_Comics_REST_API
      */
     public static function register_routes()
     {
-        // Route 1: All comics (Truyện Mới Cập Nhật)
+
         register_rest_route('nettruyen/v1', '/comics', array(
             'methods' => 'GET',
             'callback' => array(__CLASS__, 'get_comics'),
@@ -38,7 +38,7 @@ class NetTruyen_Comics_REST_API
             ),
         ));
 
-        // Route 2: Comics by genre (Truyện Theo Thể Loại)
+
         register_rest_route('nettruyen/v1', '/comics/genre', array(
             'methods' => 'GET',
             'callback' => array(__CLASS__, 'get_comics_by_genre'),
@@ -81,7 +81,7 @@ class NetTruyen_Comics_REST_API
             $country = $request->get_param('country');
             $posts_per_page = 42;
 
-            // Build query args
+
             $args = array(
                 'post_type' => 'nettruyen_comic',
                 'post_status' => 'publish',
@@ -91,7 +91,7 @@ class NetTruyen_Comics_REST_API
                 'order' => 'DESC'
             );
 
-            // Apply status filter
+
             if ($status !== '') {
                 $args['meta_query'] = array(
                     array(
@@ -102,7 +102,7 @@ class NetTruyen_Comics_REST_API
                 );
             }
 
-            // Apply country filter
+
             if ($country !== '') {
                 $args['tax_query'] = array(
                     array(
@@ -115,7 +115,7 @@ class NetTruyen_Comics_REST_API
 
             $comics_query = new WP_Query($args);
 
-            // Get hot comics (cache for performance)
+
             $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
             $hot_comic_ids = wp_cache_get('hot_comic_ids', 'nettruyen');
 
@@ -130,10 +130,10 @@ class NetTruyen_Comics_REST_API
                 wp_cache_set('hot_comic_ids', $hot_comic_ids, 'nettruyen', 300);
             }
 
-            // Build comics data
+
             $comics = self::build_comics_array($comics_query, $hot_comic_ids);
 
-            // Build response
+
             $response = array(
                 'success' => true,
                 'comics' => $comics,
@@ -171,7 +171,7 @@ class NetTruyen_Comics_REST_API
             $sort = $request->get_param('sort');
             $posts_per_page = 42;
 
-            // Sort mapping
+
             $sort_options = array(
                 '0' => array('orderby' => 'date', 'order' => 'DESC'),
                 '1' => array('orderby' => 'date', 'order' => 'ASC'),
@@ -183,7 +183,7 @@ class NetTruyen_Comics_REST_API
 
             $sort_config = isset($sort_options[$sort]) ? $sort_options[$sort] : $sort_options['2'];
 
-            // Build query args
+
             $args = array(
                 'post_type' => 'nettruyen_comic',
                 'post_status' => 'publish',
@@ -200,7 +200,7 @@ class NetTruyen_Comics_REST_API
                 'order' => $sort_config['order']
             );
 
-            // Apply status filter
+
             if ($status !== '') {
                 if (!isset($args['meta_query'])) {
                     $args['meta_query'] = array();
@@ -212,7 +212,7 @@ class NetTruyen_Comics_REST_API
                 );
             }
 
-            // Apply country filter
+
             if ($country !== '') {
                 $args['tax_query'][] = array(
                     'taxonomy' => 'nettruyen_country',
@@ -221,24 +221,24 @@ class NetTruyen_Comics_REST_API
                 );
             }
 
-            // For sort by views - USE DIFFERENT QUERY
+
             if ($sort == '4' || $sort == '5') {
-                // Don't use meta_key - query view stats table instead
+
                 unset($args['orderby']);
                 unset($args['order']);
 
-                // We'll sort manually after getting posts
-                $args['posts_per_page'] = -1; // Get all first
-                $args['fields'] = 'ids'; // Only IDs
+
+                $args['posts_per_page'] = -1;
+                $args['fields'] = 'ids';
             }
 
             $comics_query = new WP_Query($args);
 
-            // Manual sorting for view-based queries
+
             if ($sort == '4' || $sort == '5') {
                 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-                // Get view counts for all posts
+
                 $post_ids = $comics_query->posts;
                 if (!empty($post_ids)) {
                     $placeholders = implode(',', array_fill(0, count($post_ids), '%d'));
@@ -249,23 +249,23 @@ class NetTruyen_Comics_REST_API
                         ...$post_ids
                     ), OBJECT_K);
 
-                    // Sort posts by view count
+
                     usort($post_ids, function ($a, $b) use ($view_data, $sort) {
                         $views_a = isset($view_data[$a]) ? (int) $view_data[$a]->total_display_views : 0;
                         $views_b = isset($view_data[$b]) ? (int) $view_data[$b]->total_display_views : 0;
 
                         if ($sort == '4') {
-                            return $views_b - $views_a; // DESC
+                            return $views_b - $views_a;
                         } else {
-                            return $views_a - $views_b; // ASC
+                            return $views_a - $views_b;
                         }
                     });
 
-                    // Apply pagination manually
+
                     $offset = ($page - 1) * $posts_per_page;
                     $paginated_ids = array_slice($post_ids, $offset, $posts_per_page);
 
-                    // Create new query with paginated IDs
+
                     $comics_query = new WP_Query(array(
                         'post_type' => 'nettruyen_comic',
                         'post__in' => $paginated_ids,
@@ -273,13 +273,13 @@ class NetTruyen_Comics_REST_API
                         'posts_per_page' => $posts_per_page
                     ));
 
-                    // Set pagination info manually
+
                     $comics_query->max_num_pages = ceil(count($post_ids) / $posts_per_page);
                     $comics_query->found_posts = count($post_ids);
                 }
             }
 
-            // Get hot comics
+
             $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
             $hot_comic_ids = wp_cache_get('hot_comic_ids', 'nettruyen');
 
@@ -294,10 +294,10 @@ class NetTruyen_Comics_REST_API
                 wp_cache_set('hot_comic_ids', $hot_comic_ids, 'nettruyen', 300);
             }
 
-            // Build comics data
+
             $comics = self::build_comics_array($comics_query, $hot_comic_ids);
 
-            // Build response
+
             $response = array(
                 'success' => true,
                 'comics' => $comics,
@@ -334,7 +334,7 @@ class NetTruyen_Comics_REST_API
                 $comics_query->the_post();
                 $post_id = get_the_ID();
 
-                // Get thumbnail
+
                 $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                 if (empty($thumbnail)) {
                     $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -343,11 +343,11 @@ class NetTruyen_Comics_REST_API
                     $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                 }
 
-                // Get chapter manifest
+
                 $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                 $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
-                // Get latest chapter
+
                 $latest_chapter = 'Đang cập nhật';
                 if (!empty($manifest['chapters'])) {
                     $chapters = $manifest['chapters'];
@@ -355,11 +355,11 @@ class NetTruyen_Comics_REST_API
                     $latest_chapter = 'Chapter ' . $latest['name'];
                 }
 
-                // Get time ago
+
                 $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                 $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                // Get stats
+
                 $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                 if (empty($follow_count)) {
                     $follow_count = 0;
@@ -376,7 +376,7 @@ class NetTruyen_Comics_REST_API
                     $view_count = $view_stats->total_display_views;
                 }
 
-                // Badge logic
+
                 $is_hot = in_array($post_id, $hot_comic_ids);
                 $is_new = (current_time('timestamp') - strtotime($updated_at)) <= (7 * 24 * 60 * 60);
 
@@ -410,5 +410,5 @@ class NetTruyen_Comics_REST_API
     }
 }
 
-// ✅ Register routes on REST API init
+
 add_action('rest_api_init', array('NetTruyen_Comics_REST_API', 'register_routes'));
