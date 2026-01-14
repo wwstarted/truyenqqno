@@ -79,6 +79,23 @@ function toyota_enqueue_assets()
         );
     }
 
+    if (is_page_template('page-login.php')) {
+        wp_enqueue_style(
+            'toyota-login',
+            get_template_directory_uri() . '/css/auth-modals.css',
+            array('toyota-global'),
+            '1.0.0'
+        );
+
+        wp_enqueue_style(
+            'toyota-login',
+            get_template_directory_uri() . '/js/auth.js',
+            array(),
+            '1.0.0',
+            true
+        );
+    }
+
     // Swiper CSS
     wp_enqueue_style(
         'swiper',
@@ -116,7 +133,7 @@ function toyota_enqueue_assets()
     if (is_front_page()) {
         wp_enqueue_style(
             'toyota-front-page',
-            get_template_directory_uri() . '/css/front-page.css',
+            get_template_directory_uri() . '/css/front-page-v2.css',
             array('toyota-global'),
             '1.0.0'
         );
@@ -229,13 +246,32 @@ function toyota_enqueue_assets()
         );
     }
 
+    wp_enqueue_style('truyenqq-auth', get_template_directory_uri() . '/css/auth-pages.css');
+    wp_enqueue_script('truyenqq-auth', get_template_directory_uri() . '/js/auth-pages.js');
+
 }
 add_action('wp_enqueue_scripts', 'toyota_enqueue_assets');
+
+
+require_once get_template_directory() . '/inc/auth-db-migration.php';
+
+// OTP Manager
+require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
+
+// Auth Handler
+require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
+
+// AJAX Handlers with reCAPTCHA
+require_once get_template_directory() . '/inc/ajax-handlers-with-recaptcha.php';
 
 
 require_once get_template_directory() . '/inc/class-nettruyen-comics-rest-api.php';
 require_once get_template_directory() . '/inc/class-advanced-search-api.php';
 require_once get_template_directory() . '/inc/single-nettruyen-comics.php';
+
+// Include auth files
+require_once get_template_directory() . '/inc/auth-db-migration.php';
+// require_once get_template_directory() . '/inc/auth-ajax-handlers.php';
 
 /**
  * Enqueue Comics Listing Scripts
