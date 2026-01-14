@@ -100,7 +100,7 @@ function truyenqq_cleanup_expired_otps()
     }
 }
 
-// Schedule daily cleanup
+// Schedule daily cleanupa
 if (!wp_next_scheduled('truyenqq_cleanup_otps_hook')) {
     wp_schedule_event(time(), 'daily', 'truyenqq_cleanup_otps_hook');
 }

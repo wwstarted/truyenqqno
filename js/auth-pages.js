@@ -133,6 +133,15 @@
     const $message = $form.find(".form-message");
 
     // Validate reCAPTCHA
+    if (typeof grecaptcha === "undefined") {
+      showMessage(
+        $message,
+        "error",
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây."
+      );
+      return;
+    }
+
     const recaptchaResponse = grecaptcha.getResponse();
     if (!recaptchaResponse) {
       showMessage($message, "error", "Vui lòng xác nhận bạn không phải robot");
@@ -167,13 +176,19 @@
           }, 1000);
         } else {
           showMessage($message, "error", response.message);
-          grecaptcha.reset();
+          if (typeof grecaptcha !== "undefined") {
+            grecaptcha.reset();
+          }
         }
       },
-      error: function () {
+      error: function (xhr, status, error) {
         setLoadingState($btn, false);
+        console.error("AJAX Error:", status, error);
+        console.error("Response:", xhr.responseText);
         showMessage($message, "error", "Có lỗi xảy ra. Vui lòng thử lại.");
-        grecaptcha.reset();
+        if (typeof grecaptcha !== "undefined") {
+          grecaptcha.reset();
+        }
       },
     });
   }
@@ -187,6 +202,15 @@
     const $message = $form.find(".form-message");
 
     // Validate reCAPTCHA
+    if (typeof grecaptcha === "undefined") {
+      showMessage(
+        $message,
+        "error",
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây."
+      );
+      return;
+    }
+
     const recaptchaResponse = grecaptcha.getResponse();
     if (!recaptchaResponse) {
       showMessage($message, "error", "Vui lòng xác nhận bạn không phải robot");
@@ -244,13 +268,19 @@
           );
         } else {
           showMessage($message, "error", response.message);
-          grecaptcha.reset();
+          if (typeof grecaptcha !== "undefined") {
+            grecaptcha.reset();
+          }
         }
       },
-      error: function () {
+      error: function (xhr, status, error) {
         setLoadingState($btn, false);
+        console.error("AJAX Error:", status, error);
+        console.error("Response:", xhr.responseText);
         showMessage($message, "error", "Có lỗi xảy ra. Vui lòng thử lại.");
-        grecaptcha.reset();
+        if (typeof grecaptcha !== "undefined") {
+          grecaptcha.reset();
+        }
       },
     });
   }
@@ -312,6 +342,15 @@
     const $message = $form.find(".form-message");
 
     // Validate reCAPTCHA
+    if (typeof grecaptcha === "undefined") {
+      showMessage(
+        $message,
+        "error",
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây."
+      );
+      return;
+    }
+
     const recaptchaResponse = grecaptcha.getResponse();
     if (!recaptchaResponse) {
       showMessage($message, "error", "Vui lòng xác nhận bạn không phải robot");
@@ -351,13 +390,19 @@
           );
         } else {
           showMessage($message, "error", response.message);
-          grecaptcha.reset();
+          if (typeof grecaptcha !== "undefined") {
+            grecaptcha.reset();
+          }
         }
       },
-      error: function () {
+      error: function (xhr, status, error) {
         setLoadingState($btn, false);
+        console.error("AJAX Error:", status, error);
+        console.error("Response:", xhr.responseText);
         showMessage($message, "error", "Có lỗi xảy ra. Vui lòng thử lại.");
-        grecaptcha.reset();
+        if (typeof grecaptcha !== "undefined") {
+          grecaptcha.reset();
+        }
       },
     });
   }

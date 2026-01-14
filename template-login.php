@@ -76,9 +76,10 @@ get_header();
                         </div>
 
                         <!-- reCAPTCHA -->
-                        <div class="form-group">
+                        <div class="form-group recaptcha-container">
                             <div class="g-recaptcha"
-                                data-sitekey="<?php echo get_option('truyenqq_recaptcha_site_key'); ?>"></div>
+                                data-sitekey="<?php echo get_option('truyenqq_recaptcha_site_key'); ?>"
+                                data-size="normal" data-theme="light"></div>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-block">
@@ -97,19 +98,6 @@ get_header();
                         <p>Chưa có tài khoản?
                             <a href="<?php echo home_url('/dang-ky'); ?>">Đăng ký ngay</a>
                         </p>
-                    </div>
-
-                    <!-- Social Login (Optional) -->
-                    <div class="auth-divider">
-                        <span>Hoặc đăng nhập với</span>
-                    </div>
-                    <div class="social-login">
-                        <button class="btn-social btn-google">
-                            <i class="fa fa-google"></i> Google
-                        </button>
-                        <button class="btn-social btn-facebook">
-                            <i class="fa fa-facebook"></i> Facebook
-                        </button>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 /**
- * TruyenQQ Header JavaScript
- * Features: Dark Mode Toggle, Search Functionality, Responsive Menu
+ * TruyenQQ Header JavaScript - COMPLETE FIXED VERSION
+ * Features: Dark Mode, Search, Responsive Menu, User Authentication
  */
 
 (function () {
@@ -10,6 +10,9 @@
   const CONFIG = {
     searchAPI: TRUYENQQ_CONFIG.restUrl + "nettruyen/v1/search",
     genresAPI: TRUYENQQ_CONFIG.restUrl + "wp/v2/nettruyen_genre",
+    userInfoAPI: TRUYENQQ_CONFIG.restUrl + "nettruyen/v1/user/info",
+    notificationsAPI:
+      TRUYENQQ_CONFIG.restUrl + "nettruyen/v1/user/notifications",
     searchDebounceDelay: 500,
     maxSearchResults: 20,
     localStorageKey: "truyenqq_dark_mode",
@@ -36,38 +39,39 @@
 
     // Genres
     genresList: document.getElementById("genresList"),
+
+    // User Authentication
+    authButtons: document.getElementById("authButtons"),
+    userMenu: document.getElementById("userMenu"),
+    userAvatarImg: document.getElementById("userAvatarImg"),
+    userDropdownAvatar: document.getElementById("userDropdownAvatar"),
+    userName: document.getElementById("userName"),
+    userEmail: document.getElementById("userEmail"),
+    logoutBtn: document.getElementById("logoutBtn"),
+    notificationList: document.getElementById("notificationList"),
+    notificationBadge: document.getElementById("notificationBadge"),
   };
 
   // ==================== DARK MODE ====================
 
-  /**
-   * Initialize Dark Mode
-   */
   function initDarkMode() {
-    // Check localStorage for saved preference
     const savedMode = localStorage.getItem(CONFIG.localStorageKey);
 
     if (savedMode === "dark") {
       elements.body.classList.add("dark-mode");
     }
 
-    // Toggle on button click
     if (elements.darkModeToggle) {
       elements.darkModeToggle.addEventListener("click", toggleDarkMode);
     }
   }
 
-  /**
-   * Toggle Dark Mode
-   */
   function toggleDarkMode() {
     elements.body.classList.toggle("dark-mode");
 
-    // Save to localStorage
     const isDark = elements.body.classList.contains("dark-mode");
     localStorage.setItem(CONFIG.localStorageKey, isDark ? "dark" : "light");
 
-    // Optional: Add animation effect
     elements.darkModeToggle.style.transform = "rotate(360deg)";
     setTimeout(() => {
       elements.darkModeToggle.style.transform = "";
@@ -79,11 +83,7 @@
   let searchTimeout = null;
   let currentSearchController = null;
 
-  /**
-   * Initialize Search
-   */
   function initSearch() {
-    // Desktop search
     if (elements.searchInput) {
       elements.searchInput.addEventListener("input", handleDesktopSearch);
       elements.searchInput.addEventListener("focus", () => {
@@ -92,7 +92,6 @@
         }
       });
 
-      // Close on click outside
       document.addEventListener("click", (e) => {
         if (!e.target.closest(".search-form")) {
           elements.searchResults.classList.remove("active");
@@ -100,81 +99,60 @@
       });
     }
 
-    // Mobile search toggle
     if (elements.mobileSearchToggle) {
       elements.mobileSearchToggle.addEventListener("click", toggleMobileSearch);
     }
 
-    // Mobile search input
     if (elements.mobileSearchInput) {
       elements.mobileSearchInput.addEventListener("input", handleMobileSearch);
     }
   }
 
-  /**
-   * Handle Desktop Search
-   */
   function handleDesktopSearch(e) {
     const query = e.target.value.trim();
 
-    // Clear previous timeout
     if (searchTimeout) {
       clearTimeout(searchTimeout);
     }
 
-    // If empty, hide results
     if (!query) {
       elements.searchResults.classList.remove("active");
       return;
     }
 
-    // Show loading state
     elements.searchResults.innerHTML = getLoadingHTML();
     elements.searchResults.classList.add("active");
 
-    // Debounce search
     searchTimeout = setTimeout(() => {
       performSearch(query, elements.searchResults);
     }, CONFIG.searchDebounceDelay);
   }
 
-  /**
-   * Handle Mobile Search
-   */
   function handleMobileSearch(e) {
     const query = e.target.value.trim();
 
-    // Clear previous timeout
     if (searchTimeout) {
       clearTimeout(searchTimeout);
     }
 
-    // If empty, hide results
     if (!query) {
       elements.mobileSearchResults.classList.remove("active");
       return;
     }
 
-    // Show loading state
     elements.mobileSearchResults.innerHTML = getLoadingHTML();
     elements.mobileSearchResults.classList.add("active");
 
-    // Debounce search
     searchTimeout = setTimeout(() => {
       performSearch(query, elements.mobileSearchResults);
     }, CONFIG.searchDebounceDelay);
   }
 
-  /**
-   * Perform Search API Call
-   */
   async function performSearch(query, resultsContainer) {
-    // Cancel previous request
     if (currentSearchController) {
       currentSearchController.abort();
     }
 
-    // Create new controller for this request
     currentSearchController = new AbortController();
 
     try {
@@ -189,7 +167,6 @@
 
       const results = await response.json();
 
-      // Display results
       if (results.length === 0) {
         resultsContainer.innerHTML = getNoResultsHTML();
       } else {
@@ -197,7 +174,6 @@
       }
     } catch (error) {
       if (error.name === "AbortError") {
-        // Request was cancelled, ignore
         return;
       }
 
@@ -206,19 +182,14 @@
     }
   }
 
-  /**
-   * Toggle Mobile Search Expand
-   */
   function toggleMobileSearch() {
     const isActive = elements.mobileSearchExpand.classList.toggle("active");
 
     if (isActive) {
-      // Focus input after animation
       setTimeout(() => {
         elements.mobileSearchInput.focus();
       }, 300);
     } else {
-      // Clear search
       elements.mobileSearchInput.value = "";
       elements.mobileSearchResults.classList.remove("active");
       elements.mobileSearchResults.innerHTML = "";
@@ -227,45 +198,33 @@
 
   // ==================== HTML TEMPLATES ====================
 
-  /**
-   * Get Loading HTML
-   */
   function getLoadingHTML() {
     return `
-            <div class="search-loading">
-                <i class="fa fa-spinner"></i>
-                <p>Đang tìm kiếm...</p>
-            </div>
-        `;
+      <div class="search-loading">
+        <i class="fa fa-spinner fa-spin"></i>
+        <p>Đang tìm kiếm...</p>
+      </div>
+    `;
   }
 
-  /**
-   * Get No Results HTML
-   */
   function getNoResultsHTML() {
     return `
-            <div class="search-no-results">
-                <i class="fa fa-search"></i>
-                <p>Không tìm thấy kết quả</p>
-            </div>
-        `;
+      <div class="search-no-results">
+        <i class="fa fa-search"></i>
+        <p>Không tìm thấy kết quả</p>
+      </div>
+    `;
   }
 
-  /**
-   * Get Error HTML
-   */
   function getErrorHTML() {
     return `
-            <div class="search-no-results">
-                <i class="fa fa-exclamation-triangle"></i>
-                <p>Có lỗi xảy ra, vui lòng thử lại</p>
-            </div>
-        `;
+      <div class="search-no-results">
+        <i class="fa fa-exclamation-triangle"></i>
+        <p>Có lỗi xảy ra, vui lòng thử lại</p>
+      </div>
+    `;
   }
 
-  /**
-   * Get Results HTML
-   */
   function getResultsHTML(results) {
     const limitedResults = results.slice(0, CONFIG.maxSearchResults);
 
@@ -277,23 +236,23 @@
         const chapter = item.latest_chapter || "Đang cập nhật";
 
         return `
-                <a href="${item.link}" class="search-result-item">
-                    <div class="search-result-avatar">
-                        <img src="${thumbnail}" 
-                             alt="${item.title}"
-                             onerror="this.src='https://via.placeholder.com/60x80?text=No+Image'">
-                    </div>
-                    <div class="search-result-info">
-                        <div class="search-result-title">${item.title}</div>
-                        ${
-                          altTitle
-                            ? `<div class="search-result-alt-title">${altTitle}</div>`
-                            : ""
-                        }
-                        <div class="search-result-chapter">${chapter}</div>
-                    </div>
-                </a>
-            `;
+          <a href="${item.link}" class="search-result-item">
+            <div class="search-result-avatar">
+              <img src="${thumbnail}" 
+                   alt="${item.title}"
+                   onerror="this.src='https://via.placeholder.com/60x80?text=No+Image'">
+            </div>
+            <div class="search-result-info">
+              <div class="search-result-title">${item.title}</div>
+              ${
+                altTitle
+                  ? `<div class="search-result-alt-title">${altTitle}</div>`
+                  : ""
+              }
+              <div class="search-result-chapter">${chapter}</div>
+            </div>
+          </a>
+        `;
       })
       .join("");
 
@@ -302,15 +261,11 @@
 
   // ==================== MOBILE MENU ====================
 
-  /**
-   * Initialize Mobile Menu
-   */
   function initMobileMenu() {
     if (elements.mobileMenuToggle) {
       elements.mobileMenuToggle.addEventListener("click", toggleMobileMenu);
     }
 
-    // Handle dropdown toggles on mobile
     const dropdownToggles = document.querySelectorAll(
       ".has-dropdown > .dropdown-toggle"
     );
@@ -319,13 +274,9 @@
     });
   }
 
-  /**
-   * Toggle Mobile Menu
-   */
   function toggleMobileMenu() {
     const isActive = elements.mainMenu.classList.toggle("active");
 
-    // Toggle icon
     const icon = elements.mobileMenuToggle.querySelector("i");
     if (icon) {
       if (isActive) {
@@ -335,7 +286,6 @@
       }
     }
 
-    // Close all dropdowns when closing menu
     if (!isActive) {
       const activeDropdowns = document.querySelectorAll(".has-dropdown.active");
       activeDropdowns.forEach((dropdown) => {
@@ -344,19 +294,13 @@
     }
   }
 
-  /**
-   * Handle Mobile Dropdown (Accordion style)
-   */
   function handleMobileDropdown(e) {
-    // Only apply accordion on mobile/tablet
     if (window.innerWidth > 1024) return;
 
     e.preventDefault();
 
     const parentLi = e.currentTarget.closest(".has-dropdown");
-    const isActive = parentLi.classList.contains("active");
 
-    // Close other dropdowns (accordion behavior)
     const allDropdowns = document.querySelectorAll(".has-dropdown");
     allDropdowns.forEach((dropdown) => {
       if (dropdown !== parentLi) {
@@ -364,55 +308,11 @@
       }
     });
 
-    // Toggle current dropdown
     parentLi.classList.toggle("active");
-  }
-
-  // ==================== SCROLL BEHAVIOR ====================
-
-  /**
-   * Handle Header Scroll
-   */
-  let lastScroll = 0;
-
-  function handleScroll() {
-    const currentScroll = window.pageYOffset;
-    const header = document.querySelector(".site-header");
-
-    if (currentScroll > lastScroll && currentScroll > 100) {
-      // Scrolling down
-      header.style.transform = "translateY(-100%)";
-    } else {
-      // Scrolling up
-      header.style.transform = "translateY(0)";
-    }
-
-    lastScroll = currentScroll;
-  }
-
-  /**
-   * Initialize Scroll Behavior
-   */
-  function initScrollBehavior() {
-    let ticking = false;
-
-    window.addEventListener("scroll", () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-
-        ticking = true;
-      }
-    });
   }
 
   // ==================== GENRES LOADER ====================
 
-  /**
-   * Load Genres from API
-   */
   async function loadGenres() {
     if (!elements.genresList) return;
 
@@ -425,50 +325,278 @@
 
       const genres = await response.json();
 
-      // Sort genres by name
       genres.sort((a, b) => a.name.localeCompare(b.name, "vi"));
 
-      // Generate HTML
       const genresHTML = genres
         .map((genre) => {
           return `<a href="${genre.link}" title="${genre.name}">${genre.name}</a>`;
         })
         .join("");
 
-      // Update DOM
       elements.genresList.innerHTML = genresHTML;
     } catch (error) {
       console.error("Error loading genres:", error);
       elements.genresList.innerHTML = `
-                <div class="loading-genres">
-                    <i class="fa fa-exclamation-triangle"></i> Không thể tải thể loại
-                </div>
-            `;
+        <div class="loading-genres">
+          <i class="fa fa-exclamation-triangle"></i> Không thể tải thể loại
+        </div>
+      `;
+    }
+  }
+
+  // ==================== USER AUTHENTICATION ====================
+
+  async function checkUserLoginStatus() {
+    if (!elements.authButtons || !elements.userMenu) return;
+
+    // Kiểm tra xem PHP đã cho hiển thị menu chưa
+    const isAlreadyLoggedIn =
+      elements.userMenu.style.display === "flex" ||
+      window.getComputedStyle(elements.userMenu).display === "flex";
+
+    try {
+      const response = await fetch(CONFIG.userInfoAPI, {
+        method: "GET",
+        headers: {
+          "X-WP-Nonce": TRUYENQQ_CONFIG.nonce, // Quan trọng: Phải có nonce từ bước 1
+          "Content-Type": "application/json",
+        },
+        credentials: "same-origin",
+      });
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+
+      if (data.is_logged_in && data.user) {
+        // Cập nhật thông tin mượt mà
+        updateUserInfo(data.user);
+        loadUserNotifications();
+
+        // Đảm bảo hiển thị đúng (trong trường hợp PHP chưa kịp render)
+        elements.authButtons.style.setProperty("display", "none", "important");
+        elements.userMenu.style.display = "flex";
+      } else {
+        // CHỈ ẩn menu nếu thực sự không có session (User đã thoát)
+        if (isAlreadyLoggedIn) {
+          elements.authButtons.style.display = "flex";
+          elements.userMenu.style.setProperty("display", "none", "important");
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi xác thực API:", error);
+      // Nếu lỗi mạng, giữ nguyên trạng thái hiện tại, không nhảy menu
+    }
+  }
+
+  function updateUserInfo(user) {
+    if (elements.userAvatarImg) {
+      elements.userAvatarImg.src = user.avatar;
+      elements.userAvatarImg.alt = user.display_name;
+    }
+
+    if (elements.userDropdownAvatar) {
+      elements.userDropdownAvatar.src = user.avatar;
+      elements.userDropdownAvatar.alt = user.display_name;
+    }
+
+    if (elements.userName) {
+      elements.userName.textContent = user.display_name || user.username;
+    }
+
+    if (elements.userEmail) {
+      elements.userEmail.textContent = user.email;
+    }
+
+    if (elements.logoutBtn && user.links && user.links.logout) {
+      elements.logoutBtn.href = user.links.logout;
+    }
+  }
+
+  async function loadUserNotifications() {
+    if (!elements.notificationList || !elements.notificationBadge) {
+      return;
+    }
+
+    try {
+      const response = await fetch(CONFIG.notificationsAPI);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch notifications");
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.notifications && data.notifications.length > 0) {
+        displayNotifications(data.notifications);
+
+        if (data.unread_count > 0) {
+          elements.notificationBadge.textContent = data.unread_count;
+          elements.notificationBadge.style.display = "block";
+        } else {
+          elements.notificationBadge.style.display = "none";
+        }
+      } else {
+        elements.notificationList.innerHTML =
+          '<li class="no-notification">Không có thông báo nào!</li>';
+        elements.notificationBadge.style.display = "none";
+      }
+    } catch (error) {
+      console.error("Error loading notifications:", error);
+      elements.notificationList.innerHTML =
+        '<li class="no-notification">Không thể tải thông báo</li>';
+    }
+  }
+
+  function displayNotifications(notifications) {
+    const notificationsHTML = notifications
+      .map((notification) => {
+        const unreadClass = notification.is_read ? "" : "unread";
+        return `
+          <li class="${unreadClass}">
+            <a href="${notification.link}" class="notification-item">
+              <div class="notification-title">${notification.title}</div>
+              <div class="notification-time">${notification.time}</div>
+            </a>
+          </li>
+        `;
+      })
+      .join("");
+
+    elements.notificationList.innerHTML = notificationsHTML;
+  }
+
+  function handleLogout(e) {
+    e.preventDefault();
+
+    if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+      window.location.href = elements.logoutBtn.href;
+    }
+
+    // if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+    //   // Thay vì dùng href, ta có thể dùng trực tiếp link logout từ config hoặc ép redirect
+    //   const logoutUrl = elements.logoutBtn.href;
+
+    //   // Nếu trong link chưa có redirect_to, ta có thể nối thêm hoặc dùng filter PHP hỗ trợ
+    //   window.location.href = logoutUrl;
+    // }
+  }
+
+  function initUserMenu() {
+    checkUserLoginStatus();
+
+    if (elements.logoutBtn) {
+      elements.logoutBtn.addEventListener("click", handleLogout);
+    }
+
+    // Mobile dropdown handling
+    document.addEventListener("click", function (e) {
+      if (window.innerWidth > 1024) return;
+
+      const notificationBell = document.querySelector(".notification-bell");
+      const userProfile = document.querySelector(".user-profile");
+      const notificationDropdown = document.getElementById(
+        "notificationDropdown"
+      );
+      const userDropdown = document.getElementById("userDropdown");
+
+      // Close both dropdowns when clicking outside
+      if (
+        notificationBell &&
+        !notificationBell.contains(e.target) &&
+        notificationDropdown
+      ) {
+        notificationDropdown.style.opacity = "0";
+        notificationDropdown.style.visibility = "hidden";
+      }
+
+      if (userProfile && !userProfile.contains(e.target) && userDropdown) {
+        userDropdown.style.opacity = "0";
+        userDropdown.style.visibility = "hidden";
+      }
+    });
+
+    // Toggle dropdowns on mobile
+    const notificationIcon = document.querySelector(".icon-notification");
+    const userAvatar = document.querySelector(".user-avatar");
+
+    if (notificationIcon) {
+      notificationIcon.addEventListener("click", function (e) {
+        if (window.innerWidth > 1024) return;
+
+        e.stopPropagation();
+        const dropdown = document.getElementById("notificationDropdown");
+        const userDropdown = document.getElementById("userDropdown");
+
+        if (!dropdown) return;
+
+        const isVisible = dropdown.style.opacity === "1";
+
+        // Close user dropdown
+        if (userDropdown) {
+          userDropdown.style.opacity = "0";
+          userDropdown.style.visibility = "hidden";
+        }
+
+        // Toggle notification dropdown
+        if (isVisible) {
+          dropdown.style.opacity = "0";
+          dropdown.style.visibility = "hidden";
+        } else {
+          dropdown.style.opacity = "1";
+          dropdown.style.visibility = "visible";
+        }
+      });
+    }
+
+    if (userAvatar) {
+      userAvatar.addEventListener("click", function (e) {
+        if (window.innerWidth > 1024) return;
+
+        e.stopPropagation();
+        const dropdown = document.getElementById("userDropdown");
+        const notificationDropdown = document.getElementById(
+          "notificationDropdown"
+        );
+
+        if (!dropdown) return;
+
+        const isVisible = dropdown.style.opacity === "1";
+
+        // Close notification dropdown
+        if (notificationDropdown) {
+          notificationDropdown.style.opacity = "0";
+          notificationDropdown.style.visibility = "hidden";
+        }
+
+        // Toggle user dropdown
+        if (isVisible) {
+          dropdown.style.opacity = "0";
+          dropdown.style.visibility = "hidden";
+        } else {
+          dropdown.style.opacity = "1";
+          dropdown.style.visibility = "visible";
+        }
+      });
     }
   }
 
   // ==================== INITIALIZATION ====================
 
-  /**
-   * Initialize All Features
-   */
   function init() {
-    // Wait for DOM to be ready
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", init);
       return;
     }
 
-    // Initialize features
     initDarkMode();
     initSearch();
     initMobileMenu();
+    initUserMenu();
     loadGenres();
-    // initScrollBehavior(); // Optional: Uncomment if you want auto-hide header on scroll
 
     console.log("TruyenQQ Header initialized successfully");
   }
 
-  // Start initialization
   init();
 })();

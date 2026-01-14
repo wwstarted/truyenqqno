@@ -1,10 +1,10 @@
 <?php
 /**
- * OTP Manager Class
+ * OTP Manager Class - FIXED TIMEZONE ISSUE
  * Xử lý generate, send, verify OTP codes
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.2 - FIXED TIMEZONE
  */
 
 if (!defined('ABSPATH')) {
@@ -16,7 +16,7 @@ class TruyenQQ_OTP_Manager
     /**
      * OTP expiration time (phút)
      */
-    const OTP_EXPIRY_MINUTES = 10;
+    const OTP_EXPIRY_MINUTES = 30;
 
     /**
      * Maximum OTP requests per hour
@@ -46,6 +46,7 @@ class TruyenQQ_OTP_Manager
 
         // Validate email
         if (!is_email($email)) {
+            error_log('OTP SEND ERROR: Invalid email - ' . $email);
             return array(
                 'success' => false,
                 'message' => 'Email không hợp lệ'
@@ -54,6 +55,7 @@ class TruyenQQ_OTP_Manager
 
         // Check rate limiting
         if (!self::check_rate_limit($email)) {
+            error_log('OTP SEND ERROR: Rate limit exceeded for ' . $email);
             return array(
                 'success' => false,
                 'message' => 'Bạn đã gửi quá nhiều OTP. Vui lòng thử lại sau 1 giờ.'
@@ -62,8 +64,18 @@ class TruyenQQ_OTP_Manager
 
         // Generate OTP
         $otp_code = self::generate_otp();
-        $expires_at = date('Y-m-d H:i:s', strtotime('+' . self::OTP_EXPIRY_MINUTES . ' minutes'));
+
+        // FIX: Dùng gmdate thay vì date để lưu theo UTC
+        $expires_at = gmdate('Y-m-d H:i:s', strtotime('+' . self::OTP_EXPIRY_MINUTES . ' minutes'));
+        $created_at = gmdate('Y-m-d H:i:s');
         $user_ip = self::get_user_ip();
+
+        error_log('=== OTP SEND DEBUG ===');
+        error_log('Email: ' . $email);
+        error_log('OTP Code: ' . $otp_code);
+        error_log('Purpose: ' . $purpose);
+        error_log('Expires At (UTC): ' . $expires_at);
+        error_log('Created At (UTC): ' . $created_at);
 
         // Save to database
         $otp_table = $wpdb->prefix . 'nettruyen_otp_codes';
@@ -74,13 +86,14 @@ class TruyenQQ_OTP_Manager
                 'otp_code' => $otp_code,
                 'purpose' => $purpose,
                 'expires_at' => $expires_at,
-                'created_at' => current_time('mysql'),
+                'created_at' => $created_at,
                 'ip_address' => $user_ip
             ),
             array('%s', '%s', '%s', '%s', '%s', '%s')
         );
 
         if (!$inserted) {
+            error_log('OTP SEND ERROR: Database insert failed - ' . $wpdb->last_error);
             return array(
                 'success' => false,
                 'message' => 'Lỗi database. Vui lòng thử lại.'
@@ -88,16 +101,20 @@ class TruyenQQ_OTP_Manager
         }
 
         $otp_id = $wpdb->insert_id;
+        error_log('OTP saved to database with ID: ' . $otp_id);
 
         // Send email
         $email_sent = self::send_otp_email($email, $otp_code, $purpose);
 
         if (!$email_sent) {
+            error_log('OTP SEND ERROR: Email sending failed');
             return array(
                 'success' => false,
                 'message' => 'Không thể gửi email. Vui lòng kiểm tra lại địa chỉ email.'
             );
         }
+
+        error_log('OTP email sent successfully');
 
         return array(
             'success' => true,
@@ -108,7 +125,7 @@ class TruyenQQ_OTP_Manager
     }
 
     /**
-     * Verify OTP code
+     * Verify OTP code - FIXED TIMEZONE VERSION
      * 
      * @param string $email Email address
      * @param string $otp_code OTP code to verify
@@ -119,7 +136,14 @@ class TruyenQQ_OTP_Manager
     {
         global $wpdb;
 
+        error_log('=== OTP VERIFY DEBUG ===');
+        error_log('Email: ' . $email);
+        error_log('OTP Code: ' . $otp_code);
+        error_log('Purpose: ' . $purpose);
+        error_log('Current Time (UTC): ' . gmdate('Y-m-d H:i:s'));
+
         if (empty($email) || empty($otp_code)) {
+            error_log('VERIFY ERROR: Empty email or OTP code');
             return array(
                 'success' => false,
                 'message' => 'Vui lòng nhập đầy đủ thông tin'
@@ -128,36 +152,101 @@ class TruyenQQ_OTP_Manager
 
         $otp_table = $wpdb->prefix . 'nettruyen_otp_codes';
 
-        // Find valid OTP
-        $otp = $wpdb->get_row($wpdb->prepare(
+        // DEBUG: Kiểm tra tất cả OTP của email này
+        $all_otps = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, email, otp_code, purpose, expires_at, verified_at, created_at 
+            FROM {$otp_table} 
+            WHERE email = %s 
+            ORDER BY created_at DESC 
+            LIMIT 5",
+            $email
+        ));
+        error_log('All OTPs for this email:');
+        error_log(print_r($all_otps, true));
+
+        // FIX: Dùng UTC_TIMESTAMP() thay vì NOW()
+        $sql = $wpdb->prepare(
             "SELECT * FROM {$otp_table} 
             WHERE email = %s 
             AND otp_code = %s 
             AND purpose = %s 
-            AND expires_at > NOW()
+            AND expires_at > UTC_TIMESTAMP()
             AND verified_at IS NULL
             ORDER BY created_at DESC
             LIMIT 1",
             $email,
             $otp_code,
             $purpose
-        ));
+        );
+
+        error_log('SQL Query: ' . $sql);
+
+        $otp = $wpdb->get_row($sql);
+
+        error_log('Query Result:');
+        error_log(print_r($otp, true));
+
+        if ($wpdb->last_error) {
+            error_log('SQL Error: ' . $wpdb->last_error);
+        }
 
         if (!$otp) {
+            error_log('VERIFY ERROR: No valid OTP found');
+
+            // Kiểm tra các trường hợp cụ thể
+            $check_otp_code = $wpdb->get_row($wpdb->prepare(
+                "SELECT *, 
+                UTC_TIMESTAMP() as current_utc,
+                CASE 
+                    WHEN expires_at <= UTC_TIMESTAMP() THEN 'EXPIRED'
+                    WHEN verified_at IS NOT NULL THEN 'ALREADY_USED'
+                    WHEN purpose != %s THEN 'WRONG_PURPOSE'
+                    ELSE 'UNKNOWN'
+                END as error_reason
+                FROM {$otp_table} 
+                WHERE email = %s 
+                AND otp_code = %s 
+                ORDER BY created_at DESC 
+                LIMIT 1",
+                $purpose,
+                $email,
+                $otp_code
+            ));
+
+            if (!$check_otp_code) {
+                error_log('Reason: OTP code not found in database');
+            } else {
+                error_log('OTP found but invalid. Reason: ' . $check_otp_code->error_reason);
+                error_log('Current UTC: ' . $check_otp_code->current_utc);
+                error_log('Expires At: ' . $check_otp_code->expires_at);
+                error_log('Purpose: ' . $check_otp_code->purpose . ' (Expected: ' . $purpose . ')');
+                error_log('Verified At: ' . ($check_otp_code->verified_at ?? 'NULL'));
+            }
+
             return array(
                 'success' => false,
                 'message' => 'Mã OTP không đúng hoặc đã hết hạn'
             );
         }
 
-        // Mark as verified
-        $wpdb->update(
+        // Mark as verified - FIX: Dùng gmdate
+        $updated = $wpdb->update(
             $otp_table,
-            array('verified_at' => current_time('mysql')),
+            array('verified_at' => gmdate('Y-m-d H:i:s')),
             array('id' => $otp->id),
             array('%s'),
             array('%d')
         );
+
+        if ($updated === false) {
+            error_log('VERIFY ERROR: Failed to update verified_at - ' . $wpdb->last_error);
+            return array(
+                'success' => false,
+                'message' => 'Lỗi cập nhật database'
+            );
+        }
+
+        error_log('OTP verified successfully! ID: ' . $otp->id);
 
         return array(
             'success' => true,
@@ -178,12 +267,15 @@ class TruyenQQ_OTP_Manager
 
         $otp_table = $wpdb->prefix . 'nettruyen_otp_codes';
 
+        // FIX: Dùng UTC_TIMESTAMP()
         $count = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$otp_table} 
             WHERE email = %s 
-            AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)",
+            AND created_at > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR)",
             $email
         ));
+
+        error_log('Rate limit check for ' . $email . ': ' . $count . '/' . self::MAX_OTP_PER_HOUR);
 
         return ($count < self::MAX_OTP_PER_HOUR);
     }
@@ -259,7 +351,11 @@ class TruyenQQ_OTP_Manager
         );
 
         // Send email
-        return wp_mail($email, $subject, $message, $headers);
+        $sent = wp_mail($email, $subject, $message, $headers);
+
+        error_log('Email send result: ' . ($sent ? 'SUCCESS' : 'FAILED'));
+
+        return $sent;
     }
 
     /**
@@ -304,7 +400,7 @@ class TruyenQQ_OTP_Manager
         global $wpdb;
         $otp_table = $wpdb->prefix . 'nettruyen_otp_codes';
 
-        $wpdb->delete(
+        $deleted = $wpdb->delete(
             $otp_table,
             array(
                 'email' => $email,
@@ -312,5 +408,7 @@ class TruyenQQ_OTP_Manager
             ),
             array('%s', '%s')
         );
+
+        error_log('Deleted ' . $deleted . ' old OTP codes for ' . $email);
     }
 }

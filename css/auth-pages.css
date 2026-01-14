@@ -806,9 +806,44 @@ body.dark-mode .btn-social {
 }
 
 /* ==================== RECAPTCHA ==================== */
-.g-recaptcha {
+.recaptcha-container {
   display: flex;
   justify-content: center;
+  margin: 20px 0;
+}
+
+.g-recaptcha {
+  display: inline-block;
+}
+
+/* Force reCAPTCHA to be responsive */
+@media (max-width: 767px) {
+  .recaptcha-container {
+    overflow: hidden;
+  }
+
+  .g-recaptcha {
+    transform: scale(0.9);
+    transform-origin: 0 0;
+    -webkit-transform: scale(0.9);
+    -webkit-transform-origin: 0 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .g-recaptcha {
+    transform: scale(0.77);
+    transform-origin: 0 0;
+    -webkit-transform: scale(0.77);
+    -webkit-transform-origin: 0 0;
+  }
+}
+
+/* Dark mode support for reCAPTCHA */
+body.dark-mode .recaptcha-container {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 8px;
 }
 
 /* ==================== RESPONSIVE ==================== */

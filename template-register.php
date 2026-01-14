@@ -116,9 +116,10 @@ get_header();
                             </div>
 
                             <!-- reCAPTCHA -->
-                            <div class="form-group">
+                            <div class="form-group recaptcha-container">
                                 <div class="g-recaptcha"
-                                    data-sitekey="<?php echo get_option('truyenqq_recaptcha_site_key'); ?>"></div>
+                                    data-sitekey="<?php echo get_option('truyenqq_recaptcha_site_key'); ?>"
+                                    data-size="normal" data-theme="light"></div>
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-block">
@@ -189,5 +190,4 @@ get_header();
         </div>
     </div>
 </div>
-
 <?php get_footer(); ?>

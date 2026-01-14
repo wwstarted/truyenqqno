@@ -208,6 +208,11 @@ function toyota_enqueue_assets()
         true
     );
 
+    wp_localize_script('toyota-header', 'TRUYENQQ_CONFIG', array(
+        'restUrl' => esc_url_raw(rest_url()),
+        'nonce' => wp_create_nonce('wp_rest'),
+    ));
+
     // wp_enqueue_script(
     //     'toyota-view-trackers',
     //     get_template_directory_uri() . '/js/nettruyen-view-tracker.js',
@@ -216,9 +221,9 @@ function toyota_enqueue_assets()
     //     true
     // );
 
-    wp_localize_script('toyota-header', 'TRUYENQQ_CONFIG', [
-        'restUrl' => get_rest_url(),
-    ]);
+    // wp_localize_script('toyota-header', 'TRUYENQQ_CONFIG', [
+    //     'restUrl' => get_rest_url(),
+    // ]);
 
     wp_enqueue_script(
         'toyota-footer',
@@ -252,8 +257,15 @@ function toyota_enqueue_assets()
 }
 add_action('wp_enqueue_scripts', 'toyota_enqueue_assets');
 
+add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $user) {
+    // Trả về URL trang đăng nhập của bạn
+    return home_url('/dang-nhap');
+}, 10, 3);
+
 
 require_once get_template_directory() . '/inc/auth-db-migration.php';
+
+require_once get_template_directory() . '/inc/api-user-auth.php';
 
 // OTP Manager
 require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';

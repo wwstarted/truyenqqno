@@ -1,7 +1,20 @@
 <?php
 /**
  * Header Template - TruyenQQ
+ * Updated with User Menu Logic
  */
+
+// Lấy thông tin user hiện tại để hiển thị ngay lập tức
+$is_user_logged_in = is_user_logged_in();
+$current_user = wp_get_current_user();
+$display_name = $is_user_logged_in ? $current_user->display_name : 'Khách';
+$user_email = $is_user_logged_in ? $current_user->user_email : '';
+
+// Logic lấy Avatar (giống với file api-user-auth.php của bạn)
+$avatar_url = get_avatar_url($current_user->ID, array('size' => 100));
+if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar') !== false) {
+    $avatar_url = 'https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
+}
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -9,7 +22,6 @@
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Font Awesome 4.7 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <?php wp_head(); ?>
 </head>
@@ -17,10 +29,8 @@
 <body <?php body_class(); ?>>
 
     <header class="site-header">
-        <!-- Top Header -->
         <div class="header-top">
             <div class="container">
-                <!-- Logo -->
                 <div class="header-logo">
                     <a href="<?php echo home_url('/'); ?>" title="Truyện tranh online">
                         <img src="https://st.truyenqqno.com/template/frontend/images/logo.png" alt="TruyenQQ"
@@ -30,41 +40,99 @@
                     </a>
                 </div>
 
-                <!-- Dark Mode Toggle (Right of Logo) -->
                 <button class="dark-mode-toggle" id="darkModeToggle" title="Chế độ tối/sáng">
                     <i class="fa fa-lightbulb-o"></i>
                 </button>
 
-                <!-- Right Actions -->
                 <div class="header-actions">
-                    <!-- Search Icon (Mobile/Tablet) -->
                     <button class="search-icon-btn mobile-tablet-only" id="mobileSearchToggle">
                         <i class="fa fa-search"></i>
                     </button>
 
-                    <!-- Auth Buttons -->
-                    <div class="auth-buttons">
-                        <button class="btn-register">Đăng ký</button>
-                        <button class="btn-login">Đăng nhập</button>
+                    <div class="auth-buttons" id="authButtons"
+                        style="<?php echo $is_user_logged_in ? 'display: none;' : 'display: flex;'; ?>">
+                        <button class="btn-register"
+                            onclick="window.location.href='<?php echo home_url('/dang-ky'); ?>'">
+                            Đăng ký
+                        </button>
+                        <button class="btn-login"
+                            onclick="window.location.href='<?php echo home_url('/dang-nhap'); ?>'">
+                            Đăng nhập
+                        </button>
+                    </div>
+
+                    <div class="user-menu" id="userMenu"
+                        style="<?php echo $is_user_logged_in ? 'display: flex;' : 'display: none;'; ?>">
+                        <ul class="user-menu-list">
+                            <li class="notification-bell">
+                                <div class="icon-notification">
+                                    <i class="fa fa-bell" aria-hidden="true"></i>
+                                    <span class="notification-badge" id="notificationBadge"
+                                        style="display: none;">0</span>
+                                </div>
+                                <div class="notification-dropdown" id="notificationDropdown">
+                                    <div class="notification-header">
+                                        <h4>Thông báo</h4>
+                                    </div>
+                                    <ul class="notification-list" id="notificationList">
+                                        <li class="no-notification">Không có thông báo nào!</li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="user-profile">
+                                <div class="user-avatar" id="userAvatar">
+                                    <img src="<?php echo esc_url($avatar_url); ?>" alt="User Avatar" id="userAvatarImg">
+                                </div>
+                                <div class="user-dropdown" id="userDropdown">
+                                    <div class="user-info">
+                                        <img src="<?php echo esc_url($avatar_url); ?>" alt="User Avatar"
+                                            id="userDropdownAvatar">
+                                        <div class="user-details">
+                                            <div class="user-name" id="userName"><?php echo esc_html($display_name); ?>
+                                            </div>
+                                            <div class="user-email" id="userEmail"><?php echo esc_html($user_email); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="user-menu-links">
+                                        <li>
+                                            <a href="<?php echo home_url('/truyen-dang-theo-doi'); ?>">
+                                                <i class="fa fa-heart"></i> Danh sách theo dõi
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="<?php echo home_url('/lich-su'); ?>">
+                                                <i class="fa fa-history"></i> Lịch sử đọc truyện
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="<?php echo home_url('/quan-ly-tai-khoan'); ?>">
+                                                <i class="fa fa-cog"></i> Cài đặt thông tin
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="<?php echo wp_logout_url(home_url('/dang-nhap')); ?>">
+                                                <i class="fa fa-sign-out"></i> Đăng xuất
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Search Form (Desktop) -->
                 <div class="search-form desktop-only">
                     <input type="text" class="search-input" id="searchInput" placeholder="Bạn muốn tìm truyện gì">
                     <button class="search-submit">
                         <i class="fa fa-search"></i>
                     </button>
-
-                    <!-- Search Dropdown Results -->
-                    <div class="search-results" id="searchResults">
-                        <!-- Results will be populated by JS -->
-                    </div>
+                    <div class="search-results" id="searchResults"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile/Tablet Search Expandable -->
         <div class="search-mobile-expand" id="mobileSearchExpand">
             <div class="container">
                 <input type="text" class="search-input" id="mobileSearchInput" placeholder="Bạn muốn tìm truyện gì">
@@ -72,41 +140,29 @@
                     <i class="fa fa-search"></i>
                 </button>
             </div>
-
-            <!-- Search Results Fullscreen (Mobile/Tablet) -->
-            <div class="search-results-fullscreen" id="mobileSearchResults">
-                <!-- Results will be populated by JS -->
-            </div>
+            <div class="search-results-fullscreen" id="mobileSearchResults"></div>
         </div>
-        <!-- Bottom Navigation -->
+
         <div class="header-bottom">
             <div class="container">
                 <nav class="main-navigation">
                     <ul class="nav-menu" id="mainMenu">
                         <li>
                             <a href="<?php echo home_url('/'); ?>">Trang chủ</a>
-                            <!-- Mobile Menu Toggle - Inside first li -->
                             <button class="mobile-menu-toggle" id="mobileMenuToggle">
                                 <i class="fa fa-bars"></i>
                             </button>
                         </li>
                         <li class="has-dropdown">
-                            <a href="#" class="dropdown-toggle">
-                                Thể Loại <i class="fa fa-caret-down"></i>
-                            </a>
+                            <a href="#" class="dropdown-toggle">Thể Loại <i class="fa fa-caret-down"></i></a>
                             <div class="mega-menu">
                                 <div class="mega-menu-content" id="genresList">
-                                    <!-- Genres will be loaded dynamically -->
-                                    <div class="loading-genres">
-                                        <i class="fa fa-spinner fa-spin"></i> Đang tải...
-                                    </div>
+                                    <div class="loading-genres"><i class="fa fa-spinner fa-spin"></i> Đang tải...</div>
                                 </div>
                             </div>
                         </li>
                         <li class="has-dropdown">
-                            <a href="#" class="dropdown-toggle">
-                                Xếp Hạng <i class="fa fa-caret-down"></i>
-                            </a>
+                            <a href="#" class="dropdown-toggle">Xếp Hạng <i class="fa fa-caret-down"></i></a>
                             <div class="mega-menu">
                                 <div class="mega-menu-content">
                                     <a href="<?php echo home_url('/top-ngay'); ?>">Top Ngày</a>
@@ -131,10 +187,8 @@
                 </nav>
             </div>
         </div>
-
-
-
     </header>
+
     <?php wp_footer(); ?>
 </body>
 

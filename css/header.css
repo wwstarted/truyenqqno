@@ -872,3 +872,578 @@ body.dark-mode .search-icon-btn {
     font-size: 11px;
   }
 }
+
+/* ===================== add css for user info ==================================== */
+
+/* ==================== USER MENU STYLES - IMPROVED ==================== */
+
+/* User Menu Container */
+.user-menu {
+  display: flex;
+  align-items: center;
+}
+
+.user-menu-list {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==================== NOTIFICATION BELL ==================== */
+
+.notification-bell {
+  position: relative;
+}
+
+.icon-notification {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+body.dark-mode .icon-notification {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.icon-notification:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.icon-notification i {
+  font-size: 18px;
+  color: var(--text-light);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff4757;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Notification Dropdown */
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 15px);
+  right: 0;
+  width: 320px;
+  max-height: 400px;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1005;
+  overflow: hidden;
+}
+
+body.dark-mode .notification-dropdown {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+}
+
+.notification-bell:hover .notification-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.notification-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+}
+
+body.dark-mode .notification-header {
+  background-color: #0f0f0f;
+  border-bottom-color: #333;
+}
+
+.notification-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.notification-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for dark mode */
+body.dark-mode .notification-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+body.dark-mode .notification-list::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+
+body.dark-mode .notification-list::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+body.dark-mode .notification-list::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+.notification-list li {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+body.dark-mode .notification-list li {
+  border-bottom-color: #333;
+}
+
+.notification-list li:last-child {
+  border-bottom: none;
+}
+
+.notification-list li:hover {
+  background-color: rgba(255, 107, 107, 0.05);
+}
+
+body.dark-mode .notification-list li:hover {
+  background-color: rgba(255, 107, 107, 0.1);
+}
+
+.notification-list li.no-notification {
+  text-align: center;
+  color: var(--text-muted);
+  cursor: default;
+  padding: 30px 20px;
+}
+
+.notification-list li.no-notification:hover {
+  background-color: transparent;
+}
+
+.notification-item {
+  display: block;
+  color: var(--text-primary);
+}
+
+.notification-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 5px;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.notification-time {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.notification-item.unread .notification-title {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+/* ==================== USER PROFILE ==================== */
+
+.user-profile {
+  position: relative;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  background-color: var(--bg-secondary);
+}
+
+body.dark-mode .user-avatar {
+  background-color: #1a1a1a;
+  border-color: #333;
+}
+
+.user-avatar:hover {
+  border-color: var(--accent-color);
+  transform: scale(1.05);
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* User Dropdown */
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 15px);
+  right: 0;
+  width: 280px;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1005;
+  overflow: hidden;
+}
+
+body.dark-mode .user-dropdown {
+  background-color: #1a1a1a;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid #333;
+}
+
+.user-profile:hover .user-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.user-info {
+  padding: 20px;
+  background: linear-gradient(
+    135deg,
+    var(--accent-color) 0%,
+    var(--hover-color) 100%
+  );
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+body.dark-mode .user-info {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+}
+
+.user-info img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid white;
+  object-fit: cover;
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-email {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu-links {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.user-menu-links li {
+  border-bottom: 1px solid var(--border-color);
+}
+
+body.dark-mode .user-menu-links li {
+  border-bottom-color: #333;
+}
+
+.user-menu-links li:last-child {
+  border-bottom: none;
+}
+
+.user-menu-links a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .user-menu-links a {
+  color: #e0e0e0;
+}
+
+.user-menu-links a:hover {
+  background-color: rgba(255, 107, 107, 0.1);
+  color: var(--accent-color);
+  padding-left: 25px;
+}
+
+body.dark-mode .user-menu-links a:hover {
+  background-color: rgba(255, 107, 107, 0.15);
+}
+
+.user-menu-links a i {
+  width: 18px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.user-menu-links li:last-child a:hover {
+  color: #ff4757;
+}
+
+/* ==================== RESPONSIVE - TABLET ==================== */
+
+@media (max-width: 1024px) {
+  .notification-dropdown,
+  .user-dropdown {
+    position: fixed;
+    right: 20px;
+    left: auto;
+    width: calc(100% - 40px);
+    max-width: 320px;
+    top: 80px;
+  }
+
+  /* Click to toggle on tablet */
+  .notification-bell:hover .notification-dropdown,
+  .user-profile:hover .user-dropdown {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ==================== RESPONSIVE - MOBILE ==================== */
+
+@media (max-width: 767px) {
+  .user-menu-list {
+    gap: 10px;
+  }
+
+  .icon-notification,
+  .user-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .icon-notification i {
+    font-size: 16px;
+  }
+
+  .notification-badge {
+    font-size: 9px;
+    padding: 1px 5px;
+    min-width: 16px;
+    top: -3px;
+    right: -3px;
+  }
+
+  .notification-dropdown,
+  .user-dropdown {
+    right: 15px;
+    width: calc(100% - 30px);
+    max-width: 300px;
+    top: 70px;
+  }
+
+  .user-info {
+    padding: 15px;
+  }
+
+  .user-info img {
+    width: 45px;
+    height: 45px;
+    border-width: 2px;
+  }
+
+  .user-name {
+    font-size: 14px;
+  }
+
+  .user-email {
+    font-size: 11px;
+  }
+
+  .user-menu-links a {
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+
+  .user-menu-links a:hover {
+    padding-left: 20px;
+  }
+
+  .notification-header {
+    padding: 12px 15px;
+  }
+
+  .notification-header h4 {
+    font-size: 15px;
+  }
+
+  .notification-list li {
+    padding: 12px 15px;
+  }
+
+  .notification-title {
+    font-size: 13px;
+  }
+
+  .notification-time {
+    font-size: 11px;
+  }
+}
+
+/* ==================== RESPONSIVE - SMALL MOBILE ==================== */
+
+@media (max-width: 480px) {
+  .notification-dropdown,
+  .user-dropdown {
+    right: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+    max-width: none;
+    top: 65px;
+  }
+
+  .user-menu-list {
+    gap: 8px;
+  }
+
+  .icon-notification,
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ==================== LOADING STATE ==================== */
+
+.user-menu.loading .user-avatar img {
+  opacity: 0.5;
+  animation: pulse 1.5s infinite;
+}
+
+.user-menu.loading .icon-notification {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ==================== ANIMATION IMPROVEMENTS ==================== */
+
+.notification-dropdown,
+.user-dropdown {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation when visible */
+.notification-bell:hover .notification-dropdown,
+.user-profile:hover .user-dropdown {
+  animation-name: fadeInDown;
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+
+.user-avatar:focus,
+.icon-notification:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.user-menu-links a:focus,
+.notification-item:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: -2px;
+}
+
+/* ==================== DARK MODE SPECIFIC ENHANCEMENTS ==================== */
+
+body.dark-mode .user-avatar {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .icon-notification {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .notification-dropdown::before,
+body.dark-mode .user-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 15px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #333;
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+  .user-menu,
+  .auth-buttons {
+    display: none !important;
+  }
+}
