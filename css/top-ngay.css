@@ -1,0 +1,47 @@
+/* Rank Badge */
+.list_grid .rank-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  min-width: 40px;
+  height: 32px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0 10px;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.list_grid .rank-badge.rank-1 {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #000;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+}
+
+.list_grid .rank-badge.rank-2 {
+  background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+  color: #000;
+  box-shadow: 0 4px 12px rgba(192, 192, 192, 0.5);
+}
+
+.list_grid .rank-badge.rank-3 {
+  background: linear-gradient(135deg, #cd7f32, #e8a87c);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(205, 127, 50, 0.5);
+}
+
+.list_grid .rank-badge i {
+  font-size: 12px;
+}
+
+/* Adjust subscribed badge khi có rank badge */
+.list_grid .book_avatar .subscribed-badge {
+  top: 48px; /* Dời xuống để không đè lên rank */
+}

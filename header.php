@@ -19,6 +19,49 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 
+<?php if (is_front_page()): ?>
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+</noscript>
+
+<style>
+/* Critical CSS - Hide carousel until Swiper loads */
+.truyen-hay-swiper,
+.exclusive-swiper {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.truyen-hay-swiper.swiper-initialized,
+.exclusive-swiper.swiper-initialized {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Skeleton loader (optional) */
+.homepage-suggest .swiper-wrapper,
+.homepage-exclusive .swiper-wrapper {
+    min-height: 340px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+</style>
+<?php endif; ?>
+
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -172,7 +215,7 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                                     <a href="<?php echo home_url('/moi-cap-nhat'); ?>">Mới Cập Nhật</a>
                                     <a href="<?php echo home_url('/truyen-moi'); ?>">Truyện Mới</a>
                                     <a href="<?php echo home_url('/truyen-full'); ?>">Truyện Full</a>
-                                    <a href="<?php echo home_url('/ngau-nhien'); ?>">Truyện Ngẫu Nhiên</a>
+                                    <a href="<?php echo home_url('/truyen-ngau-nhien'); ?>">Truyện Ngẫu Nhiên</a>
                                 </div>
                             </div>
                         </li>
@@ -187,6 +230,7 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                 </nav>
             </div>
         </div>
+
     </header>
 
     <?php wp_footer(); ?>

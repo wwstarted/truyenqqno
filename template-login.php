@@ -29,8 +29,7 @@ get_header();
                     <p>Đăng nhập để tiếp tục đọc truyện yêu thích</p>
 
                     <div class="auth-illustration">
-                        <img src="<?php echo get_template_directory_uri(); ?>/images/login-illustration.svg"
-                            alt="Login">
+                        <img src="<?php echo get_template_directory_uri(); ?>/images/login.jpg" alt="Login">
                     </div>
                 </div>
             </div>

@@ -384,3 +384,103 @@
 
   init();
 })();
+
+/**
+ * Truyện Mới Cập Nhật
+ * Extends ComicsListingBase
+ *
+ * @package TruyenQQ
+ * @version 1.0.0
+ */
+
+class TruyenMoiCapNhat extends ComicsListingBase {
+  constructor(config = {}) {
+    super(config);
+  }
+
+  /**
+   * Override renderComicCard để thêm Hot/New badges
+   */
+  renderComicCard(comic) {
+    return `
+      <li>
+        <div class="book_avatar">
+          <a href="${comic.url}" title="${comic.title}">
+            <img class="center" src="${comic.thumbnail}" alt="${
+      comic.title
+    }" loading="lazy">
+          </a>
+          
+          <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi" data-id="${
+            comic.id
+          }">
+            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+          </span>
+          
+          <div class="top-notice">
+            <span class="time-ago">${comic.time_ago}</span>
+            ${
+              comic.badge_type
+                ? `<span class="type-label ${comic.badge_type}">${comic.badge_text}</span>`
+                : ""
+            }
+          </div>
+        </div>
+        
+        <div class="book_info">
+          <div class="book_name">
+            <h3>
+              <a title="${comic.title}" href="${comic.url}">${comic.title}</a>
+            </h3>
+          </div>
+          <div class="clear"></div>
+          
+          <div class="text_detail">
+            <span><i class="fa fa-bookmark"></i> ${comic.follow_count}</span>
+            <span><i class="fa fa-eye"></i> ${comic.view_count}</span>
+          </div>
+          
+          <div class="last_chapter">
+            <a href="${comic.url}" title="${comic.latest_chapter}">${
+      comic.latest_chapter
+    }</a>
+          </div>
+        </div>
+        
+        <div class="clear"></div>
+      </li>
+    `;
+  }
+}
+
+// Auto-initialize
+(function () {
+  "use strict";
+
+  function autoInit() {
+    const mainContainer = document.querySelector("#main_homepage");
+    if (!mainContainer) return;
+
+    const filterType = mainContainer.dataset.filterType;
+
+    // Chỉ khởi tạo nếu KHÔNG phải trang top ranking
+    if (filterType && filterType.startsWith("top-")) return;
+
+    const apiEndpoint =
+      typeof nettruyenData !== "undefined"
+        ? nettruyenData.restUrl
+        : "/wp-json/nettruyen/v1/comics";
+
+    new TruyenMoiCapNhat({
+      apiEndpoint: apiEndpoint,
+      filterType: "moi-cap-nhat",
+      postsPerPage: 42,
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", autoInit);
+  } else {
+    autoInit();
+  }
+})();

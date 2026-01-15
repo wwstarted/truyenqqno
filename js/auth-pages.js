@@ -1,19 +1,21 @@
 /**
- * Authentication Pages JavaScript
+ * Authentication Pages JavaScript - COMPLETE FIXED
  * Handle auth interactions with reCAPTCHA
  *
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.4 - FIXED RESPONSE HANDLING
  */
 
 (function ($) {
   "use strict";
 
   $(document).ready(function () {
+    console.log("TruyenQQ Auth: Initializing...");
     initAuthPages();
   });
 
   function initAuthPages() {
+    // Toggle password visibility
     $(document).on("click", ".toggle-password", function () {
       const input = $(this).siblings("input");
       const icon = $(this).find("i");
@@ -27,10 +29,12 @@
       }
     });
 
+    // Password strength checker
     $("#register-password, #new-password").on("input", function () {
       checkPasswordStrength($(this));
     });
 
+    // Form handlers
     $("#login-form").on("submit", handleLogin);
     $("#register-form").on("submit", handleRegisterSendOTP);
     $("#register-verify-form").on("submit", handleRegisterVerifyOTP);
@@ -38,6 +42,7 @@
     $("#forgot-verify-form").on("submit", handleForgotPasswordVerifyOTP);
     $("#reset-password-form").on("submit", handleResetPassword);
 
+    // OTP resend handlers
     $("#register-resend-otp").on("click", function (e) {
       e.preventDefault();
       resendOTP("register");
@@ -48,6 +53,7 @@
       resendOTP("reset_password");
     });
 
+    // Back button
     $("#back-to-register").on("click", function () {
       $(".auth-step").removeClass("active");
       $('.auth-step[data-step="1"]').addClass("active");
@@ -55,9 +61,12 @@
       $('.step[data-step="1"]').addClass("active");
     });
 
+    // Password match validation
     $("#register-confirm-password, #confirm-password").on("input", function () {
       validatePasswordMatch($(this));
     });
+
+    console.log("TruyenQQ Auth: Initialization complete");
   }
 
   function checkPasswordStrength($input) {
@@ -76,7 +85,6 @@
 
     if (password.length >= 6) strength++;
     if (password.length >= 10) strength++;
-
     if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
     if (/\d/.test(password)) strength++;
     if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
@@ -114,30 +122,47 @@
 
   function handleLogin(e) {
     e.preventDefault();
+    console.log("TruyenQQ Auth: Login form submitted");
 
     const $form = $(this);
     const $btn = $form.find('button[type="submit"]');
     const $message = $form.find(".form-message");
 
+    // Check if reCAPTCHA is loaded
     if (typeof grecaptcha === "undefined") {
+      console.error("TruyenQQ Auth: reCAPTCHA not loaded");
       showMessage(
         $message,
         "error",
-        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây."
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây và thử lại."
       );
       return;
     }
 
+    // Get reCAPTCHA response
     const recaptchaResponse = grecaptcha.getResponse();
+    console.log(
+      "TruyenQQ Auth: reCAPTCHA response:",
+      recaptchaResponse ? "exists" : "empty"
+    );
+
     if (!recaptchaResponse) {
       showMessage($message, "error", "Vui lòng xác nhận bạn không phải robot");
       return;
     }
 
+    // Get form data
     const username = $("#login-username").val().trim();
     const password = $("#login-password").val();
     const remember = $("#login-remember").is(":checked");
 
+    // Validate
+    if (!username || !password) {
+      showMessage($message, "error", "Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+
+    // Show loading state
     setLoadingState($btn, true);
     $message.removeClass("show");
 
@@ -153,25 +178,52 @@
         recaptcha_response: recaptchaResponse,
       },
       success: function (response) {
+        console.log("TruyenQQ Auth: Response received:", response);
         setLoadingState($btn, false);
 
-        if (response.success) {
+        // Handle wp_send_json_success format
+        if (response.success && response.data) {
+          const data = response.data;
+          showMessage($message, "success", data.message);
+          console.log("TruyenQQ Auth: Login successful, redirecting...");
+
+          // Redirect after short delay
+          setTimeout(function () {
+            window.location.href = data.redirect || window.location.href;
+          }, 800);
+        }
+        // Handle wp_send_json_error format
+        else if (!response.success && response.data) {
+          console.error("TruyenQQ Auth: Login failed:", response.data.message);
+          showMessage($message, "error", response.data.message);
+
+          // Reset reCAPTCHA on error
+          if (typeof grecaptcha !== "undefined") {
+            grecaptcha.reset();
+          }
+        }
+        // Fallback for old format
+        else if (response.success) {
           showMessage($message, "success", response.message);
           setTimeout(function () {
             window.location.href = response.redirect || window.location.href;
-          }, 1000);
+          }, 800);
         } else {
-          showMessage($message, "error", response.message);
+          showMessage($message, "error", response.message || "Có lỗi xảy ra");
           if (typeof grecaptcha !== "undefined") {
             grecaptcha.reset();
           }
         }
       },
       error: function (xhr, status, error) {
+        console.error("TruyenQQ Auth: AJAX error");
+        console.error("Status:", status);
+        console.error("Error:", error);
+
         setLoadingState($btn, false);
-        console.error("AJAX Error:", status, error);
-        console.error("Response:", xhr.responseText);
         showMessage($message, "error", "Có lỗi xảy ra. Vui lòng thử lại.");
+
+        // Reset reCAPTCHA on error
         if (typeof grecaptcha !== "undefined") {
           grecaptcha.reset();
         }
@@ -181,6 +233,7 @@
 
   function handleRegisterSendOTP(e) {
     e.preventDefault();
+    console.log("TruyenQQ Auth: Register form submitted");
 
     const $form = $(this);
     const $btn = $form.find('button[type="submit"]');
@@ -234,7 +287,11 @@
       success: function (response) {
         setLoadingState($btn, false);
 
-        if (response.success) {
+        // Handle new format
+        const data = response.data || response;
+        const isSuccess = response.success;
+
+        if (isSuccess) {
           $(".auth-step").removeClass("active");
           $('.auth-step[data-step="2"]').addClass("active");
           $(".step").removeClass("active");
@@ -245,19 +302,17 @@
           showMessage(
             $('.auth-step[data-step="2"] .form-message'),
             "success",
-            response.message
+            data.message
           );
         } else {
-          showMessage($message, "error", response.message);
+          showMessage($message, "error", data.message);
           if (typeof grecaptcha !== "undefined") {
             grecaptcha.reset();
           }
         }
       },
-      error: function (xhr, status, error) {
+      error: function () {
         setLoadingState($btn, false);
-        console.error("AJAX Error:", status, error);
-        console.error("Response:", xhr.responseText);
         showMessage($message, "error", "Có lỗi xảy ra. Vui lòng thử lại.");
         if (typeof grecaptcha !== "undefined") {
           grecaptcha.reset();
@@ -296,13 +351,16 @@
       success: function (response) {
         setLoadingState($btn, false);
 
-        if (response.success) {
-          showMessage($message, "success", response.message);
+        const data = response.data || response;
+        const isSuccess = response.success;
+
+        if (isSuccess) {
+          showMessage($message, "success", data.message);
           setTimeout(function () {
-            window.location.href = response.redirect || window.location.href;
+            window.location.href = data.redirect || window.location.href;
           }, 1000);
         } else {
-          showMessage($message, "error", response.message);
+          showMessage($message, "error", data.message);
         }
       },
       error: function () {
@@ -351,7 +409,10 @@
       success: function (response) {
         setLoadingState($btn, false);
 
-        if (response.success) {
+        const data = response.data || response;
+        const isSuccess = response.success;
+
+        if (isSuccess) {
           $(".auth-step").removeClass("active");
           $('.auth-step[data-step="2"]').addClass("active");
           $(".step").removeClass("active");
@@ -362,19 +423,17 @@
           showMessage(
             $('.auth-step[data-step="2"] .form-message'),
             "success",
-            response.message
+            data.message
           );
         } else {
-          showMessage($message, "error", response.message);
+          showMessage($message, "error", data.message);
           if (typeof grecaptcha !== "undefined") {
             grecaptcha.reset();
           }
         }
       },
-      error: function (xhr, status, error) {
+      error: function () {
         setLoadingState($btn, false);
-        console.error("AJAX Error:", status, error);
-        console.error("Response:", xhr.responseText);
         showMessage($message, "error", "Có lỗi xảy ra. Vui lòng thử lại.");
         if (typeof grecaptcha !== "undefined") {
           grecaptcha.reset();
@@ -413,20 +472,23 @@
       success: function (response) {
         setLoadingState($btn, false);
 
-        if (response.success) {
+        const data = response.data || response;
+        const isSuccess = response.success;
+
+        if (isSuccess) {
           $(".auth-step").removeClass("active");
           $('.auth-step[data-step="3"]').addClass("active");
           $(".step").removeClass("active");
           $(".step").addClass("active");
 
-          $("#reset-token").val(response.reset_token);
+          $("#reset-token").val(data.reset_token);
           showMessage(
             $('.auth-step[data-step="3"] .form-message'),
             "success",
-            response.message
+            data.message
           );
         } else {
-          showMessage($message, "error", response.message);
+          showMessage($message, "error", data.message);
         }
       },
       error: function () {
@@ -467,13 +529,16 @@
       success: function (response) {
         setLoadingState($btn, false);
 
-        if (response.success) {
-          showMessage($message, "success", response.message);
+        const data = response.data || response;
+        const isSuccess = response.success;
+
+        if (isSuccess) {
+          showMessage($message, "success", data.message);
           setTimeout(function () {
-            window.location.href = response.redirect || window.location.href;
+            window.location.href = data.redirect || window.location.href;
           }, 1000);
         } else {
-          showMessage($message, "error", response.message);
+          showMessage($message, "error", data.message);
         }
       },
       error: function () {
@@ -504,11 +569,14 @@
         const prefix = purpose === "register" ? "register" : "forgot";
         const $message = $('.auth-step[data-step="2"] .form-message');
 
-        if (response.success) {
+        const data = response.data || response;
+        const isSuccess = response.success;
+
+        if (isSuccess) {
           showMessage($message, "success", "Mã OTP mới đã được gửi!");
           startOTPTimer(prefix, 60);
         } else {
-          showMessage($message, "error", response.message);
+          showMessage($message, "error", data.message);
         }
       },
     });

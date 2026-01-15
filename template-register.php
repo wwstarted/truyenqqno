@@ -29,8 +29,7 @@ get_header();
                     <p>Tạo tài khoản để trải nghiệm đầy đủ tính năng</p>
 
                     <div class="auth-illustration">
-                        <img src="<?php echo get_template_directory_uri(); ?>/images/register-illustration.svg"
-                            alt="Register">
+                        <img src="<?php echo get_template_directory_uri(); ?>/images/login.jpg" alt="Register">
                     </div>
                 </div>
             </div>

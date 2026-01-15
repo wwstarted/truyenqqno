@@ -96,29 +96,29 @@ function nettruyen_migration_tool_page()
     <div class="card" style="margin-top: 20px;">
         <h2>Tables Info</h2>
         <?php
-                global $wpdb;
-                $tables = array(
-                    'Chapter Views' => $wpdb->prefix . 'nettruyen_chapter_views',
-                    'Comic Views' => $wpdb->prefix . 'nettruyen_comic_views',
-                    'View Stats' => $wpdb->prefix . 'nettruyen_view_stats'
-                );
+            global $wpdb;
+            $tables = array(
+                'Chapter Views' => $wpdb->prefix . 'nettruyen_chapter_views',
+                'Comic Views' => $wpdb->prefix . 'nettruyen_comic_views',
+                'View Stats' => $wpdb->prefix . 'nettruyen_view_stats'
+            );
 
-                echo '<table class="wp-list-table widefat fixed striped">';
-                echo '<thead><tr><th>Table Name</th><th>Status</th><th>Rows</th></tr></thead><tbody>';
+            echo '<table class="wp-list-table widefat fixed striped">';
+            echo '<thead><tr><th>Table Name</th><th>Status</th><th>Rows</th></tr></thead><tbody>';
 
-                foreach ($tables as $name => $table) {
-                    $exists = $wpdb->get_var("SHOW TABLES LIKE '{$table}'") == $table;
-                    $rows = $exists ? $wpdb->get_var("SELECT COUNT(*) FROM {$table}") : 0;
+            foreach ($tables as $name => $table) {
+                $exists = $wpdb->get_var("SHOW TABLES LIKE '{$table}'") == $table;
+                $rows = $exists ? $wpdb->get_var("SELECT COUNT(*) FROM {$table}") : 0;
 
-                    echo '<tr>';
-                    echo '<td><code>' . esc_html($table) . '</code></td>';
-                    echo '<td>' . ($exists ? '<span style="color:green;">✅ Exists</span>' : '<span style="color:red;">❌ Not found</span>') . '</td>';
-                    echo '<td>' . number_format($rows) . '</td>';
-                    echo '</tr>';
-                }
+                echo '<tr>';
+                echo '<td><code>' . esc_html($table) . '</code></td>';
+                echo '<td>' . ($exists ? '<span style="color:green;">✅ Exists</span>' : '<span style="color:red;">❌ Not found</span>') . '</td>';
+                echo '<td>' . number_format($rows) . '</td>';
+                echo '</tr>';
+            }
 
-                echo '</tbody></table>';
-                ?>
+            echo '</tbody></table>';
+            ?>
     </div>
 </div>
 

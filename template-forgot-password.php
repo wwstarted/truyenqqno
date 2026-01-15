@@ -29,8 +29,7 @@ get_header();
                     <p>Đặt lại mật khẩu của bạn một cách an toàn</p>
 
                     <div class="auth-illustration">
-                        <img src="<?php echo get_template_directory_uri(); ?>/images/forgot-password-illustration.svg"
-                            alt="Forgot Password">
+                        <img src="<?php echo get_template_directory_uri(); ?>/images/login.jpg" alt="Forgot Password">
                     </div>
                 </div>
             </div>

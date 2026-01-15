@@ -28,9 +28,13 @@
 
       slidesPerGroup: 1,
 
+      // navigation: {
+      //   nextEl: ".swiper-button-next",
+      //   prevEl: ".swiper-button-prev",
+      // },
       navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
+        nextEl: ".homepage-suggest .swiper-button-next", // ← Thêm prefix này
+        prevEl: ".homepage-suggest .swiper-button-prev", // ← Thêm prefix này
       },
 
       breakpoints: {
