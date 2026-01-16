@@ -4,9 +4,10 @@
  * Template for reading comic chapters
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
  * ✅ Fixed: querySelectorAll typo
  * ✅ Added: Dark mode compatibility
+ * ✅ Added: Reading history tracking with data attributes
  */
 
 get_header();
@@ -68,7 +69,9 @@ if (class_exists('NetTruyen_View_Tracker')) {
 }
 ?>
 
-<div id="chapter_reader" class="content background-black">
+<!-- ✅ THÊM DATA ATTRIBUTES ĐỂ JS CÓ THỂ ĐỌC -->
+<div id="chapter_reader" class="content background-black" data-comic-id="<?php echo esc_attr($post_id); ?>"
+    data-chapter-slug="<?php echo esc_attr($chapter_slug); ?>">
     <div class="div_middle">
         <!-- Alert Notice -->
         <div class="alert-note">
@@ -249,7 +252,6 @@ if (class_exists('NetTruyen_View_Tracker')) {
         <?php endif; ?>
 
         <button class="control-btn chapter-list-btn" onclick="toggleChapterList()" title="Danh sách chương">
-            <!-- <i class="fa fa-list"></i> -->
             <span>
                 <?php echo $current_position; ?>/
                 <?php echo $total_chapters; ?>

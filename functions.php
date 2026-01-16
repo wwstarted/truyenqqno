@@ -19,7 +19,7 @@ function toyota_enqueue_assets()
     wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], '11.0.0', true);
 
     // ========================================
-    // BASE LISTING ASSETS (Load cho tất cả trang listing)
+    // BASE LISTING ASSETS
     // ========================================
     $listing_templates = array(
         'page-truyen-moi-cap-nhat.php',
@@ -213,6 +213,7 @@ function toyota_enqueue_assets()
         ));
     }
 
+
     // ========================================
     // NGẪU NHIÊN
     // ========================================
@@ -264,8 +265,32 @@ function toyota_enqueue_assets()
     }
 
     if (is_page_template('page-advanced-search.php')) {
-        wp_enqueue_style('advanced-search-css', get_template_directory_uri() . '/css/advanced-search.css', array('truyen-moi-cap-nhat-base'), '1.0.1');
-        wp_enqueue_script('advanced-search-js', get_template_directory_uri() . '/js/advanced-search.js', array('jquery'), '1.0.1', true);
+        // Đảm bảo base CSS được load
+        wp_enqueue_style(
+            'truyen-moi-cap-nhat-base',
+            get_template_directory_uri() . '/css/truyen-moi-cap-nhat.css',
+            array('toyota-global'),
+            '1.0.2'
+        );
+
+        // CSS riêng
+        wp_enqueue_style(
+            'advanced-search-css',
+            get_template_directory_uri() . '/css/advanced-search.css',
+            array('truyen-moi-cap-nhat-base'),
+            '1.0.2'
+        );
+
+        // JS
+        wp_enqueue_script(
+            'advanced-search-js',
+            get_template_directory_uri() . '/js/advanced-search.js',
+            array('jquery'),
+            '1.0.2',
+            true
+        );
+
+        // Localize script
         wp_localize_script('advanced-search-js', 'nettruyenData', array(
             'restUrl' => rest_url('nettruyen/v1/advanced-search'),
             'nonce' => wp_create_nonce('wp_rest'),
@@ -284,10 +309,63 @@ function toyota_enqueue_assets()
     // Single Comic & Chapter
     if (is_singular('nettruyen_comic')) {
         wp_enqueue_style('single-comic-css', get_template_directory_uri() . '/css/single-comic.css', array('toyota-global'), '1.0.1');
+
+        if (get_query_var('chapter')) {
+            wp_enqueue_style('chapter', get_template_directory_uri() . '/css/single-chapter.css', array('toyota-global'), '1.0.1');
+
+            wp_enqueue_script(
+                'single-chapter-js',
+                get_template_directory_uri() . '/js/single-chapter.js',
+                array('jquery'),
+                '1.0.0',
+                true
+            );
+        }
+
+        if (is_user_logged_in()) {
+            wp_localize_script('single-chapter-js', 'wpApiSettings', array(
+                'root' => esc_url_raw(rest_url()),
+                'nonce' => wp_create_nonce('wp_rest')
+            ));
+        }
     }
 
-    if (is_page_template('single-chapter.php')) {
-        wp_enqueue_style('chapter', get_template_directory_uri() . '/css/single-chapter.css', array('toyota-global'), '1.0.1');
+    if (is_page_template('page-lich-su.php')) {
+        // Enqueue Swiper (đã có trong homepage)
+        // CSS cho section Độc Quyền QQ (tái sử dụng từ homepage)
+        wp_enqueue_style(
+            'toyota-front-page',
+            get_template_directory_uri() . '/css/front-page-v2.css',
+            array('toyota-global'),
+            '1.0.1'
+        );
+
+        // CSS riêng cho reading history
+        wp_enqueue_style(
+            'reading-history-css',
+            get_template_directory_uri() . '/css/reading-history.css',
+            array('toyota-front-page'),
+            '1.0.0'
+        );
+
+        // JS cho Độc Quyền carousel (tái sử dụng từ homepage)
+        wp_enqueue_script(
+            'toyota-front-page',
+            get_template_directory_uri() . '/js/front-page.js',
+            array('jquery', 'swiper'),
+            '1.0.1',
+            true
+        );
+
+        // JS riêng cho reading history
+        wp_enqueue_script(
+            'reading-history-js',
+            get_template_directory_uri() . '/js/reading-history.js',
+            array('jquery'),
+            '1.0.0',
+            true
+        );
+
     }
 
     // Auth pages
@@ -310,8 +388,30 @@ require_once get_template_directory() . '/inc/class-nettruyen-comics-rest-api.ph
 require_once get_template_directory() . '/inc/class-advanced-search-api.php';
 require_once get_template_directory() . '/inc/single-nettruyen-comics.php';
 require_once get_template_directory() . '/inc/class-top-comics-api.php';
+require_once get_template_directory() . '/inc/create-reading-history-table.php';
+require_once get_template_directory() . '/inc/reading-history-api.php';
+
+// // Force create reading history table on init
+// add_action('init', function () {
+//     global $wpdb;
+//     $table_name = $wpdb->prefix . 'nettruyen_reading_history';
+
+//     // Check if table exists
+//     if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
+//         truyenqq_create_reading_history_table();
+//     }
+// }, 5);
 
 // Theme setup và các functions khác giữ nguyên...
+
+add_action('init', function () {
+    static $flushed = false;
+    if (!$flushed && get_option('truyenqq_api_flushed') !== 'yes') {
+        flush_rewrite_rules();
+        update_option('truyenqq_api_flushed', 'yes');
+        $flushed = true;
+    }
+}, 999);
 
 
 function nettruyen_enqueue_comics_listing_scripts()

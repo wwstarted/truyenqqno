@@ -8,8 +8,6 @@
 
 get_header();
 
-require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
-
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 $posts_per_page = 42;
 
@@ -19,16 +17,21 @@ $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-// Lấy danh sách comic IDs theo view count hôm nay
+// ✅ FIXED: Lấy TẤT CẢ truyện, sắp xếp theo daily_views (Giải pháp 2)
 $comic_ids = $wpdb->get_col("
-    SELECT post_id 
-    FROM {$stats_table} 
-    WHERE daily_views > 0
-    ORDER BY daily_views DESC
+    SELECT p.ID 
+    FROM {$wpdb->posts} p
+    LEFT JOIN {$stats_table} s ON p.ID = s.post_id
+    WHERE p.post_type = 'nettruyen_comic' 
+    AND p.post_status = 'publish'
+    ORDER BY 
+        COALESCE(s.daily_views, 0) DESC, 
+        COALESCE(s.total_display_views, 0) DESC,
+        p.post_date DESC
 ");
 
 if (empty($comic_ids)) {
-    $comic_ids = array(0); // Tránh SQL error
+    $comic_ids = array(0);
 }
 
 $args = array(
@@ -64,19 +67,11 @@ if ($country !== '') {
 
 $comics_query = new WP_Query($args);
 
-$hot_comic_ids = $wpdb->get_col(
-    "SELECT post_id 
-    FROM {$stats_table} 
-    WHERE total_display_views > 0 
-    ORDER BY total_display_views DESC 
-    LIMIT 20"
-);
-
 $total_pages = $comics_query->max_num_pages;
 $current_page = max(1, $paged);
 ?>
 
-<div id="main_homepage" data-ajax-enabled="true" data-filter-type="daily">
+<div id="main_homepage" data-ajax-enabled="true" data-filter-type="top-ngay">
     <!-- Section Header -->
     <div class="homepage_tags">
         <h1>
@@ -228,8 +223,7 @@ $current_page = max(1, $paged);
                         <?php if ($is_top3): ?>
                         <i class="fa fa-trophy"></i>
                         <?php endif; ?>
-                        #
-                        <?php echo $rank; ?>
+                        #<?php echo $rank; ?>
                     </span>
 
                     <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi"

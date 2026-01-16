@@ -222,7 +222,7 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                         <li><a href="#">Con Gái</a></li>
                         <li><a href="#">Con Trai</a></li>
                         <li><a href="<?php echo esc_url(home_url('/tim-kiem-nang-cao')); ?>">Tìm Truyện</a></li>
-                        <li><a href="#">Lịch Sử</a></li>
+                        <li><a href="<?php echo esc_url(home_url('/lich-su')); ?>">Lịch Sử</a></li>
                         <li><a href="#">Theo Dõi</a></li>
                         <li><a href="https://discord.gg/t8dQUwsrsj" target="_blank">Discord</a></li>
                         <li><a href="https://www.facebook.com/truyenqqq" target="_blank">Fanpage</a></li>

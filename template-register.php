@@ -22,7 +22,7 @@ get_header();
             <div class="auth-page-left">
                 <div class="auth-branding">
                     <a href="<?php echo home_url(); ?>" class="brand-logo">
-                        <img src="<?php echo get_template_directory_uri(); ?>/images/logo.png"
+                        <img src="https://st.truyenqqno.com/template/frontend/images/logo-icon.png"
                             alt="<?php bloginfo('name'); ?>">
                     </a>
                     <h1>Tham gia cộng đồng!</h1>
@@ -38,7 +38,7 @@ get_header();
             <div class="auth-page-right">
                 <div class="auth-form-container">
                     <!-- Step Indicator -->
-                    <div class="step-indicator">
+                    <!-- <div class="step-indicator">
                         <div class="step active" data-step="1">
                             <div class="step-number">1</div>
                             <div class="step-label">Thông tin</div>
@@ -48,7 +48,7 @@ get_header();
                             <div class="step-number">2</div>
                             <div class="step-label">Xác thực OTP</div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Step 1: Register Form -->
                     <div class="auth-step active" data-step="1">

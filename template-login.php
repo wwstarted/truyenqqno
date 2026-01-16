@@ -22,7 +22,7 @@ get_header();
             <div class="auth-page-left">
                 <div class="auth-branding">
                     <a href="<?php echo home_url(); ?>" class="brand-logo">
-                        <img src="<?php echo get_template_directory_uri(); ?>/images/logo.png"
+                        <img src="https://st.truyenqqno.com/template/frontend/images/logo-icon.png"
                             alt="<?php bloginfo('name'); ?>">
                     </a>
                     <h1>Chào mừng trở lại!</h1>

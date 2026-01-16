@@ -1,3 +1,11 @@
+/* ========================================
+   ADVANCED SEARCH - FIXED CSS
+   Extends truyen-moi-cap-nhat.css base
+   ======================================== */
+
+/* ========================================
+   1. TOGGLE BUTTON
+   ======================================== */
 .btn-collapse {
   margin-bottom: 20px;
   padding: 10px 24px;
@@ -27,11 +35,15 @@
   display: none;
 }
 
+/* ========================================
+   2. FORM CONTAINER
+   ======================================== */
 .advsearch-form {
   opacity: 1;
   max-height: 3000px;
   overflow: visible;
   transition: all 0.4s ease;
+  margin-bottom: 30px; /* ← THÊM margin để không dính grid */
 }
 
 .advsearch-form.hidden {
@@ -39,6 +51,7 @@
   max-height: 0;
   overflow: hidden;
   pointer-events: none;
+  margin-bottom: 0; /* ← Collapse margin khi ẩn */
 }
 
 .advsearch-form .form-group {
@@ -51,12 +64,15 @@
   clear: both;
 }
 
+/* ========================================
+   3. LEGEND (Checkbox/Tick/Cross)
+   ======================================== */
 .advsearch-form .form-group p {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: var(--text-secondary, #666);
   margin: 8px 0;
 }
 
@@ -103,6 +119,9 @@ body.dark-mode .icon-checkbox {
   content: "✕";
 }
 
+/* ========================================
+   4. RESET BUTTON
+   ======================================== */
 .btn-reset {
   padding: 8px 20px;
   font-size: 14px;
@@ -129,10 +148,13 @@ body.dark-mode .icon-checkbox {
   font-size: 13px;
 }
 
+/* ========================================
+   5. LABELS
+   ======================================== */
 .label-search {
   font-weight: 600;
   font-size: 15px;
-  color: var(--text-primary);
+  color: var(--text-primary, #333);
   margin-bottom: 12px;
   padding-right: 20px;
   min-width: 150px;
@@ -142,6 +164,9 @@ body.dark-mode .label-search {
   color: var(--text-primary-dark, #e0e0e0);
 }
 
+/* ========================================
+   6. GENRE CONTAINER (7 COLUMNS)
+   ======================================== */
 .genre-container {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -154,7 +179,7 @@ body.dark-mode .label-search {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-secondary, #f5f5f5);
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
@@ -189,6 +214,9 @@ body.dark-mode .genre-item:hover {
   transform: scale(1.1);
 }
 
+/* ========================================
+   7. FORM ROW (Dropdowns)
+   ======================================== */
 .form-group.row {
   display: flex;
   flex-wrap: wrap;
@@ -196,6 +224,9 @@ body.dark-mode .genre-item:hover {
   gap: 20px;
 }
 
+/* ========================================
+   8. SELECT DROPDOWNS
+   ======================================== */
 .select.select-search {
   position: relative;
   min-width: 180px;
@@ -206,8 +237,8 @@ body.dark-mode .genre-item:hover {
   width: 100%;
   padding: 10px 14px;
   font-size: 14px;
-  color: var(--text-primary);
-  background-color: var(--bg-secondary);
+  color: var(--text-primary, #333);
+  background-color: var(--bg-secondary, #f5f5f5);
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   cursor: pointer;
@@ -229,22 +260,25 @@ body.dark-mode .custom-select {
 
 .select.select-search select:hover,
 .custom-select:hover {
-  border-color: var(--accent-color);
+  border-color: #00bcd4;
   box-shadow: 0 2px 8px rgba(0, 188, 212, 0.2);
 }
 
 .select.select-search select:focus,
 .custom-select:focus {
   outline: none;
-  border-color: var(--accent-color);
+  border-color: #00bcd4;
   box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.1);
 }
 
+/* ========================================
+   9. SEARCH BUTTON
+   ======================================== */
 .btn-search {
   padding: 12px 40px;
   font-size: 16px;
   font-weight: 700;
-  background-color: var(--accent-color);
+  background-color: #00bcd4;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -255,7 +289,7 @@ body.dark-mode .custom-select {
 }
 
 .btn-search:hover {
-  background-color: var(--hover-color);
+  background-color: #0097a7;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
 }
@@ -264,6 +298,18 @@ body.dark-mode .custom-select {
   transform: translateY(0);
 }
 
+/* ========================================
+   10. OVERRIDE BASE GRID (CRITICAL FIX)
+   ======================================== */
+/* Đảm bảo grid 6 cột trên desktop */
+.list_grid.grid {
+  grid-template-columns: repeat(6, 1fr) !important;
+  gap: 20px;
+}
+
+/* ========================================
+   11. RESPONSIVE
+   ======================================== */
 @media (max-width: 1200px) {
   .genre-container {
     grid-template-columns: repeat(6, 1fr);
@@ -274,9 +320,13 @@ body.dark-mode .custom-select {
     font-size: 13px;
     padding: 7px 10px;
   }
+
+  .list_grid.grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 1023px) {
   .genre-container {
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
@@ -310,6 +360,10 @@ body.dark-mode .custom-select {
   .btn-search {
     padding: 10px 32px;
     font-size: 15px;
+  }
+
+  .list_grid.grid {
+    grid-template-columns: repeat(4, 1fr) !important;
   }
 }
 
@@ -383,6 +437,10 @@ body.dark-mode .custom-select {
     width: 100%;
     max-width: 300px;
   }
+
+  .list_grid.grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
 @media (max-width: 567px) {
@@ -424,6 +482,9 @@ body.dark-mode .custom-select {
   }
 }
 
+/* ========================================
+   12. UTILITY CLASSES
+   ======================================== */
 .text-center {
   text-align: center;
 }

@@ -1,0 +1,456 @@
+/**
+ * Reading History Page - CSS
+ * 
+ * @package TruyenQQ
+ * @version 1.0.0
+ */
+
+.reading-history-page {
+  padding: 40px 0;
+  background-color: var(--bg-primary);
+  min-height: 60vh;
+}
+
+.reading-history-page .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.reading-history-page .section-header {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.reading-history-page .section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+body.dark-mode .reading-history-page .section-title {
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.reading-history-page .section-title i {
+  color: #ff6b6b;
+  font-size: 28px;
+}
+
+.reading-history-page .history-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.reading-history-page .btn-clear-history {
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reading-history-page .btn-clear-history:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+/* Loading State */
+.reading-history-page .loading-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.reading-history-page .loading-state i {
+  font-size: 48px;
+  color: var(--accent-color);
+  margin-bottom: 15px;
+}
+
+.reading-history-page .loading-state p {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+body.dark-mode .reading-history-page .loading-state p {
+  color: var(--text-secondary-dark, #999);
+}
+
+/* Empty State */
+.reading-history-page .empty-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.reading-history-page .empty-state i {
+  font-size: 64px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+body.dark-mode .reading-history-page .empty-state i {
+  color: var(--text-secondary-dark, #666);
+}
+
+.reading-history-page .empty-state h3 {
+  font-size: 24px;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+body.dark-mode .reading-history-page .empty-state h3 {
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.reading-history-page .empty-state p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 25px;
+}
+
+body.dark-mode .reading-history-page .empty-state p {
+  color: var(--text-secondary-dark, #999);
+}
+
+.reading-history-page .empty-state .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 30px;
+  background-color: var(--accent-color);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.reading-history-page .empty-state .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+/* Comics Grid */
+.reading-history-page .comics-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+}
+
+.reading-history-page .comic-item {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.reading-history-page .comic-card {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 380px;
+}
+
+body.dark-mode .reading-history-page .comic-card {
+  background-color: var(--bg-secondary-dark, #1a1a1a);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.reading-history-page .comic-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+}
+
+body.dark-mode .reading-history-page .comic-card:hover {
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+}
+
+.reading-history-page .comic-avatar {
+  position: relative;
+  width: 100%;
+  padding-top: 130%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.reading-history-page .comic-avatar a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.reading-history-page .comic-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.reading-history-page .comic-card:hover .comic-avatar img {
+  transform: scale(1.1);
+}
+
+/* Remove History Button */
+.reading-history-page .remove-history {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(244, 67, 54, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.reading-history-page .remove-history:hover {
+  background-color: #f44336;
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+}
+
+.reading-history-page .top-notice {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 30px 10px 8px;
+  z-index: 1;
+}
+
+.reading-history-page .time-ago {
+  font-size: 11px;
+  color: #fff;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.reading-history-page .comic-info {
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.reading-history-page .comic-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reading-history-page .comic-name a {
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .reading-history-page .comic-name a {
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.reading-history-page .comic-name a:hover {
+  color: var(--accent-color);
+}
+
+.reading-history-page .comic-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+body.dark-mode .reading-history-page .comic-stats {
+  color: var(--text-secondary-dark, #999);
+}
+
+.reading-history-page .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.reading-history-page .stat-item i {
+  font-size: 12px;
+}
+
+/* Reading Progress */
+.reading-history-page .reading-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.reading-history-page .progress-bar {
+  flex: 1;
+  height: 6px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+body.dark-mode .reading-history-page .progress-bar {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.reading-history-page .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #66bb6a);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.reading-history-page .progress-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #4caf50;
+  min-width: 35px;
+  text-align: right;
+}
+
+.reading-history-page .latest-chapter a {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--accent-color);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.reading-history-page .latest-chapter a:hover {
+  color: var(--hover-color);
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 1023px) {
+  .reading-history-page {
+    padding: 30px 0;
+  }
+
+  .reading-history-page .section-title {
+    font-size: 24px;
+  }
+
+  .reading-history-page .section-title i {
+    font-size: 26px;
+  }
+
+  .reading-history-page .comics-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .reading-history-page .comic-card {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 767px) {
+  .reading-history-page {
+    padding: 25px 0;
+  }
+
+  .reading-history-page .container {
+    padding: 0 15px;
+  }
+
+  .reading-history-page .section-title {
+    font-size: 22px;
+  }
+
+  .reading-history-page .section-title i {
+    font-size: 24px;
+  }
+
+  .reading-history-page .btn-clear-history {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .reading-history-page .comics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .reading-history-page .comic-card {
+    min-height: 340px;
+  }
+
+  .reading-history-page .comic-info {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .reading-history-page .comic-name {
+    font-size: 14px;
+    min-height: 40px;
+  }
+
+  .reading-history-page .comic-stats {
+    font-size: 12px;
+    gap: 12px;
+  }
+
+  .reading-history-page .remove-history {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .reading-history-page .section-title {
+    font-size: 20px;
+  }
+
+  .reading-history-page .comic-name {
+    font-size: 13px;
+  }
+
+  .reading-history-page .comics-grid {
+    gap: 12px;
+  }
+}
