@@ -1,14 +1,19 @@
 /**
- * Reading History Page - CSS
- * 
+ * Reading History Page Styles
+ * Grid layout giống homepage-new-update
+ *
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.2
+ * ✅ Updated: Grid layout, cyan accent color, centered content
  */
+
+/* ========================================
+   READING HISTORY PAGE
+======================================== */
 
 .reading-history-page {
   padding: 40px 0;
   background-color: var(--bg-primary);
-  min-height: 60vh;
 }
 
 .reading-history-page .container {
@@ -17,147 +22,182 @@
   padding: 0 20px;
 }
 
+/* Section Header */
 .reading-history-page .section-header {
-  margin-bottom: 30px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 15px;
+  align-items: center;
+  margin-bottom: 25px;
 }
 
 .reading-history-page .section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--text-primary);
   margin: 0;
 }
 
-body.dark-mode .reading-history-page .section-title {
+.reading-history-page .section-title a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .reading-history-page .section-title a {
   color: var(--text-primary-dark, #e0e0e0);
 }
 
-.reading-history-page .section-title i {
-  color: #ff6b6b;
-  font-size: 28px;
+.reading-history-page .section-title a:hover {
+  color: #00bcd4;
 }
 
-.reading-history-page .history-actions {
+.reading-history-page .section-title i {
+  color: #00bcd4;
+  font-size: 26px;
+}
+
+/* History Actions */
+.history-actions {
   display: flex;
   gap: 10px;
 }
 
-.reading-history-page .btn-clear-history {
+.btn-clear-history {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 20px;
-  background-color: #f44336;
-  color: #fff;
-  border: none;
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
   border-radius: 6px;
+  color: #f44336;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
-.reading-history-page .btn-clear-history:hover {
-  background-color: #d32f2f;
+.btn-clear-history:hover {
+  background: #f44336;
+  color: #fff;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
 }
 
+.btn-clear-history i {
+  font-size: 16px;
+}
+
 /* Loading State */
-.reading-history-page .loading-state {
+.loading-state {
   text-align: center;
   padding: 80px 20px;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.reading-history-page .loading-state i {
+body.dark-mode .loading-state {
+  background: var(--bg-secondary-dark, #1a1a1a);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.loading-state i {
   font-size: 48px;
-  color: var(--accent-color);
-  margin-bottom: 15px;
+  color: #00bcd4;
+  margin-bottom: 20px;
 }
 
-.reading-history-page .loading-state p {
+.loading-state p {
   font-size: 16px;
-  color: var(--text-secondary);
+  color: var(--text-secondary, #666);
+  margin: 0;
 }
 
-body.dark-mode .reading-history-page .loading-state p {
+body.dark-mode .loading-state p {
   color: var(--text-secondary-dark, #999);
 }
 
 /* Empty State */
-.reading-history-page .empty-state {
+.empty-state {
   text-align: center;
   padding: 80px 20px;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.reading-history-page .empty-state i {
+body.dark-mode .empty-state {
+  background: var(--bg-secondary-dark, #1a1a1a);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.empty-state i {
   font-size: 64px;
-  color: var(--text-secondary);
+  color: #bdbdbd;
   margin-bottom: 20px;
-  opacity: 0.5;
 }
 
-body.dark-mode .reading-history-page .empty-state i {
-  color: var(--text-secondary-dark, #666);
+body.dark-mode .empty-state i {
+  color: #666;
 }
 
-.reading-history-page .empty-state h3 {
-  font-size: 24px;
+.empty-state h3 {
+  font-size: 22px;
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
 }
 
-body.dark-mode .reading-history-page .empty-state h3 {
+body.dark-mode .empty-state h3 {
   color: var(--text-primary-dark, #e0e0e0);
 }
 
-.reading-history-page .empty-state p {
+.empty-state p {
   font-size: 16px;
-  color: var(--text-secondary);
-  margin-bottom: 25px;
+  color: var(--text-secondary, #666);
+  margin: 0 0 25px 0;
 }
 
-body.dark-mode .reading-history-page .empty-state p {
+body.dark-mode .empty-state p {
   color: var(--text-secondary-dark, #999);
 }
 
-.reading-history-page .empty-state .btn {
+.empty-state .btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 12px 30px;
-  background-color: var(--accent-color);
+  background: #00bcd4;
   color: #fff;
-  text-decoration: none;
   border-radius: 25px;
+  text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
 }
 
-.reading-history-page .empty-state .btn:hover {
+.empty-state .btn:hover {
+  background: #00acc1;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  box-shadow: 0 6px 16px rgba(0, 188, 212, 0.4);
 }
 
-/* Comics Grid */
+/* Comics Grid (giống homepage-new-update) */
 .reading-history-page .comics-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 20px;
+  margin-bottom: 30px;
 }
 
 .reading-history-page .comic-item {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  width: 100%;
 }
 
+/* Comic Card Styles */
 .reading-history-page .comic-card {
   background-color: var(--bg-secondary);
   border-radius: 8px;
@@ -167,7 +207,7 @@ body.dark-mode .reading-history-page .empty-state p {
   height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 380px;
+  min-height: 360px;
 }
 
 body.dark-mode .reading-history-page .comic-card {
@@ -177,13 +217,14 @@ body.dark-mode .reading-history-page .comic-card {
 
 .reading-history-page .comic-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 188, 212, 0.3);
 }
 
 body.dark-mode .reading-history-page .comic-card:hover {
-  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 188, 212, 0.4);
 }
 
+/* Comic Avatar */
 .reading-history-page .comic-avatar {
   position: relative;
   width: 100%;
@@ -213,30 +254,39 @@ body.dark-mode .reading-history-page .comic-card:hover {
 }
 
 /* Remove History Button */
-.reading-history-page .remove-history {
+.remove-history {
   position: absolute;
   top: 8px;
   right: 8px;
   width: 32px;
   height: 32px;
-  background-color: rgba(244, 67, 54, 0.9);
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgba(244, 67, 54, 0.9);
+  border-radius: 50%;
   color: #fff;
   font-size: 18px;
   cursor: pointer;
+  opacity: 0;
   transition: all 0.3s ease;
   z-index: 2;
 }
 
-.reading-history-page .remove-history:hover {
-  background-color: #f44336;
-  transform: scale(1.15);
-  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+body.dark-mode .remove-history {
+  background-color: rgba(244, 67, 54, 0.95);
 }
 
+.reading-history-page .comic-card:hover .remove-history {
+  opacity: 1;
+}
+
+.remove-history:hover {
+  background-color: #f44336;
+  transform: scale(1.1);
+}
+
+/* Top Notice */
 .reading-history-page .top-notice {
   position: absolute;
   bottom: 0;
@@ -244,6 +294,10 @@ body.dark-mode .reading-history-page .comic-card:hover {
   right: 0;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
   padding: 30px 10px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
   z-index: 1;
 }
 
@@ -254,6 +308,7 @@ body.dark-mode .reading-history-page .comic-card:hover {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
+/* Comic Info (căn giữa) */
 .reading-history-page .comic-info {
   padding: 12px;
   flex: 1;
@@ -289,17 +344,17 @@ body.dark-mode .reading-history-page .comic-name a {
 }
 
 .reading-history-page .comic-name a:hover {
-  color: var(--accent-color);
+  color: #00bcd4;
 }
 
+/* Comic Stats */
 .reading-history-page .comic-stats {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 15px;
   font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
+  color: var(--text-secondary, #666);
 }
 
 body.dark-mode .reading-history-page .comic-stats {
@@ -314,54 +369,77 @@ body.dark-mode .reading-history-page .comic-stats {
 
 .reading-history-page .stat-item i {
   font-size: 12px;
+  color: #00bcd4;
 }
 
-/* Reading Progress */
-.reading-history-page .reading-progress {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.reading-history-page .progress-bar {
-  flex: 1;
-  height: 6px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-body.dark-mode .reading-history-page .progress-bar {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.reading-history-page .progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4caf50, #66bb6a);
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-
-.reading-history-page .progress-text {
-  font-size: 11px;
-  font-weight: 600;
-  color: #4caf50;
-  min-width: 35px;
-  text-align: right;
-}
-
+/* Latest Chapter */
 .reading-history-page .latest-chapter a {
   display: inline-block;
   font-size: 13px;
-  color: var(--accent-color);
-  font-weight: 600;
+  color: #00bcd4;
+  font-weight: 500;
   transition: all 0.3s ease;
 }
 
 .reading-history-page .latest-chapter a:hover {
-  color: var(--hover-color);
+  color: #00acc1;
   text-decoration: underline;
+}
+
+/* Toast Notification */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 20px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .toast {
+  background: var(--bg-secondary-dark, #1a1a1a);
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast i {
+  font-size: 18px;
+}
+
+.toast-success {
+  border-left: 4px solid #4caf50;
+}
+
+.toast-success i {
+  color: #4caf50;
+}
+
+.toast-error {
+  border-left: 4px solid #f44336;
+}
+
+.toast-error i {
+  color: #f44336;
 }
 
 /* Responsive */
@@ -370,12 +448,12 @@ body.dark-mode .reading-history-page .progress-bar {
     padding: 30px 0;
   }
 
-  .reading-history-page .section-title {
-    font-size: 24px;
+  .reading-history-page .section-title a {
+    font-size: 22px;
   }
 
   .reading-history-page .section-title i {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .reading-history-page .comics-grid {
@@ -384,44 +462,7 @@ body.dark-mode .reading-history-page .progress-bar {
   }
 
   .reading-history-page .comic-card {
-    min-height: 360px;
-  }
-}
-
-@media (max-width: 767px) {
-  .reading-history-page {
-    padding: 25px 0;
-  }
-
-  .reading-history-page .container {
-    padding: 0 15px;
-  }
-
-  .reading-history-page .section-title {
-    font-size: 22px;
-  }
-
-  .reading-history-page .section-title i {
-    font-size: 24px;
-  }
-
-  .reading-history-page .btn-clear-history {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
-
-  .reading-history-page .comics-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-
-  .reading-history-page .comic-card {
     min-height: 340px;
-  }
-
-  .reading-history-page .comic-info {
-    padding: 10px;
-    gap: 6px;
   }
 
   .reading-history-page .comic-name {
@@ -434,23 +475,132 @@ body.dark-mode .reading-history-page .progress-bar {
     gap: 12px;
   }
 
-  .reading-history-page .remove-history {
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
+  .reading-history-page .latest-chapter a {
+    font-size: 12px;
+  }
+
+  .btn-clear-history {
+    padding: 9px 18px;
+    font-size: 13px;
   }
 }
 
-@media (max-width: 390px) {
-  .reading-history-page .section-title {
+@media (max-width: 767px) {
+  .reading-history-page {
+    padding: 25px 0;
+  }
+
+  .reading-history-page .container {
+    padding: 0 15px;
+  }
+
+  .reading-history-page .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .reading-history-page .section-title a {
     font-size: 20px;
+  }
+
+  .reading-history-page .section-title i {
+    font-size: 22px;
+  }
+
+  .reading-history-page .comics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .reading-history-page .comic-card {
+    border-radius: 6px;
+    min-height: 320px;
+  }
+
+  .reading-history-page .comic-info {
+    padding: 10px;
+    gap: 6px;
   }
 
   .reading-history-page .comic-name {
     font-size: 13px;
+    min-height: 36px;
+  }
+
+  .reading-history-page .comic-stats {
+    font-size: 11px;
+    gap: 10px;
+  }
+
+  .reading-history-page .latest-chapter a {
+    font-size: 11px;
+  }
+
+  .remove-history {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    top: 6px;
+    right: 6px;
+  }
+
+  .reading-history-page .time-ago {
+    font-size: 10px;
+  }
+
+  .btn-clear-history {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .loading-state,
+  .empty-state {
+    padding: 60px 15px;
+  }
+
+  .empty-state h3 {
+    font-size: 18px;
+  }
+
+  .empty-state p {
+    font-size: 14px;
+  }
+
+  .toast-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+
+  .toast {
+    padding: 12px 15px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 390px) {
+  .reading-history-page .section-title a {
+    font-size: 18px;
   }
 
   .reading-history-page .comics-grid {
     gap: 12px;
   }
+
+  .reading-history-page .comic-name {
+    font-size: 12px;
+    min-height: 34px;
+  }
+
+  .btn-clear-history {
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+}
+
+/* Animation for card removal */
+.reading-history-page .comic-item {
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }

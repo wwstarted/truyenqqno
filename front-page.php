@@ -112,7 +112,7 @@ if (!$hot_comics->have_posts()) {
                                 </a>
 
                                 <!-- Bookmark Button (UI Only) -->
-                                <span class="bookmark-badge" title="Theo dõi">
+                                <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
                                     <i class="fa fa-bookmark-o"></i>
                                 </span>
 
@@ -243,7 +243,7 @@ if (!$exclusive_comics->have_posts()) {
                                 </a>
 
                                 <!-- Bookmark Button (UI Only) -->
-                                <span class="bookmark-badge" title="Theo dõi">
+                                <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
                                     <i class="fa fa-bookmark-o"></i>
                                 </span>
 
@@ -341,7 +341,7 @@ $hot_comic_ids = $wpdb->get_col(
                 </a>
             </h2>
             <div class="filter-button">
-                <a href="#" title="Lọc truyện">
+                <a href="<?php echo esc_url(home_url('/tim-kiem-nang-cao')) ?>" title="Lọc truyện">
                     <button type="button">
                         <i class="fa fa-filter"></i>
                     </button>
@@ -421,7 +421,7 @@ $hot_comic_ids = $wpdb->get_col(
                         </a>
 
                         <!-- Bookmark Button -->
-                        <span class="bookmark-badge" title="Theo dõi">
+                        <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
                             <i class="fa fa-bookmark-o"></i>
                         </span>
 

@@ -19,6 +19,25 @@ function toyota_enqueue_assets()
     wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], '11.0.0', true);
 
     // ========================================
+    // GLOBAL BOOKMARK HANDLER (load everywhere)
+    // ========================================
+    wp_enqueue_script(
+        'truyenqq-bookmarks',
+        get_template_directory_uri() . '/js/bookmarks.js',
+        array('jquery'),
+        '1.0.1',
+        true
+    );
+
+    // Localize for bookmark script
+    wp_localize_script('truyenqq-bookmarks', 'truyenqqConfig', array(
+        'apiBase' => esc_url_raw(rest_url('nettruyen/v1')),
+        'nonce' => wp_create_nonce('wp_rest'),
+        'homeUrl' => esc_url(home_url()),
+        'isLoggedIn' => is_user_logged_in()
+    ));
+
+    // ========================================
     // BASE LISTING ASSETS
     // ========================================
     $listing_templates = array(
@@ -41,7 +60,6 @@ function toyota_enqueue_assets()
     }
 
     if ($is_listing_page) {
-        // Base CSS (dùng chung cho tất cả)
         wp_enqueue_style(
             'truyen-moi-cap-nhat-base',
             get_template_directory_uri() . '/css/truyen-moi-cap-nhat.css',
@@ -49,7 +67,6 @@ function toyota_enqueue_assets()
             '1.0.1'
         );
 
-        // Base JS Class (load TRƯỚC)
         wp_enqueue_script(
             'comics-listing-base',
             get_template_directory_uri() . '/js/comics-listing-base.js',
@@ -213,7 +230,6 @@ function toyota_enqueue_assets()
         ));
     }
 
-
     // ========================================
     // NGẪU NHIÊN
     // ========================================
@@ -232,8 +248,90 @@ function toyota_enqueue_assets()
         ));
     }
 
+
     // ========================================
-    // OTHER PAGES (giữ nguyên code cũ)
+    // LỊCH SỬ PAGE
+    // ========================================
+    if (is_page_template('page-lich-su.php')) {
+        wp_enqueue_style(
+            'toyota-front-page',
+            get_template_directory_uri() . '/css/front-page-v2.css',
+            array('toyota-global'),
+            '1.0.1'
+        );
+
+        wp_enqueue_style(
+            'reading-history-css',
+            get_template_directory_uri() . '/css/reading-history.css',
+            array('toyota-front-page'),
+            '1.0.1'
+        );
+
+        wp_enqueue_script(
+            'toyota-front-page',
+            get_template_directory_uri() . '/js/front-page.js',
+            array('jquery', 'swiper'),
+            '1.0.1',
+            true
+        );
+
+        wp_enqueue_script(
+            'reading-history-js',
+            get_template_directory_uri() . '/js/reading-history.js',
+            array('jquery'),
+            '1.0.1',
+            true
+        );
+
+        wp_localize_script('reading-history-js', 'truyenqqConfig', array(
+            'apiBase' => esc_url_raw(rest_url('nettruyen/v1')),
+            'nonce' => wp_create_nonce('wp_rest'),
+            'homeUrl' => esc_url(home_url())
+        ));
+    }
+
+    // ========================================
+    // THEO DÕI PAGE
+    // ========================================
+    if (is_page_template('page-theo-doi.php')) {
+        // CSS cho carousel
+        wp_enqueue_style(
+            'toyota-front-page',
+            get_template_directory_uri() . '/css/front-page-v2.css',
+            array('toyota-global'),
+            '1.0.1'
+        );
+
+        // CSS cho grid layout (reuse từ reading-history)
+        wp_enqueue_style(
+            'reading-history-css',
+            get_template_directory_uri() . '/css/reading-history.css',
+            array('toyota-front-page'),
+            '1.0.1'
+        );
+
+        // JS cho carousel (front-page)
+        wp_enqueue_script(
+            'toyota-front-page',
+            get_template_directory_uri() . '/js/front-page.js',
+            array('jquery', 'swiper'),
+            '1.0.1',
+            true
+        );
+
+        // JS riêng cho trang theo dõi
+        wp_enqueue_script(
+            'theo-doi-js',
+            get_template_directory_uri() . '/js/theo-doi.js',
+            array('jquery', 'truyenqq-bookmarks'),
+            '1.0.1',
+            true
+        );
+    }
+
+
+    // ========================================
+    // OTHER PAGES
     // ========================================
     if (is_page_template('page-thuythu.php')) {
         wp_enqueue_style('thuythu', get_template_directory_uri() . '/css/thuythu.css', array('toyota-global'), '1.0.1');
@@ -265,7 +363,6 @@ function toyota_enqueue_assets()
     }
 
     if (is_page_template('page-advanced-search.php')) {
-        // Đảm bảo base CSS được load
         wp_enqueue_style(
             'truyen-moi-cap-nhat-base',
             get_template_directory_uri() . '/css/truyen-moi-cap-nhat.css',
@@ -273,7 +370,6 @@ function toyota_enqueue_assets()
             '1.0.2'
         );
 
-        // CSS riêng
         wp_enqueue_style(
             'advanced-search-css',
             get_template_directory_uri() . '/css/advanced-search.css',
@@ -281,7 +377,6 @@ function toyota_enqueue_assets()
             '1.0.2'
         );
 
-        // JS
         wp_enqueue_script(
             'advanced-search-js',
             get_template_directory_uri() . '/js/advanced-search.js',
@@ -290,7 +385,6 @@ function toyota_enqueue_assets()
             true
         );
 
-        // Localize script
         wp_localize_script('advanced-search-js', 'nettruyenData', array(
             'restUrl' => rest_url('nettruyen/v1/advanced-search'),
             'nonce' => wp_create_nonce('wp_rest'),
@@ -330,44 +424,6 @@ function toyota_enqueue_assets()
         }
     }
 
-    if (is_page_template('page-lich-su.php')) {
-        // Enqueue Swiper (đã có trong homepage)
-        // CSS cho section Độc Quyền QQ (tái sử dụng từ homepage)
-        wp_enqueue_style(
-            'toyota-front-page',
-            get_template_directory_uri() . '/css/front-page-v2.css',
-            array('toyota-global'),
-            '1.0.1'
-        );
-
-        // CSS riêng cho reading history
-        wp_enqueue_style(
-            'reading-history-css',
-            get_template_directory_uri() . '/css/reading-history.css',
-            array('toyota-front-page'),
-            '1.0.0'
-        );
-
-        // JS cho Độc Quyền carousel (tái sử dụng từ homepage)
-        wp_enqueue_script(
-            'toyota-front-page',
-            get_template_directory_uri() . '/js/front-page.js',
-            array('jquery', 'swiper'),
-            '1.0.1',
-            true
-        );
-
-        // JS riêng cho reading history
-        wp_enqueue_script(
-            'reading-history-js',
-            get_template_directory_uri() . '/js/reading-history.js',
-            array('jquery'),
-            '1.0.0',
-            true
-        );
-
-    }
-
     // Auth pages
     wp_enqueue_style('truyenqq-auth', get_template_directory_uri() . '/css/auth-pages.css', array(), '1.0.1');
     wp_enqueue_script('truyenqq-auth', get_template_directory_uri() . '/js/auth-pages.js', array('jquery'), '1.0.1', true);
@@ -390,6 +446,39 @@ require_once get_template_directory() . '/inc/single-nettruyen-comics.php';
 require_once get_template_directory() . '/inc/class-top-comics-api.php';
 require_once get_template_directory() . '/inc/create-reading-history-table.php';
 require_once get_template_directory() . '/inc/reading-history-api.php';
+
+// ========================================
+// BOOKMARK SYSTEM
+// ========================================
+require_once get_template_directory() . '/inc/create-bookmarks-table.php';
+require_once get_template_directory() . '/inc/bookmarks-api.php';
+
+/**
+ * Helper function: Render bookmark badge with proper state
+ * 
+ * @param int $post_id Post ID
+ * @param bool|null $is_bookmarked Override bookmark state (null = auto-check)
+ */
+function truyenqq_render_bookmark_badge($post_id, $is_bookmarked = null)
+{
+    if ($is_bookmarked === null && is_user_logged_in()) {
+        $is_bookmarked = truyenqq_is_bookmarked($post_id);
+    }
+
+    $icon_class = $is_bookmarked ? 'fa-bookmark' : 'fa-bookmark-o';
+    $active_class = $is_bookmarked ? 'active' : '';
+    $title = $is_bookmarked ? 'Bỏ theo dõi' : 'Theo dõi';
+
+    echo sprintf(
+        '<span class="bookmark-badge %s" title="%s" data-post-id="%d">
+            <i class="fa %s"></i>
+        </span>',
+        esc_attr($active_class),
+        esc_attr($title),
+        (int) $post_id,
+        esc_attr($icon_class)
+    );
+}
 
 // // Force create reading history table on init
 // add_action('init', function () {
@@ -1463,3 +1552,5 @@ function auto_migrate_genre_to_country()
 
     echo '<div class="notice notice-success is-dismissible"><p><strong>Đã xử lý xong!</strong> Tổng cộng ' . $count . ' truyện đã được cập nhật Quốc gia tự động.</p></div>';
 }
+
+// ============================ add asset register for bookmarks =======================

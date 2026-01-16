@@ -1,10 +1,9 @@
 <?php
 /**
- * Template Name: Lịch Sử Đọc Truyện
+ * Template Name: Truyện Theo Dõi
  * 
  * @package TruyenQQ
- * @version 1.0.1
- * ✅ Updated: Grid layout like homepage-new-update
+ * @version 1.0.0
  */
 
 // Redirect if not logged in
@@ -87,8 +86,8 @@ $exclusive_comics = new WP_Query($args);
                                         loading="lazy">
                                 </a>
 
-                                <!-- Bookmark Button (UI Only) -->
-                                <span class="bookmark-badge" title="Theo dõi">
+                                <!-- Bookmark Button -->
+                                <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
                                     <i class="fa fa-bookmark-o"></i>
                                 </span>
 
@@ -139,42 +138,42 @@ $exclusive_comics = new WP_Query($args);
 </section>
 <?php endif; ?>
 
-<!-- Reading History Section -->
-<div class="reading-history-page">
+<!-- Bookmarks Section -->
+<div class="bookmarks-page reading-history-page">
     <div class="container">
         <!-- Section Header -->
         <div class="section-header">
             <h2 class="section-title">
-                <a href="/lich-su" title="Lịch Sử Đọc Truyện">
-                    <i class="fa fa-history"></i>
-                    <span>Lịch Sử Đọc Truyện</span>
+                <a href="/theo-doi" title="Truyện Theo Dõi">
+                    <i class="fa fa-bookmark"></i>
+                    <span>Truyện Theo Dõi</span>
                 </a>
             </h2>
-            <div class="history-actions">
-                <button type="button" class="btn-clear-history" id="clear-all-history">
+            <div class="bookmark-actions">
+                <button type="button" class="btn-clear-bookmarks" id="clear-all-bookmarks">
                     <i class="fa fa-trash-o"></i> Xóa Tất Cả
                 </button>
             </div>
         </div>
 
         <!-- Loading State -->
-        <div class="loading-state" id="history-loading">
+        <div class="loading-state" id="bookmarks-loading">
             <i class="fa fa-spinner fa-spin"></i>
-            <p>Đang tải lịch sử...</p>
+            <p>Đang tải truyện theo dõi...</p>
         </div>
 
         <!-- Empty State -->
-        <div class="empty-state" id="history-empty" style="display: none;">
-            <i class="fa fa-book"></i>
-            <h3>Chưa có lịch sử đọc truyện</h3>
-            <p>Bắt đầu đọc truyện yêu thích của bạn ngay!</p>
+        <div class="empty-state" id="bookmarks-empty" style="display: none;">
+            <i class="fa fa-bookmark-o"></i>
+            <h3>Chưa có truyện theo dõi</h3>
+            <p>Bắt đầu theo dõi truyện yêu thích của bạn ngay!</p>
             <a href="<?php echo home_url(); ?>" class="btn btn-primary">
                 <i class="fa fa-home"></i> Về Trang Chủ
             </a>
         </div>
 
-        <!-- History Grid (giống homepage-new-update) -->
-        <div class="comics-grid" id="history-grid" style="display: none;">
+        <!-- Bookmarks Grid -->
+        <div class="comics-grid" id="bookmarks-grid" style="display: none;">
             <!-- Items will be loaded here by JavaScript -->
         </div>
     </div>

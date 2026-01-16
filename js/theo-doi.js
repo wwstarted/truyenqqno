@@ -1,35 +1,24 @@
 /**
- * Reading History Page - JavaScript
+ * Bookmarks Page (Theo Dõi) - JavaScript
  *
  * @package TruyenQQ
- * @version 1.0.3
+ * @version 1.0.0
  */
 
 (function () {
   "use strict";
+
   function getApiBase() {
-    // Ưu tiên: Lấy từ PHP (được inject bởi wp_localize_script)
     if (typeof truyenqqConfig !== "undefined" && truyenqqConfig.apiBase) {
       return truyenqqConfig.apiBase;
     }
 
-    // Fallback: Tự động detect từ current URL
-    const origin = window.location.origin; // http://localhost
-    const pathname = window.location.pathname; // /truyen_qqno/wordpress-6.8.3-vi/wordpress/lich-su/
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
 
-    // Tách ra phần WordPress root
     let wpRoot = "/";
     if (pathname.includes("/wordpress/")) {
       wpRoot = pathname.substring(0, pathname.indexOf("/wordpress/") + 11);
-    } else if (
-      pathname.includes("/wp-admin/") ||
-      pathname.includes("/wp-content/")
-    ) {
-      const parts = pathname.split("/");
-      const wpIndex = parts.findIndex(
-        (p) => p === "wp-admin" || p === "wp-content"
-      );
-      wpRoot = parts.slice(0, wpIndex).join("/") + "/";
     }
 
     return origin + wpRoot + "wp-json/nettruyen/v1";
@@ -43,16 +32,16 @@
       return;
     }
 
-    const page = document.querySelector(".reading-history-page");
+    const page = document.querySelector(".bookmarks-page");
     if (!page) return;
 
-    console.log("📍 API Base:", API_BASE); // Debug log
-    loadHistory();
+    console.log("📍 API Base:", API_BASE);
+    loadBookmarks();
     initClearAllButton();
   }
 
   /**
-   * Get WP nonce for API requests
+   * Get WP nonce
    */
   function getNonce() {
     if (typeof truyenqqConfig !== "undefined" && truyenqqConfig.nonce) {
@@ -62,26 +51,25 @@
   }
 
   /**
-   * Load reading history from API
+   * Load bookmarks from API
    */
-  async function loadHistory() {
-    const loading = document.getElementById("history-loading");
-    const empty = document.getElementById("history-empty");
-    const grid = document.getElementById("history-grid");
+  async function loadBookmarks() {
+    const loading = document.getElementById("bookmarks-loading");
+    const empty = document.getElementById("bookmarks-empty");
+    const grid = document.getElementById("bookmarks-grid");
 
     loading.style.display = "block";
     empty.style.display = "none";
     grid.style.display = "none";
 
     try {
-      const response = await fetch(`${API_BASE}/reading-history`, {
+      const response = await fetch(`${API_BASE}/bookmarks`, {
         credentials: "same-origin",
         headers: {
           "X-WP-Nonce": getNonce(),
         },
       });
 
-      // Check HTTP status
       if (!response.ok) {
         const errorText = await response.text();
         console.error("API Error:", response.status, errorText);
@@ -96,9 +84,9 @@
 
       if (!result.success || !result.data || result.data.length === 0) {
         empty.innerHTML = `
-          <i class="fa fa-book"></i>
-          <h3>Chưa có lịch sử đọc truyện</h3>
-          <p>Bắt đầu đọc truyện yêu thích của bạn ngay!</p>
+          <i class="fa fa-bookmark-o"></i>
+          <h3>Chưa có truyện theo dõi</h3>
+          <p>Bắt đầu theo dõi truyện yêu thích của bạn ngay!</p>
           <a href="${window.location.origin}" class="btn btn-primary">
             <i class="fa fa-home"></i> Về Trang Chủ
           </a>
@@ -107,15 +95,15 @@
         return;
       }
 
-      renderHistory(result.data);
+      renderBookmarks(result.data);
       grid.style.display = "grid";
     } catch (error) {
-      console.error("Failed to load history:", error);
+      console.error("Failed to load bookmarks:", error);
       loading.style.display = "none";
 
       empty.innerHTML = `
         <i class="fa fa-exclamation-triangle"></i>
-        <h3>Không thể tải lịch sử</h3>
+        <h3>Không thể tải truyện theo dõi</h3>
         <p style="color: #e74c3c; margin: 10px 0;">${error.message}</p>
         <p style="color: #777; font-size: 14px;">Vui lòng kiểm tra kết nối và thử lại</p>
         <a href="${window.location.href}" class="btn btn-primary">
@@ -127,30 +115,43 @@
   }
 
   /**
-   * Render history items
+   * Render bookmarks
    */
-  function renderHistory(items) {
-    const grid = document.getElementById("history-grid");
+  function renderBookmarks(items) {
+    const grid = document.getElementById("bookmarks-grid");
     grid.innerHTML = "";
 
     items.forEach((item) => {
-      const card = createHistoryCard(item);
+      const card = createBookmarkCard(item);
       grid.appendChild(card);
     });
 
-    // Init delete buttons
-    initDeleteButtons();
+    // Init remove buttons
+    initRemoveButtons();
+
+    // Init bookmark buttons (for global handler)
+    if (window.TruyenqqBookmarks) {
+      window.TruyenqqBookmarks.init();
+    }
   }
 
   /**
-   * Create history card HTML (giống homepage-new-update)
+   * Create bookmark card HTML
    */
-  function createHistoryCard(item) {
+  function createBookmarkCard(item) {
     const div = document.createElement("div");
     div.className = "comic-item";
-    div.setAttribute("data-history-id", item.id);
+    div.setAttribute("data-post-id", item.post_id);
 
-    const continueUrl = `${item.post_url}?chapter=${item.chapter_slug}&page=${item.current_page}`;
+    // Calculate time since added
+    const addedDate = new Date(item.created_at);
+    const now = new Date();
+    const diffMs = now - addedDate;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    let addedText = "Hôm nay";
+    if (diffDays > 0) {
+      addedText = `${diffDays} ngày trước`;
+    }
 
     div.innerHTML = `
       <div class="comic-card">
@@ -161,12 +162,19 @@
     )}" loading="lazy">
           </a>
           
-          <span class="remove-history" title="Xóa lịch sử" data-id="${item.id}">
+          <span class="remove-bookmark" title="Bỏ theo dõi" data-post-id="${
+            item.post_id
+          }">
             <i class="fa fa-times-circle-o"></i>
           </span>
           
           <div class="top-notice">
             <span class="time-ago">${item.time_ago}</span>
+            <span class="bookmark-badge active" data-post-id="${
+              item.post_id
+            }" title="Đã theo dõi">
+              <i class="fa fa-bookmark"></i>
+            </span>
           </div>
         </div>
         
@@ -180,7 +188,7 @@
           <div class="comic-stats">
             <span class="stat-item">
               <i class="fa fa-bookmark"></i>
-              ${formatNumber(item.follow_count)}
+              ${formatNumber(item.bookmark_count)}
             </span>
             <span class="stat-item">
               <i class="fa fa-eye"></i>
@@ -189,9 +197,13 @@
           </div>
           
           <div class="latest-chapter">
-            <a href="${continueUrl}" title="Đọc tiếp ${item.chapter_name}">
-              Đọc tiếp chương ${item.chapter_name}
+            <a href="${item.post_url}" title="Đọc ${item.latest_chapter}">
+              ${escapeHtml(item.latest_chapter)}
             </a>
+          </div>
+          
+          <div class="bookmark-info">
+            <small><i class="fa fa-clock-o"></i> Đã theo dõi ${addedText}</small>
           </div>
         </div>
       </div>
@@ -201,34 +213,31 @@
   }
 
   /**
-   * Init delete buttons
+   * Init remove buttons
    */
-  function initDeleteButtons() {
-    const deleteButtons = document.querySelectorAll(".remove-history");
+  function initRemoveButtons() {
+    const removeButtons = document.querySelectorAll(".remove-bookmark");
 
-    deleteButtons.forEach((btn) => {
+    removeButtons.forEach((btn) => {
       btn.addEventListener("click", async function (e) {
         e.preventDefault();
         e.stopPropagation();
 
-        const historyId = this.getAttribute("data-id");
+        const postId = this.getAttribute("data-post-id");
         const card = this.closest(".comic-item");
 
-        if (!confirm("Bạn có chắc muốn xóa lịch sử này?")) {
+        if (!confirm("Bạn có chắc muốn bỏ theo dõi truyện này?")) {
           return;
         }
 
         try {
-          const response = await fetch(
-            `${API_BASE}/reading-history/${historyId}`,
-            {
-              method: "DELETE",
-              credentials: "same-origin",
-              headers: {
-                "X-WP-Nonce": getNonce(),
-              },
-            }
-          );
+          const response = await fetch(`${API_BASE}/bookmarks/${postId}`, {
+            method: "DELETE",
+            credentials: "same-origin",
+            headers: {
+              "X-WP-Nonce": getNonce(),
+            },
+          });
 
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -244,14 +253,14 @@
               card.remove();
 
               // Check if grid is empty
-              const grid = document.getElementById("history-grid");
+              const grid = document.getElementById("bookmarks-grid");
               if (grid.children.length === 0) {
                 grid.style.display = "none";
-                const emptyState = document.getElementById("history-empty");
+                const emptyState = document.getElementById("bookmarks-empty");
                 emptyState.innerHTML = `
-                  <i class="fa fa-book"></i>
-                  <h3>Chưa có lịch sử đọc truyện</h3>
-                  <p>Bắt đầu đọc truyện yêu thích của bạn ngay!</p>
+                  <i class="fa fa-bookmark-o"></i>
+                  <h3>Chưa có truyện theo dõi</h3>
+                  <p>Bắt đầu theo dõi truyện yêu thích của bạn ngay!</p>
                   <a href="${window.location.origin}" class="btn btn-primary">
                     <i class="fa fa-home"></i> Về Trang Chủ
                   </a>
@@ -260,7 +269,7 @@
               }
             }, 300);
 
-            showToast("Đã xóa lịch sử", "success");
+            showToast("Đã bỏ theo dõi", "success");
           } else {
             showToast(
               result.message || "Xóa thất bại. Vui lòng thử lại.",
@@ -269,7 +278,7 @@
           }
         } catch (error) {
           console.error("Delete failed:", error);
-          showToast("Lỗi xóa lịch sử", "error");
+          showToast("Lỗi bỏ theo dõi", "error");
         }
       });
     });
@@ -279,23 +288,23 @@
    * Init clear all button
    */
   function initClearAllButton() {
-    const btn = document.getElementById("clear-all-history");
+    const btn = document.getElementById("clear-all-bookmarks");
     if (!btn) return;
 
     btn.addEventListener("click", async function () {
-      if (!confirm("Bạn có chắc muốn xóa TẤT CẢ lịch sử đọc truyện?")) {
+      if (!confirm("Bạn có chắc muốn bỏ theo dõi TẤT CẢ truyện?")) {
         return;
       }
 
-      const loading = document.getElementById("history-loading");
-      const grid = document.getElementById("history-grid");
-      const empty = document.getElementById("history-empty");
+      const loading = document.getElementById("bookmarks-loading");
+      const grid = document.getElementById("bookmarks-grid");
+      const empty = document.getElementById("bookmarks-empty");
 
       try {
         loading.style.display = "block";
         grid.style.display = "none";
 
-        const response = await fetch(`${API_BASE}/reading-history/clear`, {
+        const response = await fetch(`${API_BASE}/bookmarks/clear-all`, {
           method: "POST",
           credentials: "same-origin",
           headers: {
@@ -315,9 +324,9 @@
           grid.innerHTML = "";
           grid.style.display = "none";
           empty.innerHTML = `
-            <i class="fa fa-book"></i>
-            <h3>Đã xóa tất cả lịch sử</h3>
-            <p>Bắt đầu đọc truyện yêu thích của bạn ngay!</p>
+            <i class="fa fa-bookmark-o"></i>
+            <h3>Đã xóa tất cả truyện theo dõi</h3>
+            <p>Bắt đầu theo dõi truyện yêu thích của bạn ngay!</p>
             <a href="${window.location.origin}" class="btn btn-primary">
               <i class="fa fa-home"></i> Về Trang Chủ
             </a>
@@ -332,22 +341,19 @@
         console.error("Clear all failed:", error);
         loading.style.display = "none";
         grid.style.display = "grid";
-        showToast("Lỗi xóa lịch sử", "error");
+        showToast("Lỗi xóa truyện theo dõi", "error");
       }
     });
   }
 
   /**
-   * Utility: Format number
+   * Utility functions
    */
   function formatNumber(num) {
     if (!num) return "0";
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  /**
-   * Utility: Escape HTML
-   */
   function escapeHtml(text) {
     if (!text) return "";
     const map = {
@@ -360,9 +366,6 @@
     return text.replace(/[&<>"']/g, (m) => map[m]);
   }
 
-  /**
-   * Show toast notification
-   */
   function showToast(message, type = "info") {
     let toastContainer = document.querySelector(".toast-container");
 

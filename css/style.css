@@ -604,3 +604,250 @@ select:focus {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
+
+/* css for badge =================== */
+
+/**
+ * Bookmark Badge Styles
+ * Thêm vào file CSS chính của bạn (style.css hoặc front-page-v2.css)
+ * 
+ * @package TruyenQQ
+ * @version 1.0.0
+ */
+
+/* ========================================
+   BOOKMARK BADGE STYLES
+======================================== */
+
+/* Default state (chưa bookmark) */
+.bookmark-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+  border: 2px solid transparent;
+}
+
+body.dark-mode .bookmark-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Hover state */
+.bookmark-badge:hover {
+  background-color: rgba(255, 107, 107, 0.9);
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Active state (đã bookmark) */
+.bookmark-badge.active {
+  background-color: #ff6b6b !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.6);
+}
+
+body.dark-mode .bookmark-badge.active {
+  background-color: #ff6b6b !important;
+  box-shadow: 0 0 16px rgba(255, 107, 107, 0.8);
+}
+
+/* Active hover */
+.bookmark-badge.active:hover {
+  background-color: #ff5252 !important;
+  transform: scale(1.15);
+  box-shadow: 0 0 16px rgba(255, 107, 107, 0.8);
+}
+
+/* Icon inside */
+.bookmark-badge i {
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.bookmark-badge.active i {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+/* Animation when clicking */
+@keyframes bookmarkPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.bookmark-badge.animating {
+  animation: bookmarkPulse 0.3s ease;
+}
+
+/* Loading state */
+.bookmark-badge.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.bookmark-badge.loading i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .bookmark-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    top: 6px;
+    right: 6px;
+  }
+
+  .bookmark-badge i {
+    font-size: 12px;
+  }
+
+  .bookmark-badge.active i {
+    font-size: 13px;
+  }
+}
+
+/* ========================================
+   BOOKMARK COUNT DISPLAY (Optional)
+======================================== */
+
+.bookmark-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background-color: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 12px;
+  color: #ff6b6b;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .bookmark-count-badge {
+  background-color: rgba(255, 107, 107, 0.15);
+  border-color: rgba(255, 107, 107, 0.4);
+}
+
+.bookmark-count-badge:hover {
+  background-color: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.5);
+}
+
+.bookmark-count-badge i {
+  font-size: 11px;
+}
+
+/* ========================================
+   TOAST NOTIFICATION STYLES
+======================================== */
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 20px;
+  background: var(--bg-secondary, #fff);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+  min-width: 250px;
+}
+
+body.dark-mode .toast {
+  background: var(--bg-secondary-dark, #1a1a1a);
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast i {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.toast-success {
+  border-left: 4px solid #4caf50;
+}
+
+.toast-success i {
+  color: #4caf50;
+}
+
+.toast-error {
+  border-left: 4px solid #f44336;
+}
+
+.toast-error i {
+  color: #f44336;
+}
+
+.toast-info {
+  border-left: 4px solid #2196f3;
+}
+
+.toast-info i {
+  color: #2196f3;
+}
+
+/* Mobile toast */
+@media (max-width: 767px) {
+  .toast-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+
+  .toast {
+    padding: 12px 15px;
+    font-size: 13px;
+    min-width: auto;
+  }
+}
