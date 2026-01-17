@@ -42,6 +42,6 @@
 }
 
 /* Adjust subscribed badge khi có rank badge */
-.list_grid .book_avatar .subscribed-badge {
-  top: 48px; /* Dời xuống để không đè lên rank */
-}
+/* .list_grid .book_avatar .subscribed-badge {
+  top: 48px;
+} */

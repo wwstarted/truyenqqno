@@ -1273,3 +1273,8 @@ body.dark-mode .homepage-new-update .view-more-btn {
     gap: 12px;
   }
 }
+
+.homepage-suggest .swiper-wrapper,
+.homepage-exclusive .swiper-wrapper {
+  background: none !important;
+}

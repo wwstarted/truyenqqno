@@ -230,8 +230,13 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                 </nav>
             </div>
         </div>
-    </header>
 
+        <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+            <div class="mobile-menu-content">
+                <div class="mobile-menu-header"></div>
+            </div>
+        </div>
+    </header>
     <?php wp_footer(); ?>
 </body>
 

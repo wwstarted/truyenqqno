@@ -14,6 +14,9 @@ function toyota_enqueue_assets()
     wp_enqueue_style('toyota-header', get_template_directory_uri() . '/css/header.css', array('toyota-global'), '1.0.1');
     wp_enqueue_style('toyota-footer', get_template_directory_uri() . '/css/footer.css', array('toyota-global'), '1.0.1');
 
+    // Bookmark Badge CSS (load on all pages)
+    wp_enqueue_style('bookmark-badge', get_template_directory_uri() . '/css/bookmark-badge.css', array('toyota-global'), '1.0.1');
+
     // Swiper
     wp_enqueue_style('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', [], '11.0.0');
     wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], '11.0.0', true);
@@ -248,6 +251,44 @@ function toyota_enqueue_assets()
         ));
     }
 
+    // ========================================
+    // THEO DÕI PAGE
+    // ========================================
+    if (is_page_template('page-theo-doi.php')) {
+        // CSS cho carousel
+        wp_enqueue_style(
+            'toyota-front-page',
+            get_template_directory_uri() . '/css/front-page-v2.css',
+            array('toyota-global'),
+            '1.0.1'
+        );
+
+        // CSS cho grid layout (reuse từ reading-history)
+        wp_enqueue_style(
+            'reading-history-css',
+            get_template_directory_uri() . '/css/reading-history.css',
+            array('toyota-front-page'),
+            '1.0.1'
+        );
+
+        // JS cho carousel (front-page)
+        wp_enqueue_script(
+            'toyota-front-page',
+            get_template_directory_uri() . '/js/front-page.js',
+            array('jquery', 'swiper'),
+            '1.0.1',
+            true
+        );
+
+        // JS riêng cho trang theo dõi
+        wp_enqueue_script(
+            'theo-doi-js',
+            get_template_directory_uri() . '/js/theo-doi.js',
+            array('jquery', 'truyenqq-bookmarks'),
+            '1.0.1',
+            true
+        );
+    }
 
     // ========================================
     // LỊCH SỬ PAGE
@@ -289,46 +330,6 @@ function toyota_enqueue_assets()
             'homeUrl' => esc_url(home_url())
         ));
     }
-
-    // ========================================
-    // THEO DÕI PAGE
-    // ========================================
-    if (is_page_template('page-theo-doi.php')) {
-        // CSS cho carousel
-        wp_enqueue_style(
-            'toyota-front-page',
-            get_template_directory_uri() . '/css/front-page-v2.css',
-            array('toyota-global'),
-            '1.0.1'
-        );
-
-        // CSS cho grid layout (reuse từ reading-history)
-        wp_enqueue_style(
-            'reading-history-css',
-            get_template_directory_uri() . '/css/reading-history.css',
-            array('toyota-front-page'),
-            '1.0.1'
-        );
-
-        // JS cho carousel (front-page)
-        wp_enqueue_script(
-            'toyota-front-page',
-            get_template_directory_uri() . '/js/front-page.js',
-            array('jquery', 'swiper'),
-            '1.0.1',
-            true
-        );
-
-        // JS riêng cho trang theo dõi
-        wp_enqueue_script(
-            'theo-doi-js',
-            get_template_directory_uri() . '/js/theo-doi.js',
-            array('jquery', 'truyenqq-bookmarks'),
-            '1.0.1',
-            true
-        );
-    }
-
 
     // ========================================
     // OTHER PAGES
@@ -479,7 +480,6 @@ function truyenqq_render_bookmark_badge($post_id, $is_bookmarked = null)
         esc_attr($icon_class)
     );
 }
-
 // // Force create reading history table on init
 // add_action('init', function () {
 //     global $wpdb;

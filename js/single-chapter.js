@@ -10,8 +10,38 @@
 (function () {
   "use strict";
 
-  const API_BASE =
-    "http://localhost/truyen_qqno/wordpress-6.8.3-vi/wordpress/wp-json/nettruyen/v1";
+  // const API_BASE =
+  //   "http://localhost/truyen_qqno/wordpress-6.8.3-vi/wordpress/wp-json/nettruyen/v1";
+
+  function getApiBase() {
+    // Ưu tiên: Lấy từ PHP (được inject bởi wp_localize_script)
+    if (typeof truyenqqConfig !== "undefined" && truyenqqConfig.apiBase) {
+      return truyenqqConfig.apiBase;
+    }
+
+    // Fallback: Tự động detect từ current URL
+    const origin = window.location.origin; // http://localhost
+    const pathname = window.location.pathname; // /truyen_qqno/wordpress-6.8.3-vi/wordpress/lich-su/
+
+    // Tách ra phần WordPress root
+    let wpRoot = "/";
+    if (pathname.includes("/wordpress/")) {
+      wpRoot = pathname.substring(0, pathname.indexOf("/wordpress/") + 11);
+    } else if (
+      pathname.includes("/wp-admin/") ||
+      pathname.includes("/wp-content/")
+    ) {
+      const parts = pathname.split("/");
+      const wpIndex = parts.findIndex(
+        (p) => p === "wp-admin" || p === "wp-content"
+      );
+      wpRoot = parts.slice(0, wpIndex).join("/") + "/";
+    }
+
+    return origin + wpRoot + "wp-json/nettruyen/v1";
+  }
+
+  const API_BASE = getApiBase();
   let saveTimeout = null;
   let lastSavedPage = -1;
   let isScrolling = false;

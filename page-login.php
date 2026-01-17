@@ -281,7 +281,7 @@
     </div>
 </div>
 
-<!-- Auth Buttons (when not logged in) -->
+<!-- Auth Buttons -->
 <div id="auth-buttons">
     <button class="btn btn-outline" data-modal="login">
         <i class="fa fa-sign-in"></i> Đăng nhập
