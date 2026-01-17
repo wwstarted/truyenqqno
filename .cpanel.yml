@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/truyen2/public_html/bentmountainbistro.com/wp-content/themes/truyenqqno
+    - /bin/rsync -av --delete ./ $DEPLOYPATH
