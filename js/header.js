@@ -135,7 +135,7 @@
     try {
       const response = await fetch(
         `${CONFIG.searchAPI}?q=${encodeURIComponent(query)}`,
-        { signal: currentSearchController.signal }
+        { signal: currentSearchController.signal },
       );
 
       if (!response.ok) {
@@ -240,7 +240,7 @@
     }
 
     const dropdownToggles = document.querySelectorAll(
-      ".has-dropdown > .dropdown-toggle"
+      ".has-dropdown > .dropdown-toggle",
     );
     dropdownToggles.forEach((toggle) => {
       toggle.addEventListener("click", handleMobileDropdown);
@@ -359,7 +359,7 @@
     if (elements.iconNotification && elements.notificationBell) {
       elements.iconNotification.addEventListener(
         "click",
-        handleNotificationToggle
+        handleNotificationToggle,
       );
     }
 

@@ -11,7 +11,7 @@ function toyota_enqueue_assets()
 
     // Global CSS
     wp_enqueue_style('toyota-global', get_template_directory_uri() . '/css/style.css', array(), '1.0.1');
-    wp_enqueue_style('toyota-header', get_template_directory_uri() . '/css/header.css', array('toyota-global'), '1.0.1');
+    wp_enqueue_style('toyota-header', get_template_directory_uri() . '/css/header-v1.css', array('toyota-global'), '1.0.1');
     wp_enqueue_style('toyota-footer', get_template_directory_uri() . '/css/footer.css', array('toyota-global'), '1.0.1');
 
     // Bookmark Badge CSS (load on all pages)

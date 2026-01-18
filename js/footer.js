@@ -1,207 +1,267 @@
-(function ($) {
+/**
+ * Footer JavaScript - TruyenQQ
+ * Newsletter subscription & Back to top button
+ *
+ * @package TruyenQQ
+ * @version 1.0.0
+ */
+
+(function () {
   "use strict";
 
-  console.log("Footer JavaScript loaded");
+  /* =====================================================
+     NEWSLETTER SUBSCRIPTION
+  ===================================================== */
 
-  function initFooter() {
-    console.log("Initializing Footer");
+  function initNewsletterForm() {
+    const form = document.getElementById("footerNewsletterForm");
 
-    const newsletterForm = document.getElementById("newsletterForm");
-
-    if (newsletterForm) {
-      console.log("Newsletter form found");
-
-      newsletterForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        console.log("Newsletter form submitted");
-
-        const emailInput = this.querySelector('input[type="email"]');
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const email = emailInput.value.trim();
-
-        if (!isValidEmail(email)) {
-          console.warn("Invalid email address");
-          showNotification("Vui lòng nhập email hợp lệ", "error");
-          emailInput.focus();
-          return;
-        }
-
-        submitBtn.disabled = true;
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = "<span>Đang xử lý...</span>";
-
-        setTimeout(() => {
-          console.log("Email subscribed:", email);
-          showNotification("Đăng ký thành công! Cảm ơn bạn.", "success");
-          emailInput.value = "";
-
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalText;
-        }, 1500);
-      });
-    } else {
-      console.warn("Newsletter form not found");
+    if (!form) {
+      return;
     }
 
-    const footerLinks = document.querySelectorAll(".footer-links a");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const emailInput = form.querySelector('input[name="email"]');
+      const submitBtn = form.querySelector(".newsletter-btn");
+      const email = emailInput.value.trim();
+
+      // Validate email
+      if (!isValidEmail(email)) {
+        showToast("Vui lòng nhập email hợp lệ!", "error");
+        return;
+      }
+
+      // Disable button & show loading
+      const originalHTML = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML =
+        '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
+
+      // Simulate AJAX call (replace with real API later)
+      setTimeout(() => {
+        // Success
+        showToast("Đăng ký thành công! Cảm ơn bạn đã theo dõi.", "success");
+        emailInput.value = "";
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHTML;
+
+        // TODO: Replace with real AJAX call
+        // fetch('/wp-json/truyenqq/v1/newsletter', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ email: email })
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //   if (data.success) {
+        //     showToast(data.message, 'success');
+        //     emailInput.value = '';
+        //   } else {
+        //     showToast(data.message, 'error');
+        //   }
+        // })
+        // .catch(error => {
+        //   showToast('Có lỗi xảy ra. Vui lòng thử lại!', 'error');
+        // })
+        // .finally(() => {
+        //   submitBtn.disabled = false;
+        //   submitBtn.innerHTML = originalHTML;
+        // });
+      }, 1500);
+    });
+  }
+
+  function isValidEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function showToast(message, type = "info") {
+    let toastContainer = document.querySelector(".toast-container");
+
+    if (!toastContainer) {
+      toastContainer = document.createElement("div");
+      toastContainer.className = "toast-container";
+      document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `toast toast-${type}`;
+
+    const icon =
+      type === "success"
+        ? "check-circle"
+        : type === "error"
+          ? "exclamation-circle"
+          : "info-circle";
+
+    toast.innerHTML = `
+      <i class="fa fa-${icon}"></i>
+      <span>${message}</span>
+    `;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add("show");
+    }, 10);
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, 3000);
+  }
+
+  /* =====================================================
+     BACK TO TOP BUTTON
+  ===================================================== */
+
+  function initBackToTop() {
+    const backToTopBtn = document.getElementById("backToTop");
+
+    if (!backToTopBtn) {
+      return;
+    }
+
+    const button = backToTopBtn.querySelector("button");
+
+    // Show/hide button based on scroll position
+    window.addEventListener("scroll", function () {
+      if (window.pageYOffset > 300) {
+        backToTopBtn.classList.add("show");
+      } else {
+        backToTopBtn.classList.remove("show");
+      }
+    });
+
+    // Scroll to top on click
+    button.addEventListener("click", function () {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    });
+  }
+
+  /* =====================================================
+     SMOOTH SCROLL FOR FOOTER LINKS
+  ===================================================== */
+
+  function initSmoothScroll() {
+    const footerLinks = document.querySelectorAll('.site-footer a[href^="#"]');
+
     footerLinks.forEach((link) => {
       link.addEventListener("click", function (e) {
-        const href = this.getAttribute("href");
+        const targetId = this.getAttribute("href");
 
-        if (href && href.startsWith("#") && href.length > 1) {
+        if (targetId === "#" || targetId === "#top") {
           e.preventDefault();
-          const target = document.querySelector(href);
-
-          if (target) {
-            console.log("Scrolling to:", href);
-            target.scrollIntoView({
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        } else {
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            e.preventDefault();
+            const offsetTop = targetElement.offsetTop - 80; // 80px for fixed header
+            window.scrollTo({
+              top: offsetTop,
               behavior: "smooth",
-              block: "start",
             });
           }
         }
       });
     });
-
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px",
-    };
-
-    const observer = new IntersectionObserver(function (entries) {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-        }
-      });
-    }, observerOptions);
-
-    const footerCols = document.querySelectorAll(".footer-col");
-    footerCols.forEach((col, index) => {
-      col.style.opacity = "0";
-      col.style.transform = "translateY(20px)";
-      col.style.transition = `opacity 0.6s ease ${
-        index * 0.1
-      }s, transform 0.6s ease ${index * 0.1}s`;
-
-      observer.observe(col);
-    });
-
-    const style = document.createElement("style");
-    style.textContent = `
-      .footer-col.visible {
-        opacity: 1 !important;
-        transform: translateY(0) !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    console.log("Footer initialization complete");
   }
 
-  function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
+  /* =====================================================
+     ANIMATE STATS ON SCROLL
+  ===================================================== */
 
-  function showNotification(message, type = "info") {
-    let container = document.getElementById("notification-container");
+  function animateStats() {
+    const statNumbers = document.querySelectorAll(".stat-number");
 
-    if (!container) {
-      container = document.createElement("div");
-      container.id = "notification-container";
-      container.style.cssText = `
-        position: fixed;
-        top: 2rem;
-        right: 2rem;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      `;
-      document.body.appendChild(container);
+    if (statNumbers.length === 0) {
+      return;
     }
 
-    const notification = document.createElement("div");
-    notification.className = `notification notification-${type}`;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !entry.target.dataset.animated) {
+            entry.target.dataset.animated = "true";
+            animateValue(entry.target);
+          }
+        });
+      },
+      { threshold: 0.5 },
+    );
 
-    const bgColor =
-      type === "success"
-        ? "linear-gradient(135deg, #95d3c5, #009fd3)"
-        : type === "error"
-        ? "linear-gradient(135deg, #ef4444, #dc2626)"
-        : "linear-gradient(135deg, #6366f1, #4f46e5)";
+    statNumbers.forEach((stat) => observer.observe(stat));
+  }
 
-    notification.style.cssText = `
-      background: ${bgColor};
-      color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-      font-size: 0.875rem;
-      font-weight: 500;
-      animation: slideInRight 0.3s ease;
-      max-width: 20rem;
-    `;
+  function animateValue(element) {
+    const text = element.textContent;
+    const hasPlus = text.includes("+");
+    const hasMSuffix = text.includes("M");
+    const hasKSuffix = text.includes("K");
 
-    notification.textContent = message;
-    container.appendChild(notification);
+    let numberStr = text.replace(/[^0-9.]/g, "");
+    let targetValue = parseFloat(numberStr);
 
-    const animationStyle = document.createElement("style");
-    animationStyle.textContent = `
-      @keyframes slideInRight {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
+    if (isNaN(targetValue)) return;
+
+    const duration = 2000;
+    const startValue = 0;
+    const increment = targetValue / (duration / 16);
+    let currentValue = startValue;
+
+    const timer = setInterval(() => {
+      currentValue += increment;
+      if (currentValue >= targetValue) {
+        currentValue = targetValue;
+        clearInterval(timer);
       }
-      @keyframes slideOutRight {
-        from {
-          transform: translateX(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateX(100%);
-          opacity: 0;
-        }
+
+      let displayValue = Math.floor(currentValue);
+
+      if (hasMSuffix) {
+        displayValue = currentValue.toFixed(1) + "M";
+      } else if (hasKSuffix) {
+        displayValue = Math.floor(currentValue) + "K";
+      } else {
+        displayValue = Math.floor(currentValue).toLocaleString();
       }
-    `;
-    if (!document.getElementById("notification-animations")) {
-      animationStyle.id = "notification-animations";
-      document.head.appendChild(animationStyle);
+
+      element.textContent = displayValue + (hasPlus ? "+" : "");
+    }, 16);
+  }
+
+  /* =====================================================
+     MAIN INITIALIZATION
+  ===================================================== */
+
+  function init() {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+      return;
     }
 
-    setTimeout(() => {
-      notification.style.animation = "slideOutRight 0.3s ease";
-      setTimeout(() => {
-        notification.remove();
-        if (container.children.length === 0) {
-          container.remove();
-        }
-      }, 300);
-    }, 3000);
+    initNewsletterForm();
+    initBackToTop();
+    initSmoothScroll();
+
+    if ("IntersectionObserver" in window) {
+      animateStats();
+    }
+
+    console.log("✅ Footer initialized successfully");
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initFooter);
-  } else {
-    initFooter();
-  }
-
-  if (typeof $ !== "undefined") {
-    $(document).ready(function () {
-      console.log("jQuery ready, ensuring Footer init");
-      if (!document.querySelector(".footer-section.initialized")) {
-        const section = document.querySelector(".footer-section");
-        if (section) {
-          section.classList.add("initialized");
-          initFooter();
-        }
-      }
-    });
-  }
-})(typeof jQuery !== "undefined" ? jQuery : undefined);
+  init();
+})();

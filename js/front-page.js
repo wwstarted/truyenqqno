@@ -1,11 +1,15 @@
 /**
- * Truyện Hay Carousel - Swiper.js Implementation
- * Responsive breakpoints: Desktop (6), Tablet (4), Mobile (2)
+ * TruyenQQ Homepage - Complete JavaScript Implementation
+ * Includes: Truyện Hay, Độc Quyền, Truyện Mới, Blog Detail, Featured Articles
  *
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 2.0.0
  * @requires Swiper.js 11.x
  */
+
+/* =====================================================
+   SECTION 1: TRUYỆN HAY CAROUSEL
+===================================================== */
 
 (function () {
   "use strict";
@@ -28,13 +32,9 @@
 
       slidesPerGroup: 1,
 
-      // navigation: {
-      //   nextEl: ".swiper-button-next",
-      //   prevEl: ".swiper-button-prev",
-      // },
       navigation: {
-        nextEl: ".homepage-suggest .swiper-button-next", // ← Thêm prefix này
-        prevEl: ".homepage-suggest .swiper-button-prev", // ← Thêm prefix này
+        nextEl: ".homepage-suggest .swiper-button-next",
+        prevEl: ".homepage-suggest .swiper-button-prev",
       },
 
       breakpoints: {
@@ -73,19 +73,19 @@
 
       on: {
         init: function () {
-          console.log("Truyen Hay carousel initialized");
+          console.log("✅ Truyen Hay carousel initialized");
         },
       },
     });
 
-    initBookmarkButtons();
+    initBookmarkButtons(".homepage-suggest");
 
     return swiper;
   }
 
-  function initBookmarkButtons() {
+  function initBookmarkButtons(sectionClass) {
     const bookmarkButtons = document.querySelectorAll(
-      ".homepage-suggest .bookmark-badge"
+      `${sectionClass} .bookmark-badge`,
     );
 
     bookmarkButtons.forEach((button) => {
@@ -142,7 +142,7 @@
 
     if (typeof Swiper === "undefined") {
       console.error(
-        "Swiper.js not loaded! Please enqueue Swiper library first."
+        "❌ Swiper.js not loaded! Please enqueue Swiper library first.",
       );
       return;
     }
@@ -153,14 +153,9 @@
   init();
 })();
 
-/**
- * Độc Quyền Truyện QQ - Swiper.js Implementation
- * Responsive breakpoints: Desktop (6), Tablet (4), Mobile (2)
- *
- * @package TruyenQQ
- * @version 1.0.0
- * @requires Swiper.js 11.x
- */
+/* =====================================================
+   SECTION 2: ĐỘC QUYỀN TRUYỆN QQ CAROUSEL
+===================================================== */
 
 (function () {
   "use strict";
@@ -224,19 +219,19 @@
 
       on: {
         init: function () {
-          console.log("Exclusive carousel initialized");
+          console.log("✅ Exclusive carousel initialized");
         },
       },
     });
 
-    initBookmarkButtons();
+    initBookmarkButtons(".homepage-exclusive");
 
     return swiper;
   }
 
-  function initBookmarkButtons() {
+  function initBookmarkButtons(sectionClass) {
     const bookmarkButtons = document.querySelectorAll(
-      ".homepage-exclusive .bookmark-badge"
+      `${sectionClass} .bookmark-badge`,
     );
 
     bookmarkButtons.forEach((button) => {
@@ -293,7 +288,7 @@
 
     if (typeof Swiper === "undefined") {
       console.error(
-        "Swiper.js not loaded! Please enqueue Swiper library first."
+        "❌ Swiper.js not loaded! Please enqueue Swiper library first.",
       );
       return;
     }
@@ -304,20 +299,16 @@
   init();
 })();
 
-/**
- * Truyện Mới Cập Nhật - Grid Layout (No Carousel)
- * Simple bookmark functionality
- *
- * @package TruyenQQ
- * @version 1.0.0
- */
+/* =====================================================
+   SECTION 3: TRUYỆN MỚI CẬP NHẬT (GRID)
+===================================================== */
 
 (function () {
   "use strict";
 
   function initBookmarkButtons() {
     const bookmarkButtons = document.querySelectorAll(
-      ".homepage-new-update .bookmark-badge"
+      ".homepage-new-update .bookmark-badge",
     );
 
     bookmarkButtons.forEach((button) => {
@@ -380,8 +371,278 @@
 
     initBookmarkButtons();
 
-    console.log("Truyện Mới Cập Nhật initialized");
+    console.log("✅ Truyện Mới Cập Nhật initialized");
   }
 
   init();
 })();
+
+/* =====================================================
+   SECTION 4: BLOG DETAIL - EXPAND/COLLAPSE
+===================================================== */
+
+(function () {
+  "use strict";
+
+  function initBlogDetailExpandCollapse() {
+    const content = document.getElementById("blogDetailContent");
+    const btnReadMore = document.getElementById("btnReadMore");
+    const btnReadLess = document.getElementById("btnReadLess");
+
+    if (!content || !btnReadMore || !btnReadLess) {
+      console.warn("Blog detail elements not found");
+      return;
+    }
+
+    // Read More - Expand (NO SCROLL)
+    btnReadMore.addEventListener("click", function () {
+      content.classList.add("expanded");
+      btnReadMore.style.display = "none";
+      btnReadLess.style.display = "flex";
+    });
+
+    // Read Less - Collapse (NO SCROLL)
+    btnReadLess.addEventListener("click", function () {
+      content.classList.remove("expanded");
+      btnReadLess.style.display = "none";
+      btnReadMore.style.display = "flex";
+    });
+
+    // Check if content exceeds max-height on load
+    checkContentHeight();
+    window.addEventListener("resize", checkContentHeight);
+
+    function checkContentHeight() {
+      const maxHeight = 600; // match CSS max-height
+      const actualHeight = content.scrollHeight;
+
+      // If content is shorter than max-height, hide Read More button
+      if (actualHeight <= maxHeight) {
+        btnReadMore.style.display = "none";
+      } else if (!content.classList.contains("expanded")) {
+        btnReadMore.style.display = "flex";
+      }
+    }
+
+    console.log("✅ Blog Detail expand/collapse initialized");
+  }
+
+  function init() {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+      return;
+    }
+
+    initBlogDetailExpandCollapse();
+  }
+
+  init();
+})();
+
+/* =====================================================
+   SECTION 5: FEATURED ARTICLES CAROUSEL
+===================================================== */
+
+(function () {
+  "use strict";
+
+  function initArticlesCarousel() {
+    const swiperContainer = document.querySelector(".articles-swiper");
+
+    if (!swiperContainer) {
+      console.warn("Articles carousel not found");
+      return;
+    }
+
+    const swiper = new Swiper(".articles-swiper", {
+      // Loop
+      loop: true,
+
+      // Default slides
+      slidesPerView: 1,
+      spaceBetween: 20,
+
+      // Speed
+      speed: 500,
+
+      // Slides per group
+      slidesPerGroup: 1,
+
+      // Navigation
+      navigation: {
+        nextEl: ".featured-articles-section .swiper-button-next",
+        prevEl: ".featured-articles-section .swiper-button-prev",
+      },
+
+      // Pagination
+      pagination: {
+        el: ".featured-articles-section .swiper-pagination",
+        clickable: true,
+        dynamicBullets: false,
+      },
+
+      // Responsive breakpoints
+      breakpoints: {
+        // Mobile (390px+)
+        390: {
+          slidesPerView: 1,
+          spaceBetween: 20,
+        },
+
+        // Tablet (768px+)
+        768: {
+          slidesPerView: 2,
+          spaceBetween: 25,
+          slidesPerGroup: 2,
+        },
+
+        // Desktop (1024px+)
+        1024: {
+          slidesPerView: 3,
+          spaceBetween: 30,
+          slidesPerGroup: 3,
+        },
+      },
+
+      // Lazy loading
+      lazy: {
+        loadPrevNext: true,
+        loadPrevNextAmount: 2,
+      },
+
+      // Keyboard control
+      keyboard: {
+        enabled: true,
+        onlyInViewport: true,
+      },
+
+      // Grab cursor
+      grabCursor: true,
+
+      // Watch overflow
+      watchOverflow: true,
+
+      // Prevent clicks
+      preventClicksPropagation: true,
+      preventClicks: true,
+
+      // Autoplay (optional)
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+
+      // Events
+      on: {
+        init: function () {
+          console.log("✅ Articles carousel initialized");
+          addHoverEffects();
+        },
+      },
+    });
+
+    // Add hover effects to cards
+    function addHoverEffects() {
+      const cards = document.querySelectorAll(".article-card");
+
+      cards.forEach((card) => {
+        card.addEventListener("mouseenter", function () {
+          this.style.zIndex = "10";
+        });
+
+        card.addEventListener("mouseleave", function () {
+          this.style.zIndex = "1";
+        });
+      });
+    }
+
+    return swiper;
+  }
+
+  function init() {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+      return;
+    }
+
+    // Check if Swiper is loaded
+    if (typeof Swiper === "undefined") {
+      console.error(
+        "❌ Swiper.js not loaded! Please enqueue Swiper library first.",
+      );
+      return;
+    }
+
+    initArticlesCarousel();
+  }
+
+  init();
+})();
+
+/* =====================================================
+   OPTIONAL: SCROLL ANIMATIONS FOR BLOG SECTIONS
+===================================================== */
+
+(function () {
+  "use strict";
+
+  function initScrollAnimations() {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px",
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("fade-in-up");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observe blog sections
+    const blogSections = document.querySelectorAll(
+      ".blog-detail-section, .featured-articles-section",
+    );
+
+    blogSections.forEach((section) => {
+      section.style.opacity = "0";
+      section.style.transform = "translateY(20px)";
+      section.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+
+      observer.observe(section);
+    });
+
+    // Add fade-in-up effect
+    const style = document.createElement("style");
+    style.textContent = `
+      .fade-in-up {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function init() {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+      return;
+    }
+
+    // Only init if Intersection Observer is supported
+    if ("IntersectionObserver" in window) {
+      initScrollAnimations();
+    }
+  }
+
+  init();
+})();
+
+/* =====================================================
+   ✅ ALL SECTIONS INITIALIZED
+===================================================== */
+
+console.log("🚀 TruyenQQ Homepage - All JavaScript modules loaded");

@@ -67,6 +67,15 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <?php wp_head(); ?>
+    <script>
+    (function() {
+        const savedMode = localStorage.getItem('darkMode');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedMode === 'true' || (!savedMode && prefersDark)) {
+            document.documentElement.classList.add('dark-mode');
+        }
+    })();
+    </script>
 </head>
 
 <body <?php body_class(); ?>>
@@ -228,12 +237,6 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                         <li><a href="https://www.facebook.com/truyenqqq" target="_blank">Fanpage</a></li>
                     </ul>
                 </nav>
-            </div>
-        </div>
-
-        <div class="mobile-menu-overlay" id="mobile-menu-overlay">
-            <div class="mobile-menu-content">
-                <div class="mobile-menu-header"></div>
             </div>
         </div>
     </header>
