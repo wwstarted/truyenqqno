@@ -1,8 +1,11 @@
 /**
- * Comics Listing with AJAX
+ * Truyện Mới Cập Nhật - JavaScript (FIXED)
+ * ✅ Xóa logic bookmark cục bộ
+ * ✅ Dùng global TruyenqqBookmarks
+ * ✅ Fix AJAX rendering với bookmark API
  *
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 (function () {
@@ -41,9 +44,8 @@
 
     initFilterListeners();
     initPaginationListeners();
-    initBookmarkButtons();
 
-    console.log("AJAX Comics Listing initialized");
+    console.log("✅ Truyện Mới Cập Nhật initialized (with global bookmarks)");
   }
 
   function initFilterListeners() {
@@ -63,8 +65,6 @@
         loadComics();
       });
     });
-
-    initPaginationListeners();
   }
 
   function initPaginationListeners() {
@@ -80,7 +80,6 @@
         if (!href || href === "javascript:void(0)") return;
 
         let page = 1;
-
         const url = new URL(href, window.location.origin);
         const pagedParam = url.searchParams.get("paged");
 
@@ -92,13 +91,6 @@
             page = parseInt(pageMatch[1]);
           }
         }
-
-        console.log(
-          "Pagination clicked - Page:",
-          page,
-          "Current:",
-          state.currentPage
-        );
 
         if (page && page !== state.currentPage) {
           state.currentPage = page;
@@ -139,13 +131,13 @@
 
       const response = await fetch(apiUrl.toString());
 
-      console.log("Response status:", response.status);
-      console.log("Response headers:", response.headers.get("content-type"));
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
 
       const responseText = await response.text();
-      console.log("Response text:", responseText.substring(0, 200));
-
       let data;
+
       try {
         data = JSON.parse(responseText);
       } catch (e) {
@@ -158,6 +150,11 @@
         renderPagination(data.pagination);
         updateURL();
         scrollToTop();
+
+        // ✅ Gọi global bookmark check sau khi render
+        if (typeof window.TruyenqqBookmarks !== "undefined") {
+          window.TruyenqqBookmarks.check();
+        }
       } else {
         showError("Không thể tải dữ liệu truyện");
       }
@@ -187,14 +184,15 @@
         <div class="book_avatar">
           <a href="${comic.url}" title="${comic.title}">
             <img class="center" src="${comic.thumbnail}" alt="${
-          comic.title
-        }" loading="lazy">
+              comic.title
+            }" loading="lazy">
           </a>
           
-          <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi" data-id="${
+          <!-- ✅ FIXED: Sử dụng bookmark-badge với data-post-id -->
+          <span class="bookmark-badge" title="Theo dõi" data-post-id="${
             comic.id
           }">
-            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+            <i class="fa fa-bookmark-o"></i>
           </span>
           
           <div class="top-notice">
@@ -222,20 +220,23 @@
           
           <div class="last_chapter">
             <a href="${comic.url}" title="${comic.latest_chapter}">${
-          comic.latest_chapter
-        }</a>
+              comic.latest_chapter
+            }</a>
           </div>
         </div>
         
         <div class="clear"></div>
       </li>
-    `
+    `,
       )
       .join("");
 
     comicsGrid.innerHTML = html;
 
-    initBookmarkButtons();
+    // ✅ Gọi global bookmark init sau khi render HTML
+    if (typeof window.TruyenqqBookmarks !== "undefined") {
+      window.TruyenqqBookmarks.init();
+    }
   }
 
   function renderPagination(pagination) {
@@ -294,7 +295,6 @@
       link.addEventListener("click", function (e) {
         e.preventDefault();
         const page = parseInt(this.getAttribute("data-page"));
-        console.log("Pagination clicked (AJAX) - Page:", page);
         if (page && page !== state.currentPage) {
           state.currentPage = page;
           loadComics();
@@ -334,31 +334,6 @@
     showToast(message);
   }
 
-  function initBookmarkButtons() {
-    const bookmarkButtons = document.querySelectorAll(
-      ".list_grid .subscribed-badge"
-    );
-
-    bookmarkButtons.forEach((button) => {
-      button.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (this.classList.contains("not-subscribed")) {
-          this.classList.remove("not-subscribed");
-          this.classList.add("subscribed");
-          this.querySelector("i").className = "fa fa-bookmark";
-          showToast("Đã thêm vào theo dõi");
-        } else {
-          this.classList.remove("subscribed");
-          this.classList.add("not-subscribed");
-          this.querySelector("i").className = "fa fa-bookmark-o";
-          showToast("Đã bỏ theo dõi");
-        }
-      });
-    });
-  }
-
   function showToast(message) {
     let toastContainer = document.querySelector(".toast-container");
 
@@ -386,101 +361,10 @@
 })();
 
 /**
- * Truyện Mới Cập Nhật
- * Extends ComicsListingBase
- *
- * @package TruyenQQ
- * @version 1.0.0
+ * ✅ REMOVED: initBookmarkButtons() - Dùng global TruyenqqBookmarks
+ * ✅ REMOVED: Class-based approach - Giữ simple functional approach
  */
 
-class TruyenMoiCapNhat extends ComicsListingBase {
-  constructor(config = {}) {
-    super(config);
-  }
-
-  /**
-   * Override renderComicCard để thêm Hot/New badges
-   */
-  renderComicCard(comic) {
-    return `
-      <li>
-        <div class="book_avatar">
-          <a href="${comic.url}" title="${comic.title}">
-            <img class="center" src="${comic.thumbnail}" alt="${
-      comic.title
-    }" loading="lazy">
-          </a>
-          
-          <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi" data-id="${
-            comic.id
-          }">
-            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
-          </span>
-          
-          <div class="top-notice">
-            <span class="time-ago">${comic.time_ago}</span>
-            ${
-              comic.badge_type
-                ? `<span class="type-label ${comic.badge_type}">${comic.badge_text}</span>`
-                : ""
-            }
-          </div>
-        </div>
-        
-        <div class="book_info">
-          <div class="book_name">
-            <h3>
-              <a title="${comic.title}" href="${comic.url}">${comic.title}</a>
-            </h3>
-          </div>
-          <div class="clear"></div>
-          
-          <div class="text_detail">
-            <span><i class="fa fa-bookmark"></i> ${comic.follow_count}</span>
-            <span><i class="fa fa-eye"></i> ${comic.view_count}</span>
-          </div>
-          
-          <div class="last_chapter">
-            <a href="${comic.url}" title="${comic.latest_chapter}">${
-      comic.latest_chapter
-    }</a>
-          </div>
-        </div>
-        
-        <div class="clear"></div>
-      </li>
-    `;
-  }
-}
-
-// Auto-initialize
-(function () {
-  "use strict";
-
-  function autoInit() {
-    const mainContainer = document.querySelector("#main_homepage");
-    if (!mainContainer) return;
-
-    const filterType = mainContainer.dataset.filterType;
-
-    // Chỉ khởi tạo nếu KHÔNG phải trang top ranking
-    if (filterType && filterType.startsWith("top-")) return;
-
-    const apiEndpoint =
-      typeof nettruyenData !== "undefined"
-        ? nettruyenData.restUrl
-        : "/wp-json/nettruyen/v1/comics";
-
-    new TruyenMoiCapNhat({
-      apiEndpoint: apiEndpoint,
-      filterType: "moi-cap-nhat",
-      postsPerPage: 42,
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", autoInit);
-  } else {
-    autoInit();
-  }
-})();
+console.log(
+  "🚀 Truyện Mới Cập Nhật - Script loaded (global bookmarks enabled)",
+);

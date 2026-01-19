@@ -1,8 +1,10 @@
 /**
- * The Loai (Genre) Listing with AJAX
+ * The Loai (Genre) Listing with AJAX (FIXED)
+ * ✅ Xóa logic bookmark cục bộ
+ * ✅ Dùng global TruyenqqBookmarks
  *
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 (function () {
@@ -51,9 +53,8 @@
     initFilterListeners();
     initSelectListeners();
     initPaginationListeners();
-    initBookmarkButtons();
 
-    console.log("AJAX Genre Listing initialized", state);
+    console.log("✅ Genre Listing initialized (with global bookmarks)", state);
   }
 
   function getGenreSlugFromURL() {
@@ -176,8 +177,6 @@
 
       const response = await fetch(apiUrl.toString());
 
-      console.log("Response status:", response.status);
-
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -189,6 +188,11 @@
         renderPagination(data.pagination);
         updateURL();
         scrollToTop();
+
+        // ✅ Gọi global bookmark check sau khi render
+        if (typeof window.TruyenqqBookmarks !== "undefined") {
+          window.TruyenqqBookmarks.check();
+        }
       } else {
         showError("Không thể tải dữ liệu truyện");
       }
@@ -218,14 +222,15 @@
         <div class="book_avatar">
           <a href="${comic.url}" title="${comic.title}">
             <img class="center" src="${comic.thumbnail}" alt="${
-          comic.title
-        }" loading="lazy">
+              comic.title
+            }" loading="lazy">
           </a>
           
-          <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi" data-id="${
+          <!-- ✅ FIXED: Sử dụng bookmark-badge với data-post-id -->
+          <span class="bookmark-badge" title="Theo dõi" data-post-id="${
             comic.id
           }">
-            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+            <i class="fa fa-bookmark-o"></i>
           </span>
           
           <div class="top-notice">
@@ -253,20 +258,23 @@
           
           <div class="last_chapter">
             <a href="${comic.url}" title="${comic.latest_chapter}">${
-          comic.latest_chapter
-        }</a>
+              comic.latest_chapter
+            }</a>
           </div>
         </div>
         
         <div class="clear"></div>
       </li>
-    `
+    `,
       )
       .join("");
 
     comicsGrid.innerHTML = html;
 
-    initBookmarkButtons();
+    // ✅ Gọi global bookmark init sau khi render HTML
+    if (typeof window.TruyenqqBookmarks !== "undefined") {
+      window.TruyenqqBookmarks.init();
+    }
   }
 
   function renderPagination(pagination) {
@@ -357,31 +365,6 @@
     showToast(message);
   }
 
-  function initBookmarkButtons() {
-    const bookmarkButtons = document.querySelectorAll(
-      ".list_grid .subscribed-badge"
-    );
-
-    bookmarkButtons.forEach((button) => {
-      button.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (this.classList.contains("not-subscribed")) {
-          this.classList.remove("not-subscribed");
-          this.classList.add("subscribed");
-          this.querySelector("i").className = "fa fa-bookmark";
-          showToast("Đã thêm vào theo dõi");
-        } else {
-          this.classList.remove("subscribed");
-          this.classList.add("not-subscribed");
-          this.querySelector("i").className = "fa fa-bookmark-o";
-          showToast("Đã bỏ theo dõi");
-        }
-      });
-    });
-  }
-
   function showToast(message) {
     let toastContainer = document.querySelector(".toast-container");
 
@@ -407,3 +390,9 @@
 
   init();
 })();
+
+/**
+ * ✅ REMOVED: initBookmarkButtons() - Dùng global TruyenqqBookmarks
+ */
+
+console.log("🚀 Genre Listing - Script loaded (global bookmarks enabled)");

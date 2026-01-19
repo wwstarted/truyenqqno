@@ -3,9 +3,10 @@
  * Template Name: Truyện Mới Cập Nhật
  * 
  * Trang listing tất cả truyện với filter + pagination
+ * ✅ FIXED: Tích hợp bookmark system
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 get_header();
@@ -17,8 +18,6 @@ $posts_per_page = 42;
 
 $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
-
-
 
 $args = array(
     'post_type' => 'nettruyen_comic',
@@ -224,10 +223,8 @@ $current_page = max(1, $paged);
                             alt="<?php the_title_attribute(); ?>" loading="lazy">
                     </a>
 
-                    <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi"
-                        data-id="<?php echo $post_id; ?>">
-                        <i class="fa fa-bookmark-o" aria-hidden="true"></i>
-                    </span>
+                    <!-- ✅ FIXED: Sử dụng global bookmark badge -->
+                    <?php truyenqq_render_bookmark_badge($post_id); ?>
 
                     <div class="top-notice">
                         <span class="time-ago"><?php echo esc_html($time_ago); ?></span>

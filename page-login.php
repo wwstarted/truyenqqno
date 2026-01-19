@@ -1,294 +1,155 @@
-<div id="auth-modals-container">
-    <!-- Login Modal -->
-    <div class="auth-modal" id="login-modal">
-        <div class="auth-modal-overlay"></div>
-        <div class="auth-modal-content">
-            <button class="auth-modal-close">
-                <i class="fa fa-times"></i>
-            </button>
+<?php
+/**
+ * Template Name: Modern Login Page
+ * 
+ * @package TruyenQQ
+ * @version 2.1.0
+ */
 
-            <div class="auth-modal-header">
-                <h2><i class="fa fa-sign-in"></i> Đăng Nhập</h2>
-                <p>Đăng nhập để theo dõi truyện yêu thích</p>
-            </div>
+// Redirect if already logged in
+if (is_user_logged_in()) {
+    wp_redirect(home_url());
+    exit;
+}
 
-            <div class="auth-modal-body">
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="login-username">Tên đăng nhập hoặc Email</label>
-                        <input type="text" id="login-username" name="username"
-                            placeholder="Nhập tên đăng nhập hoặc email" required>
-                    </div>
+get_header('auth'); // Load header-auth.php
+?>
 
-                    <div class="form-group">
-                        <label for="login-password">Mật khẩu</label>
-                        <div class="password-input">
-                            <input type="password" id="login-password" name="password" placeholder="Nhập mật khẩu"
-                                required>
-                            <button type="button" class="toggle-password">
-                                <i class="fa fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-group form-group-inline">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="remember" id="login-remember">
-                            <span>Ghi nhớ đăng nhập</span>
-                        </label>
-                        <a href="#" class="link-text" data-modal="forgot-password">Quên mật khẩu?</a>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <span class="btn-text">Đăng Nhập</span>
-                        <span class="btn-loading" style="display:none;">
-                            <i class="fa fa-spinner fa-spin"></i> Đang xử lý...
-                        </span>
-                    </button>
-
-                    <div class="form-message"></div>
-                </form>
-
-                <div class="auth-modal-footer">
-                    <p>Chưa có tài khoản? <a href="#" data-modal="register">Đăng ký ngay</a></p>
-                </div>
-            </div>
+<div class="modern-auth-container">
+    <!-- Background Elements -->
+    <div class="auth-background">
+        <div class="bg-image"></div>
+        <div class="bg-overlay"></div>
+        <div class="stars-container">
+            <div class="stars stars-small"></div>
+            <div class="stars stars-medium"></div>
+            <div class="stars stars-large"></div>
         </div>
     </div>
 
-    <!-- Register Modal -->
-    <div class="auth-modal" id="register-modal">
-        <div class="auth-modal-overlay"></div>
-        <div class="auth-modal-content">
-            <button class="auth-modal-close">
-                <i class="fa fa-times"></i>
-            </button>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">
+        <i class="fa fa-moon"></i>
+    </button>
 
-            <div class="auth-modal-header">
-                <h2><i class="fa fa-user-plus"></i> Đăng Ký Tài Khoản</h2>
-                <p>Tạo tài khoản để trải nghiệm đầy đủ tính năng</p>
+    <!-- Main Content -->
+    <div class="auth-content">
+        <!-- Login Form Card -->
+        <div class="auth-card glass-card">
+            <!-- Logo Inside Card - Link to Home -->
+            <div class="auth-brand-inside">
+                <a href="<?php echo home_url(); ?>" class="brand-link" title="Về trang chủ <?php bloginfo('name'); ?>">
+                    <img src="https://st.truyenqqno.com/template/frontend/images/logo-icon.png"
+                        alt="<?php bloginfo('name'); ?>" class="brand-logo">
+                </a>
             </div>
 
-            <div class="auth-modal-body">
-                <!-- Step 1: Register Form -->
-                <form id="register-form" class="auth-step active" data-step="1">
-                    <div class="form-group">
-                        <label for="register-username">Tên đăng nhập</label>
-                        <input type="text" id="register-username" name="username" placeholder="Chữ, số và dấu gạch dưới"
-                            required>
-                        <small class="form-hint">Chỉ sử dụng chữ cái, số và dấu gạch dưới (_)</small>
+            <!-- Header - Simple -->
+            <div class="auth-card-header">
+                <h1 class="auth-title">Đăng Nhập</h1>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <!-- Username Field -->
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <i class="fa fa-user input-icon"></i>
+                        <input type="text" id="login-username" name="username" class="form-input"
+                            placeholder="Tên đăng nhập hoặc Email" autocomplete="username" required>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="register-email">Email</label>
-                        <input type="email" id="register-email" name="email" placeholder="email@example.com" required>
-                        <small class="form-hint">Chúng tôi sẽ gửi mã OTP đến email này</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="register-password">Mật khẩu</label>
-                        <div class="password-input">
-                            <input type="password" id="register-password" name="password" placeholder="Ít nhất 6 ký tự"
-                                required>
-                            <button type="button" class="toggle-password">
-                                <i class="fa fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <span class="btn-text">Gửi Mã OTP</span>
-                        <span class="btn-loading" style="display:none;">
-                            <i class="fa fa-spinner fa-spin"></i> Đang gửi...
-                        </span>
-                    </button>
-
-                    <div class="form-message"></div>
-                </form>
-
-                <!-- Step 2: OTP Verification -->
-                <div id="register-otp-form" class="auth-step" data-step="2">
-                    <div class="otp-info">
-                        <i class="fa fa-envelope-o"></i>
-                        <p>Chúng tôi đã gửi mã OTP (6 số) đến email:</p>
-                        <strong id="register-email-display"></strong>
-                    </div>
-
-                    <form id="register-verify-form">
-                        <div class="form-group">
-                            <label for="register-otp">Nhập mã OTP</label>
-                            <input type="text" id="register-otp" name="otp_code" placeholder="000000" maxlength="6"
-                                required pattern="[0-9]{6}">
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <span class="btn-text">Xác Thực & Đăng Ký</span>
-                            <span class="btn-loading" style="display:none;">
-                                <i class="fa fa-spinner fa-spin"></i> Đang xử lý...
-                            </span>
+                <!-- Password Field -->
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <i class="fa fa-lock input-icon"></i>
+                        <input type="password" id="login-password" name="password" class="form-input"
+                            placeholder="Mật khẩu" autocomplete="current-password" required>
+                        <button type="button" class="toggle-password" aria-label="Toggle Password Visibility">
+                            <i class="fa fa-eye"></i>
                         </button>
-
-                        <div class="form-message"></div>
-
-                        <div class="otp-resend">
-                            <p>Không nhận được mã? <a href="#" id="register-resend-otp">Gửi lại</a></p>
-                            <p class="otp-timer" style="display:none;">Gửi lại sau <span id="register-timer">60</span>s
-                            </p>
-                        </div>
-                    </form>
+                    </div>
                 </div>
 
-                <div class="auth-modal-footer">
-                    <p>Đã có tài khoản? <a href="#" data-modal="login">Đăng nhập</a></p>
+                <!-- Remember & Forgot -->
+                <div class="form-options">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" name="remember" id="login-remember">
+                        <span class="checkbox-label">Ghi nhớ</span>
+                    </label>
+                    <a href="<?php echo home_url('/quen-mat-khau'); ?>" class="forgot-link">
+                        Quên mật khẩu?
+                    </a>
                 </div>
+
+                <!-- reCAPTCHA -->
+                <div class="recaptcha-wrapper">
+                    <div class="g-recaptcha" data-sitekey="<?php echo get_option('truyenqq_recaptcha_site_key'); ?>"
+                        data-theme="light"></div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit">
+                    <span class="btn-text">
+                        <i class="fa fa-sign-in"></i>
+                        Đăng Nhập
+                    </span>
+                    <span class="btn-loading" style="display:none;">
+                        <i class="fa fa-spinner fa-spin"></i>
+                        Đang xử lý...
+                    </span>
+                </button>
+
+                <!-- Message -->
+                <div class="form-message"></div>
+            </form>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+                <span>hoặc tiếp tục với</span>
+            </div>
+
+            <!-- Social Login Buttons - Below Submit -->
+            <div class="social-login-section">
+                <button type="button" class="btn-social btn-google" id="google-login">
+                    <svg width="18" height="18" viewBox="0 0 18 18">
+                        <path fill="#4285F4"
+                            d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" />
+                        <path fill="#34A853"
+                            d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" />
+                        <path fill="#FBBC05"
+                            d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" />
+                        <path fill="#EA4335"
+                            d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" />
+                    </svg>
+                    <span class="btn-social-text">Google</span>
+                </button>
+
+                <button type="button" class="btn-social btn-facebook" id="facebook-login">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff">
+                        <path
+                            d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                    <span class="btn-social-text">Facebook</span>
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <div class="auth-card-footer">
+                <p>Chưa có tài khoản?
+                    <a href="<?php echo home_url('/dang-ky'); ?>" class="register-link">
+                        Đăng ký ngay
+                    </a>
+                </p>
             </div>
         </div>
-    </div>
 
-    <!-- Forgot Password Modal -->
-    <div class="auth-modal" id="forgot-password-modal">
-        <div class="auth-modal-overlay"></div>
-        <div class="auth-modal-content">
-            <button class="auth-modal-close">
-                <i class="fa fa-times"></i>
-            </button>
-
-            <div class="auth-modal-header">
-                <h2><i class="fa fa-key"></i> Quên Mật Khẩu</h2>
-                <p>Nhập email để nhận mã xác thực</p>
-            </div>
-
-            <div class="auth-modal-body">
-                <!-- Step 1: Enter Email -->
-                <form id="forgot-password-form" class="auth-step active" data-step="1">
-                    <div class="form-group">
-                        <label for="forgot-email">Email</label>
-                        <input type="email" id="forgot-email" name="email" placeholder="email@example.com" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <span class="btn-text">Gửi Mã OTP</span>
-                        <span class="btn-loading" style="display:none;">
-                            <i class="fa fa-spinner fa-spin"></i> Đang gửi...
-                        </span>
-                    </button>
-
-                    <div class="form-message"></div>
-                </form>
-
-                <!-- Step 2: OTP Verification -->
-                <div id="forgot-otp-form" class="auth-step" data-step="2">
-                    <div class="otp-info">
-                        <i class="fa fa-envelope-o"></i>
-                        <p>Chúng tôi đã gửi mã OTP đến email:</p>
-                        <strong id="forgot-email-display"></strong>
-                    </div>
-
-                    <form id="forgot-verify-form">
-                        <div class="form-group">
-                            <label for="forgot-otp">Nhập mã OTP</label>
-                            <input type="text" id="forgot-otp" name="otp_code" placeholder="000000" maxlength="6"
-                                required pattern="[0-9]{6}">
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <span class="btn-text">Xác Thực</span>
-                            <span class="btn-loading" style="display:none;">
-                                <i class="fa fa-spinner fa-spin"></i> Đang xử lý...
-                            </span>
-                        </button>
-
-                        <div class="form-message"></div>
-
-                        <div class="otp-resend">
-                            <p>Không nhận được mã? <a href="#" id="forgot-resend-otp">Gửi lại</a></p>
-                            <p class="otp-timer" style="display:none;">Gửi lại sau <span id="forgot-timer">60</span>s
-                            </p>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Step 3: Reset Password -->
-                <div id="reset-password-form-container" class="auth-step" data-step="3">
-                    <form id="reset-password-form">
-                        <input type="hidden" id="reset-token" name="reset_token">
-
-                        <div class="form-group">
-                            <label for="new-password">Mật khẩu mới</label>
-                            <div class="password-input">
-                                <input type="password" id="new-password" name="new_password"
-                                    placeholder="Ít nhất 6 ký tự" required>
-                                <button type="button" class="toggle-password">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="confirm-password">Xác nhận mật khẩu</label>
-                            <div class="password-input">
-                                <input type="password" id="confirm-password" name="confirm_password"
-                                    placeholder="Nhập lại mật khẩu" required>
-                                <button type="button" class="toggle-password">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <span class="btn-text">Đặt Lại Mật Khẩu</span>
-                            <span class="btn-loading" style="display:none;">
-                                <i class="fa fa-spinner fa-spin"></i> Đang xử lý...
-                            </span>
-                        </button>
-
-                        <div class="form-message"></div>
-                    </form>
-                </div>
-
-                <div class="auth-modal-footer">
-                    <p>Nhớ mật khẩu? <a href="#" data-modal="login">Đăng nhập</a></p>
-                </div>
-            </div>
+        <!-- Footer Text -->
+        <div class="auth-footer-text">
+            <p>&copy; <?php echo date('Y'); ?> <?php bloginfo('name'); ?>. All rights reserved.</p>
         </div>
     </div>
 </div>
 
-<!-- User Menu (when logged in) -->
-<div id="user-menu" style="display:none;">
-    <button class="user-menu-trigger">
-        <img src="" alt="Avatar" class="user-avatar">
-        <span class="user-display-name"></span>
-        <i class="fa fa-chevron-down"></i>
-    </button>
-    <div class="user-menu-dropdown">
-        <a href="#" class="user-menu-item">
-            <i class="fa fa-user"></i> Trang cá nhân
-        </a>
-        <a href="#" class="user-menu-item">
-            <i class="fa fa-bookmark"></i> Truyện theo dõi
-        </a>
-        <a href="#" class="user-menu-item">
-            <i class="fa fa-history"></i> Lịch sử đọc
-        </a>
-        <a href="#" class="user-menu-item">
-            <i class="fa fa-cog"></i> Cài đặt
-        </a>
-        <div class="user-menu-divider"></div>
-        <a href="#" class="user-menu-item" id="logout-btn">
-            <i class="fa fa-sign-out"></i> Đăng xuất
-        </a>
-    </div>
-</div>
-
-<!-- Auth Buttons -->
-<div id="auth-buttons">
-    <button class="btn btn-outline" data-modal="login">
-        <i class="fa fa-sign-in"></i> Đăng nhập
-    </button>
-    <button class="btn btn-primary" data-modal="register">
-        <i class="fa fa-user-plus"></i> Đăng ký
-    </button>
-</div>
-
-<?php get_footer() ?>
+<?php get_footer('auth'); // Load footer-auth.php ?>

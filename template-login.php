@@ -1,9 +1,9 @@
 <?php
 /**
- * Template Name: Login Page
+ * Template Name: Modern Login Page
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 2.1.0
  */
 
 // Redirect if already logged in
@@ -12,7 +12,7 @@ if (is_user_logged_in()) {
     exit;
 }
 
-get_header();
+get_header('auth'); // Load header-auth.php
 ?>
 
 <div class="auth-page-container">
@@ -104,4 +104,4 @@ get_header();
     </div>
 </div>
 
-<?php get_footer(); ?>
+<?php get_footer('auth'); // Load footer-auth.php ?>

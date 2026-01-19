@@ -2,9 +2,10 @@
 /**
  * Template Name: Truyện Theo Thể Loại
  * Template for nettruyen_genre taxonomy
+ * ✅ FIXED: Tích hợp bookmark system
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 get_header();
@@ -21,9 +22,16 @@ $posts_per_page = 42;
 
 $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
-$sort = isset($_GET['sort']) ? absint($_GET['sort']) : 2; 
+$sort = isset($_GET['sort']) ? absint($_GET['sort']) : 2;
+
 $sort_options = array(
-    0 => array('orderby' => 'date', 'order' => 'DESC'),               1 => array('orderby' => 'date', 'order' => 'ASC'),                2 => array('orderby' => 'modified', 'order' => 'DESC'),           3 => array('orderby' => 'modified', 'order' => 'ASC'),            4 => array('orderby' => 'meta_value_num', 'order' => 'DESC'),     5 => array('orderby' => 'meta_value_num', 'order' => 'ASC'),  );
+    0 => array('orderby' => 'date', 'order' => 'DESC'),
+    1 => array('orderby' => 'date', 'order' => 'ASC'),
+    2 => array('orderby' => 'modified', 'order' => 'DESC'),
+    3 => array('orderby' => 'modified', 'order' => 'ASC'),
+    4 => array('orderby' => 'meta_value_num', 'order' => 'DESC'),
+    5 => array('orderby' => 'meta_value_num', 'order' => 'ASC'),
+);
 
 $sort_config = isset($sort_options[$sort]) ? $sort_options[$sort] : $sort_options[2];
 
@@ -228,7 +236,7 @@ $current_page = max(1, $paged);
                     $comics_query->the_post();
                     $post_id = get_the_ID();
 
-                                        $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
+                    $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                     if (empty($thumbnail)) {
                         $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
                     }
@@ -236,20 +244,20 @@ $current_page = max(1, $paged);
                         $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                     }
 
-                                        $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
+                    $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                     $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
-                                        $latest_chapter = 'Đang cập nhật';
+                    $latest_chapter = 'Đang cập nhật';
                     if (!empty($manifest['chapters'])) {
                         $chapters = $manifest['chapters'];
                         $latest = end($chapters);
                         $latest_chapter = 'Chapter ' . $latest['name'];
                     }
 
-                                        $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
+                    $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                     $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                                        $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
+                    $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                     if (empty($follow_count)) {
                         $follow_count = 0;
                     }
@@ -265,10 +273,10 @@ $current_page = max(1, $paged);
                         $view_count = $view_stats->total_display_views;
                     }
 
-                                        $follow_count_formatted = number_format($follow_count);
+                    $follow_count_formatted = number_format($follow_count);
                     $view_count_formatted = number_format($view_count);
 
-                                        $is_hot = in_array($post_id, $hot_comic_ids);
+                    $is_hot = in_array($post_id, $hot_comic_ids);
                     $is_new = (current_time('timestamp') - strtotime($updated_at)) <= (7 * 24 * 60 * 60);
 
                     $badge_type = '';
@@ -289,10 +297,8 @@ $current_page = max(1, $paged);
                             alt="<?php the_title_attribute(); ?>" loading="lazy">
                     </a>
 
-                    <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi"
-                        data-id="<?php echo $post_id; ?>">
-                        <i class="fa fa-bookmark-o" aria-hidden="true"></i>
-                    </span>
+                    <!-- ✅ FIXED: Sử dụng global bookmark badge -->
+                    <?php truyenqq_render_bookmark_badge($post_id); ?>
 
                     <div class="top-notice">
                         <span class="time-ago"><?php echo esc_html($time_ago); ?></span>
@@ -349,7 +355,7 @@ $current_page = max(1, $paged);
     <?php if ($total_pages > 1): ?>
     <div class="page_redirect">
         <?php
-                        if ($current_page > 1):
+            if ($current_page > 1):
                 ?>
         <a href="javascript:void(0)" data-page="<?php echo $current_page - 1; ?>">
             <p><span aria-hidden="true">‹</span></p>
@@ -357,11 +363,11 @@ $current_page = max(1, $paged);
         <?php endif; ?>
 
         <?php
-                        $range = 2;
+            $range = 2;
             $start = max(1, $current_page - $range);
             $end = min($total_pages, $current_page + $range);
 
-                        if ($start > 1):
+            if ($start > 1):
                 ?>
         <a href="javascript:void(0)" data-page="1">
             <p>1</p>
@@ -372,7 +378,7 @@ $current_page = max(1, $paged);
         <?php endif; ?>
 
         <?php
-                        for ($i = $start; $i <= $end; $i++):
+            for ($i = $start; $i <= $end; $i++):
                 if ($i == $current_page):
                     ?>
         <a href="javascript:void(0)">
@@ -388,7 +394,7 @@ $current_page = max(1, $paged);
             ?>
 
         <?php
-                        if ($end < $total_pages):
+            if ($end < $total_pages):
                 if ($end < $total_pages - 1):
                     ?>
         <span class="dots">...</span>
@@ -399,7 +405,7 @@ $current_page = max(1, $paged);
         <?php endif; ?>
 
         <?php
-                        if ($current_page < $total_pages):
+            if ($current_page < $total_pages):
                 ?>
         <a href="javascript:void(0)" data-page="<?php echo $current_page + 1; ?>">
             <p><span aria-hidden="true">›</span></p>

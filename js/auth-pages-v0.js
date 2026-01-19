@@ -134,7 +134,7 @@
       showMessage(
         $message,
         "error",
-        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây và thử lại.",
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây và thử lại."
       );
       return;
     }
@@ -143,7 +143,7 @@
     const recaptchaResponse = grecaptcha.getResponse();
     console.log(
       "TruyenQQ Auth: reCAPTCHA response:",
-      recaptchaResponse ? "exists" : "empty",
+      recaptchaResponse ? "exists" : "empty"
     );
 
     if (!recaptchaResponse) {
@@ -243,7 +243,7 @@
       showMessage(
         $message,
         "error",
-        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây.",
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây."
       );
       return;
     }
@@ -302,7 +302,7 @@
           showMessage(
             $('.auth-step[data-step="2"] .form-message'),
             "success",
-            data.message,
+            data.message
           );
         } else {
           showMessage($message, "error", data.message);
@@ -381,7 +381,7 @@
       showMessage(
         $message,
         "error",
-        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây.",
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây."
       );
       return;
     }
@@ -423,7 +423,7 @@
           showMessage(
             $('.auth-step[data-step="2"] .form-message'),
             "success",
-            data.message,
+            data.message
           );
         } else {
           showMessage($message, "error", data.message);
@@ -485,7 +485,7 @@
           showMessage(
             $('.auth-step[data-step="3"] .form-message'),
             "success",
-            data.message,
+            data.message
           );
         } else {
           showMessage($message, "error", data.message);
@@ -625,7 +625,7 @@
         '<i class="fa fa-' +
           (type === "success" ? "check-circle" : "exclamation-circle") +
           '"></i> ' +
-          message,
+          message
       );
 
     setTimeout(function () {

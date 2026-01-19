@@ -12,7 +12,7 @@ if (is_user_logged_in()) {
     exit;
 }
 
-get_header();
+get_header('auth');
 ?>
 
 <div class="auth-page-container">
@@ -197,4 +197,4 @@ get_header();
     </div>
 </div>
 
-<?php get_footer(); ?>
+<?php get_footer('auth'); ?>

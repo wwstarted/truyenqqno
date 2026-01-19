@@ -1,9 +1,9 @@
 /**
  * Top Ranking Comics (Daily/Weekly/Monthly)
- * Extends ComicsListingBase với logic riêng cho ranking
+ * ✅ FIXED: Tích hợp global bookmark system
  *
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 class TopRankingComics extends ComicsListingBase {
@@ -19,7 +19,7 @@ class TopRankingComics extends ComicsListingBase {
       const filterType = this.elements.mainContainer.dataset.filterType;
       if (filterType) {
         this.config.filterType = filterType;
-        console.log("Top Ranking Type:", filterType);
+        console.log("✅ Top Ranking Type:", filterType);
       }
     }
   }
@@ -49,8 +49,9 @@ class TopRankingComics extends ComicsListingBase {
           
           ${rankBadge}
           
-          <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi" data-id="${comic.id}">
-            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+          <!-- ✅ FIXED: Bookmark badge -->
+          <span class="bookmark-badge" title="Theo dõi" data-post-id="${comic.id}">
+            <i class="fa fa-bookmark-o"></i>
           </span>
           
           <div class="top-notice">
@@ -79,6 +80,31 @@ class TopRankingComics extends ComicsListingBase {
         <div class="clear"></div>
       </li>
     `;
+  }
+
+  /**
+   * ✅ Override renderComics để init global bookmarks
+   */
+  renderComics(comics) {
+    // Gọi parent renderComics
+    super.renderComics(comics);
+
+    // ✅ Init global bookmarks sau khi render
+    if (typeof window.TruyenqqBookmarks !== "undefined") {
+      window.TruyenqqBookmarks.init();
+    }
+  }
+
+  /**
+   * ✅ Override loadComics để check bookmark states
+   */
+  async loadComics() {
+    await super.loadComics();
+
+    // ✅ Check bookmark states sau khi load
+    if (typeof window.TruyenqqBookmarks !== "undefined") {
+      window.TruyenqqBookmarks.check();
+    }
   }
 }
 
@@ -121,6 +147,8 @@ class TopRankingComics extends ComicsListingBase {
       filterType: filterType,
       postsPerPage: 42,
     });
+
+    console.log("🚀 Top Ranking initialized with global bookmarks");
   }
 
   if (document.readyState === "loading") {
