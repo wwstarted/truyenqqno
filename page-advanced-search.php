@@ -314,10 +314,8 @@ $current_page = max(1, $paged);
                             alt="<?php the_title_attribute(); ?>" loading="lazy">
                     </a>
 
-                    <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi"
-                        data-id="<?php echo $post_id; ?>">
-                        <i class="fa fa-bookmark-o" aria-hidden="true"></i>
-                    </span>
+                    <!-- ✅ FIXED: Sử dụng global bookmark badge -->
+                    <?php truyenqq_render_bookmark_badge($post_id); ?>
 
                     <div class="top-notice">
                         <span class="time-ago"><?php echo esc_html($time_ago); ?></span>

@@ -1,113 +1,122 @@
 /* ========================================
-   AUTHENTICATION PAGES - FIXED CSS v2
-   Đồng bộ 100% với header.css
+   MODERN AUTH PAGE - BLUE DARK THEME
+   100% Dark Mode - No Toggle - FIXED v3.1
+   Version: 3.1.0
    ======================================== */
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
 /* ========================================
-   1. CONTAINER & BACKGROUND
+   1. VARIABLES - BLUE THEME
+   ======================================== */
+:root {
+  /* Blue Brand Colors */
+  --color-brand-primary: #009fd3;
+  --color-brand-secondary: #95d3c5;
+  --color-brand-gradient: linear-gradient(135deg, #95d3c5 0%, #009fd3 100%);
+  --color-brand-gradient-reverse: linear-gradient(
+    135deg,
+    #009fd3 0%,
+    #95d3c5 100%
+  );
+
+  /* Dark Theme Colors */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+  --bg-input: #1f1f1f;
+
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+
+  --border-color: #333333;
+  --border-focus: #009fd3;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.7);
+
+  /* Blue Shadows */
+  --shadow-blue-sm: 0 2px 12px rgba(0, 159, 211, 0.2);
+  --shadow-blue-md: 0 4px 20px rgba(0, 159, 211, 0.3);
+  --shadow-blue-lg: 0 8px 32px rgba(0, 159, 211, 0.4);
+
+  /* Status Colors */
+  --color-success: #4caf50;
+  --color-error: #ff5252;
+  --color-warning: #ffa726;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.4s ease;
+}
+
+/* ========================================
+   2. CONTAINER & BACKGROUND
    ======================================== */
 .auth-page-container {
   min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+  padding: 0;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   position: relative;
   overflow: hidden;
 }
 
+/* Animated Background Pattern */
 .auth-page-container::before {
   content: "";
   position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.5) 0%,
-    transparent 70%
-  );
-  animation: rotate 30s linear infinite;
-}
-
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-body.dark-mode .auth-page-container {
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-}
-
-body.dark-mode .auth-page-container::before {
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.03) 0%,
-    transparent 70%
-  );
-}
-
-/* ========================================
-   2. WRAPPER & CONTENT
-   ======================================== */
-.auth-page-wrapper {
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 1200px;
-  position: relative;
-  z-index: 1;
+  height: 100%;
+  background-image:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(0, 159, 211, 0.08) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(149, 211, 197, 0.08) 0%,
+      transparent 50%
+    );
+  animation: backgroundPulse 15s ease-in-out infinite;
 }
 
-.auth-page-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  background: var(--bg-primary, #ffffff);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+@keyframes backgroundPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
-body.dark-mode .auth-page-content {
-  background: var(--bg-primary, #0f0f0f);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
-}
-
-/* ========================================
-   3. LEFT SIDE - BRANDING (Header Color)
-   ======================================== */
-.auth-page-left {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  padding: 60px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-}
-
-body.dark-mode .auth-page-left {
-  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
-}
-
-.auth-page-left::before {
+/* Floating Particles */
+.auth-page-container::after {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="rgba(255,107,107,0.05)"/></svg>');
-  animation: floatPattern 20s linear infinite;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="rgba(0,159,211,0.15)"/></svg>');
+  background-size: 100px 100px;
+  animation: floatParticles 20s linear infinite;
+  opacity: 0.4;
 }
 
-@keyframes floatPattern {
+@keyframes floatParticles {
   0% {
     transform: translate(0, 0);
   }
@@ -116,186 +125,752 @@ body.dark-mode .auth-page-left {
   }
 }
 
-.auth-branding {
+/* ========================================
+   3. WRAPPER & CONTENT
+   ======================================== */
+.auth-page-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   position: relative;
   z-index: 1;
+}
+
+.auth-page-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  height: 100vh;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/* ========================================
+   4. LEFT SIDE - IMAGE ONLY
+   ======================================== */
+.auth-page-left {
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradient Overlay */
+.auth-page-left::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 159, 211, 0.1) 0%,
+    rgba(149, 211, 197, 0.05) 100%
+  );
+  z-index: 1;
+}
+
+/* Animated Circles */
+.auth-page-left::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(0, 159, 211, 0.15) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  animation: floatCircle 8s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes floatCircle {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-30px, 30px) scale(1.1);
+  }
+}
+
+.auth-branding {
+  position: relative;
+  z-index: 2;
   text-align: center;
+  width: 100%;
+  max-width: 600px;
 }
 
+/* Logo - HIDDEN */
 .brand-logo {
-  display: inline-block;
-  margin-bottom: 30px;
+  display: none;
 }
 
-.brand-logo img {
-  max-width: 150px;
-  height: auto;
-  filter: brightness(0) invert(1);
-}
-
-.auth-branding h1 {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 0 0 15px 0;
-  color: #fff;
-}
-
+/* Headings - HIDDEN */
+.auth-branding h1,
 .auth-branding > p {
-  font-size: 16px;
-  margin: 0 0 40px 0;
-  opacity: 0.9;
-  color: rgba(255, 255, 255, 0.8);
+  display: none;
 }
 
+/* Illustration - ONLY ELEMENT VISIBLE */
 .auth-illustration {
-  margin-top: 40px;
+  margin: 0;
+  position: relative;
 }
 
 .auth-illustration img {
-  border-radius: 30px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 600px;
   height: auto;
-  animation: float 3s ease-in-out infinite;
+  border-radius: 20px;
+  box-shadow: var(--shadow-xl);
+  filter: brightness(0.95) contrast(1.05);
+  transition: all var(--transition-slow);
+  animation: imageFloat 6s ease-in-out infinite;
 }
 
-@keyframes float {
+.auth-illustration img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 60px rgba(0, 159, 211, 0.3);
+}
+
+@keyframes imageFloat {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(0deg);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-15px) rotate(1deg);
   }
 }
 
 /* ========================================
-   4. RIGHT SIDE - FORM
+   5. RIGHT SIDE - FORM SECTION (NO SCROLL)
    ======================================== */
 .auth-page-right {
-  padding: 60px 40px;
+  background: var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-primary, #ffffff);
-}
-
-body.dark-mode .auth-page-right {
-  background: var(--bg-primary, #0f0f0f);
+  padding: 30px 50px; /* Giảm từ 40px 60px */
+  position: relative;
+  overflow: hidden; /* NO SCROLL */
 }
 
 .auth-form-container {
   width: 100%;
   max-width: 450px;
+  position: relative;
+  z-index: 2;
 }
 
 /* ========================================
-   5. HEADER
+   6. BACK TO HOME - FLOATING BUTTON
+   ======================================== */
+.back-to-home {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+}
+
+.back-to-home a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: var(--color-brand-gradient);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 24px;
+  box-shadow: var(--shadow-blue-md);
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+.back-to-home a:hover {
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: var(--shadow-blue-lg);
+  background: var(--color-brand-gradient-reverse);
+}
+
+.back-to-home a i {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* ========================================
+   7. HEADER - ICON BÊN TRÁI
    ======================================== */
 .auth-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .auth-header h2 {
   font-size: 28px;
   font-weight: 700;
   margin: 0 0 10px 0;
-  color: var(--text-primary, #333333);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-}
-
-body.dark-mode .auth-header h2 {
-  color: var(--text-primary, #e0e0e0);
+  gap: 12px;
 }
 
 .auth-header h2 i {
-  color: var(--accent-color, #ff6b6b);
+  color: var(--color-brand-primary);
+  font-size: 24px;
+  animation: iconPulse 2s ease-in-out infinite;
+  order: -1; /* Icon bên trái */
+}
+
+@keyframes iconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .auth-header p {
   font-size: 14px;
-  color: var(--text-muted, #999999);
+  color: var(--text-secondary);
   margin: 0;
 }
 
-body.dark-mode .auth-header p {
-  color: var(--text-muted, #999999);
+/* ========================================
+   8. FORM ELEMENTS - REDUCED SPACING
+   ======================================== */
+.auth-form {
+  margin-top: 15px; /* Giảm từ 20px */
+}
+
+.form-group {
+  margin-bottom: 14px; /* Giảm từ 18px */
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px; /* Giảm từ 8px */
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-group label i {
+  color: var(--color-brand-primary);
+  font-size: 13px;
+}
+
+/* Input Fields - REDUCED PADDING */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+  width: 100%;
+  padding: 12px 16px; /* Giảm từ 15px 18px */
+  font-size: 14px; /* Giảm từ 15px */
+  font-family: "Inter", sans-serif;
+  border: 2px solid var(--border-color);
+  border-radius: 10px; /* Giảm từ 12px */
+  background: var(--bg-input);
+  color: var(--text-primary);
+  transition: all var(--transition-base);
+}
+
+.form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-brand-primary);
+  background: var(--bg-secondary);
+  box-shadow: 0 0 0 3px rgba(0, 159, 211, 0.15); /* Giảm từ 4px */
+}
+
+/* Password Input with Toggle */
+.password-input {
+  position: relative;
+}
+
+.password-input input {
+  padding-right: 50px !important;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px;
+  transition: color var(--transition-fast);
+  font-size: 15px;
+}
+
+.toggle-password:hover {
+  color: var(--color-brand-primary);
 }
 
 /* ========================================
-   6. STEP INDICATOR (Màu Header)
+   9. CHECKBOX & INLINE ELEMENTS
+   ======================================== */
+.form-group-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px; /* Giảm từ 14px */
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-brand-primary);
+  border-radius: 4px;
+}
+
+.link-text {
+  font-size: 13px; /* Giảm từ 14px */
+  color: var(--color-brand-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.link-text:hover {
+  color: var(--color-brand-secondary);
+  text-decoration: underline;
+}
+
+/* ========================================
+   10. RECAPTCHA - NO MARGIN, DARK THEME
+   ======================================== */
+.recaptcha-container {
+  display: flex;
+  justify-content: flex-start;
+  margin: 0;
+  padding-bottom: 12px;
+  /* background: var(--bg-secondary); */
+  background: #0a0a0a;
+  border-radius: 10px;
+  /* border: 1px solid var(--border-color); */
+}
+
+.g-recaptcha {
+  display: inline-block;
+}
+
+/* ========================================
+   11. BUTTONS - REDUCED SIZE
+   ======================================== */
+.btn {
+  padding: 13px 24px; /* Giảm từ 16px 28px */
+  font-size: 15px; /* Giảm từ 16px */
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+  border-radius: 10px; /* Giảm từ 12px */
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.6s,
+    height 0.6s;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-primary {
+  background: var(--color-brand-gradient);
+  color: #fff;
+  box-shadow: var(--shadow-blue-md);
+}
+
+.btn-primary:hover {
+  background: var(--color-brand-gradient-reverse);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-blue-lg);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-loading {
+  display: none;
+}
+
+.btn.loading .btn-text {
+  display: none;
+}
+
+.btn.loading .btn-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ========================================
+   12. DIVIDER (HOẶC)
+   ======================================== */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0 16px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.auth-divider span {
+  padding: 0 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ========================================
+   13. SOCIAL LOGIN BUTTONS
+   ======================================== */
+.social-login {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.btn-social {
+  padding: 11px 18px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-social i {
+  font-size: 16px;
+}
+
+.btn-google {
+  border-color: #ea4335;
+  color: #ea4335;
+}
+
+.btn-google:hover {
+  background: #ea4335;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(234, 67, 53, 0.3);
+}
+
+.btn-facebook {
+  border-color: #1877f2;
+  color: #1877f2;
+}
+
+.btn-facebook:hover {
+  background: #1877f2;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+}
+
+.btn-social:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ========================================
+   14. FORM MESSAGES - COMPACT
+   ======================================== */
+.form-message {
+  margin-top: 16px; /* Giảm từ 20px */
+  padding: 12px 16px; /* Giảm từ 16px 20px */
+  border-radius: 10px;
+  font-size: 13px; /* Giảm từ 14px */
+  font-weight: 500;
+  display: none;
+  animation: slideDown 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.form-message.show {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-message.success {
+  background: rgba(76, 175, 80, 0.15);
+  color: #81c784;
+  border-left-color: var(--color-success);
+}
+
+.form-message.error {
+  background: rgba(255, 82, 82, 0.15);
+  color: #ff8a80;
+  border-left-color: var(--color-error);
+}
+
+.form-message i {
+  font-size: 16px;
+}
+
+/* ========================================
+   15. FOOTER - COMPACT
+   ======================================== */
+.auth-footer {
+  text-align: center;
+  padding: 15px 0 0; /* Giảm từ 20px */
+  border-top: 1px solid var(--border-color);
+  margin-top: 18px; /* Giảm từ 25px */
+}
+
+.auth-footer p {
+  margin: 0;
+  font-size: 13px; /* Giảm từ 14px */
+  color: var(--text-secondary);
+}
+
+.auth-footer a {
+  color: var(--color-brand-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.auth-footer a:hover {
+  color: var(--color-brand-secondary);
+  text-decoration: underline;
+}
+
+/* ========================================
+   16. LOADING ANIMATION
+   ======================================== */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fa-spinner.fa-spin {
+  animation: spin 0.8s linear infinite;
+}
+
+/* ========================================
+   17. PASSWORD STRENGTH
+   ======================================== */
+.password-strength {
+  margin-top: 8px;
+}
+
+.strength-bar {
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.strength-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  transition: all var(--transition-base);
+  border-radius: 2px;
+}
+
+.strength-bar.weak::before {
+  width: 33%;
+  background: #f44336;
+}
+
+.strength-bar.medium::before {
+  width: 66%;
+  background: #ffa726;
+}
+
+.strength-bar.strong::before {
+  width: 100%;
+  background: #4caf50;
+}
+
+.strength-text {
+  font-size: 11px;
+  margin-top: 5px;
+  display: block;
+  font-weight: 600;
+}
+
+.strength-text.weak {
+  color: #f44336;
+}
+.strength-text.medium {
+  color: #ffa726;
+}
+.strength-text.strong {
+  color: #4caf50;
+}
+
+/* ========================================
+   18. STEP INDICATOR - COMPACT
    ======================================== */
 .step-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px; /* Giảm từ 30px */
+  gap: 12px; /* Giảm từ 15px */
 }
 
 .step {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px; /* Giảm từ 8px */
 }
 
 .step-number {
-  width: 40px;
+  width: 40px; /* Giảm từ 44px */
   height: 40px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.05);
-  color: var(--text-muted, #999999);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-}
-
-body.dark-mode .step-number {
-  background: rgba(255, 255, 255, 0.05);
-  color: #666666;
+  font-size: 15px; /* Giảm từ 16px */
+  transition: all var(--transition-base);
+  border: 2px solid var(--border-color);
 }
 
 .step.active .step-number {
-  background: var(--accent-color, #ff6b6b);
+  background: var(--color-brand-gradient);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
-  border-color: var(--accent-color, #ff6b6b);
+  box-shadow: var(--shadow-blue-md);
+  border-color: transparent;
+  transform: scale(1.1);
 }
 
 .step-label {
-  font-size: 12px;
-  color: var(--text-muted, #999999);
+  font-size: 11px; /* Giảm từ 12px */
+  color: var(--text-muted);
   font-weight: 600;
 }
 
-body.dark-mode .step-label {
-  color: #666666;
-}
-
 .step.active .step-label {
-  color: var(--accent-color, #ff6b6b);
+  color: var(--color-brand-primary);
 }
 
 .step-line {
-  width: 60px;
+  width: 50px; /* Giảm từ 60px */
   height: 2px;
-  background: var(--border-color, #e0e0e0);
-  margin: 0 10px;
-}
-
-body.dark-mode .step-line {
-  background: var(--border-color, #333333);
+  background: var(--border-color);
 }
 
 /* ========================================
-   7. FORM STEPS
+   19. OTP SECTIONS - COMPACT
    ======================================== */
 .auth-step {
   display: none;
@@ -317,393 +892,49 @@ body.dark-mode .step-line {
   }
 }
 
-/* ========================================
-   8. FORM ELEMENTS
-   ======================================== */
-.auth-form {
-  margin-top: 30px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary, #333333);
-}
-
-body.dark-mode .form-group label {
-  color: var(--text-primary, #e0e0e0);
-}
-
-.form-group label i {
-  color: var(--accent-color, #ff6b6b);
-  font-size: 13px;
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"] {
-  width: 100%;
-  padding: 14px 16px;
-  font-size: 15px;
-  border: 1px solid var(--border-color, #e0e0e0);
-  border-radius: 10px;
-  background: var(--bg-secondary, #f5f5f5);
-  color: var(--text-primary, #333333);
-  transition: all 0.3s ease;
-}
-
-body.dark-mode .form-group input[type="text"],
-body.dark-mode .form-group input[type="email"],
-body.dark-mode .form-group input[type="password"] {
-  background: var(--bg-secondary, #1a1a1a);
-  border-color: var(--border-color, #333333);
-  color: var(--text-primary, #e0e0e0);
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: var(--accent-color, #ff6b6b);
-  box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
-}
-
-.form-hint {
-  display: block;
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--text-muted, #999999);
-}
-
-body.dark-mode .form-hint {
-  color: var(--text-muted, #999999);
-}
-
-/* ========================================
-   9. PASSWORD INPUT
-   ======================================== */
-.password-input {
-  position: relative;
-}
-
-.password-input input {
-  padding-right: 50px !important;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: var(--text-muted, #999999);
-  cursor: pointer;
-  padding: 10px;
-  transition: color 0.3s ease;
-}
-
-.toggle-password:hover {
-  color: var(--accent-color, #ff6b6b);
-}
-
-body.dark-mode .toggle-password {
-  color: var(--text-muted, #999999);
-}
-
-body.dark-mode .toggle-password:hover {
-  color: var(--accent-color, #ff6b6b);
-}
-
-/* ========================================
-   10. PASSWORD STRENGTH
-   ======================================== */
-.password-strength {
-  margin-top: 8px;
-}
-
-.strength-bar {
-  height: 4px;
-  background: var(--border-color, #e0e0e0);
-  border-radius: 2px;
-  overflow: hidden;
-  position: relative;
-}
-
-body.dark-mode .strength-bar {
-  background: var(--border-color, #333333);
-}
-
-.strength-bar::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0;
-  transition: all 0.3s ease;
-  border-radius: 2px;
-}
-
-.strength-bar.weak::before {
-  width: 33%;
-  background: #f44336;
-}
-
-.strength-bar.medium::before {
-  width: 66%;
-  background: #ff9800;
-}
-
-.strength-bar.strong::before {
-  width: 100%;
-  background: #4caf50;
-}
-
-.strength-text {
-  font-size: 12px;
-  margin-top: 4px;
-  display: block;
-  font-weight: 600;
-}
-
-.strength-text.weak {
-  color: #f44336;
-}
-
-.strength-text.medium {
-  color: #ff9800;
-}
-
-.strength-text.strong {
-  color: #4caf50;
-}
-
-/* ========================================
-   11. CHECKBOX & LINKS (Header Color)
-   ======================================== */
-.form-group-inline {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--text-primary, #333333);
-  cursor: pointer;
-  font-weight: 500;
-}
-
-body.dark-mode .checkbox-label {
-  color: var(--text-primary, #e0e0e0);
-}
-
-.checkbox-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: var(--accent-color, #ff6b6b);
-}
-
-.link-text {
-  font-size: 14px;
-  color: var(--accent-color, #ff6b6b);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.link-text:hover {
-  color: var(--hover-color, #ff4757);
-  text-decoration: underline;
-}
-
-/* ========================================
-   12. BUTTONS (Header Style)
-   ======================================== */
-.btn {
-  padding: 14px 24px;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.btn-primary {
-  background: var(--accent-color, #ff6b6b);
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background: var(--hover-color, #ff4757);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
-}
-
-.btn-block {
-  width: 100%;
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--accent-color, #ff6b6b);
-  border: 2px solid var(--accent-color, #ff6b6b);
-}
-
-.btn-outline:hover {
-  background: var(--accent-color, #ff6b6b);
-  color: #fff;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.btn-loading {
-  display: none;
-}
-
-.btn.loading .btn-text {
-  display: none;
-}
-
-.btn.loading .btn-loading {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ========================================
-   13. FORM MESSAGES
-   ======================================== */
-.form-message {
-  margin-top: 20px;
-  padding: 14px 16px;
-  border-radius: 10px;
-  font-size: 14px;
-  display: none;
-  animation: slideDown 0.3s ease;
-  border-left: 4px solid transparent;
-}
-
-.form-message.show {
-  display: block;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.form-message.success {
-  background: rgba(76, 175, 80, 0.1);
-  color: #2e7d32;
-  border-left-color: #4caf50;
-}
-
-body.dark-mode .form-message.success {
-  background: rgba(76, 175, 80, 0.15);
-  color: #81c784;
-}
-
-.form-message.error {
-  background: rgba(244, 67, 54, 0.1);
-  color: #c62828;
-  border-left-color: #f44336;
-}
-
-body.dark-mode .form-message.error {
-  background: rgba(244, 67, 54, 0.15);
-  color: #ef5350;
-}
-
-/* ========================================
-   14. OTP INFO (Header Color)
-   ======================================== */
 .otp-info {
   text-align: center;
-  padding: 25px;
-  background: rgba(255, 107, 107, 0.08);
-  border-radius: 12px;
-  margin-bottom: 25px;
-  border: 1px solid rgba(255, 107, 107, 0.15);
-}
-
-body.dark-mode .otp-info {
-  background: rgba(255, 107, 107, 0.12);
-  border-color: rgba(255, 107, 107, 0.2);
+  padding: 16px; /* Giảm từ 20px */
+  background: rgba(0, 159, 211, 0.1);
+  border-radius: 10px; /* Giảm từ 12px */
+  margin-bottom: 16px; /* Giảm từ 20px */
+  border: 1px solid rgba(0, 159, 211, 0.2);
 }
 
 .otp-info i {
-  font-size: 48px;
-  color: var(--accent-color, #ff6b6b);
-  margin-bottom: 15px;
+  font-size: 40px; /* Giảm từ 48px */
+  color: var(--color-brand-primary);
+  margin-bottom: 10px; /* Giảm từ 12px */
   display: block;
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .otp-info p {
-  margin: 10px 0;
-  font-size: 14px;
-  color: var(--text-primary, #333333);
-}
-
-body.dark-mode .otp-info p {
-  color: var(--text-primary, #e0e0e0);
+  margin: 8px 0; /* Giảm từ 10px */
+  font-size: 13px; /* Giảm từ 14px */
+  color: var(--text-secondary);
 }
 
 .otp-info strong {
-  font-size: 16px;
-  color: var(--accent-color, #ff6b6b);
+  font-size: 14px; /* Giảm từ 15px */
+  color: var(--color-brand-primary);
   display: block;
-  margin-top: 5px;
+  margin-top: 5px; /* Giảm từ 6px */
 }
 
-/* ========================================
-   15. OTP RESEND
-   ======================================== */
 .otp-resend {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 14px; /* Giảm từ 18px */
 }
 
 .otp-resend p {
-  font-size: 14px;
-  color: var(--text-muted, #999999);
-  margin: 8px 0;
-}
-
-body.dark-mode .otp-resend p {
-  color: var(--text-muted, #999999);
+  font-size: 12px; /* Giảm từ 13px */
+  color: var(--text-secondary);
+  margin: 6px 0; /* Giảm từ 8px */
 }
 
 .otp-resend a {
-  color: var(--accent-color, #ff6b6b);
+  color: var(--color-brand-primary);
   font-weight: 600;
   text-decoration: none;
 }
@@ -713,146 +944,209 @@ body.dark-mode .otp-resend p {
 }
 
 .otp-timer {
-  color: #ff9800 !important;
+  color: var(--color-warning) !important;
   font-weight: 600;
 }
 
 /* ========================================
-   16. FOOTER
+   20. RESPONSIVE - TABLET (GIỮ 2 CỘT)
    ======================================== */
-.auth-footer {
-  text-align: center;
-  padding: 25px 0 0;
-  border-top: 1px solid var(--border-color, #e0e0e0);
-  margin-top: 30px;
+@media (max-width: 1200px) {
+  .auth-page-left,
+  .auth-page-right {
+    padding: 40px 50px;
+  }
+
+  .auth-illustration img {
+    max-width: 500px;
+  }
+
+  .auth-form-container {
+    max-width: 420px;
+  }
 }
 
-body.dark-mode .auth-footer {
-  border-top-color: var(--border-color, #333333);
-}
-
-.auth-footer p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--text-muted, #999999);
-}
-
-body.dark-mode .auth-footer p {
-  color: var(--text-muted, #999999);
-}
-
-.auth-footer a {
-  color: var(--accent-color, #ff6b6b);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.auth-footer a:hover {
-  text-decoration: underline;
-}
-
-/* ========================================
-   17. RECAPTCHA (FIXED)
-   ======================================== */
-.recaptcha-container {
-  display: flex;
-  justify-content: flex-start;
-  margin: 20px 0;
-  min-height: 78px;
-  overflow: visible;
-}
-
-.g-recaptcha {
-  display: inline-block;
-}
-
-body.dark-mode .recaptcha-container {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color, #333333);
-}
-
-/* ========================================
-   18. RESPONSIVE
-   ======================================== */
-@media (max-width: 991px) {
+@media (min-width: 768px) and (max-width: 991px) {
+  /* TABLET - GIỮ 2 CỘT */
   .auth-page-content {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr; /* Vẫn 2 cột */
   }
 
   .auth-page-left {
-    padding: 40px 30px;
-  }
-
-  .auth-branding h1 {
-    font-size: 26px;
-  }
-
-  .auth-illustration {
-    max-width: 300px;
-    margin: 30px auto 0;
-  }
-}
-
-@media (max-width: 767px) {
-  .auth-page-container {
-    padding: 10px;
-  }
-
-  .auth-page-left {
-    padding: 30px 20px;
+    padding: 30px 25px;
   }
 
   .auth-page-right {
-    padding: 40px 20px;
+    padding: 30px 35px;
+  }
+
+  .auth-illustration img {
+    max-width: 100%;
+  }
+
+  .auth-form-container {
+    max-width: 100%;
   }
 
   .auth-header h2 {
     font-size: 24px;
   }
 
-  .step-indicator {
-    flex-wrap: wrap;
+  .form-group input {
+    font-size: 14px;
+    padding: 11px 14px;
   }
 
-  .step-line {
-    width: 40px;
-    margin: 0 5px;
+  .btn {
+    padding: 12px 20px;
+    font-size: 14px;
   }
 
-  .step-label {
-    font-size: 11px;
+  .recaptcha-container {
+    padding: 10px;
+  }
+
+  .back-to-home {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .back-to-home a {
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+  }
+
+  .social-login {
+    gap: 10px;
+  }
+
+  .btn-social {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
+
+/* ========================================
+   21. RESPONSIVE - MOBILE (ẢNH TRÊN, FORM DƯỚI)
+   ======================================== */
+@media (max-width: 767px) {
+  .auth-page-container {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .auth-page-wrapper {
+    height: auto;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* MOBILE - 1 CỘT: ẢNH TRÊN, FORM DƯỚI */
+  .auth-page-content {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .auth-page-left {
+    padding: 40px 20px 30px; /* Ảnh lên trên */
+    order: 1; /* Order 1 = lên trên */
+  }
+
+  .auth-page-right {
+    padding: 30px 20px 40px; /* Form xuống dưới */
+    order: 2; /* Order 2 = xuống dưới */
+  }
+
+  .auth-illustration img {
+    max-width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  .auth-header h2 {
+    font-size: 24px;
+  }
+
+  .auth-header h2 i {
+    font-size: 22px;
   }
 
   .form-group input {
-    font-size: 16px;
+    font-size: 16px; /* Tránh zoom trên iOS */
+    padding: 13px 16px;
   }
 
-  /* reCAPTCHA Mobile */
+  .btn {
+    padding: 13px 24px;
+    font-size: 15px;
+  }
+
   .recaptcha-container {
-    overflow: visible;
-    min-height: 78px;
-    padding: 10px 0;
+    padding: 10px;
+    justify-content: center;
   }
 
   .g-recaptcha {
     transform: scale(0.95);
-    transform-origin: left center;
-    -webkit-transform: scale(0.95);
-    -webkit-transform-origin: left center;
+    transform-origin: center center;
   }
 
-  .g-recaptcha iframe {
-    pointer-events: auto !important;
-    touch-action: auto !important;
-    -webkit-tap-highlight-color: transparent;
+  .step-number {
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
+  }
+
+  .back-to-home {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .back-to-home a {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .social-login {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .btn-social {
+    padding: 12px 20px;
   }
 }
 
 @media (max-width: 480px) {
-  .auth-branding h1 {
+  .auth-page-left {
+    padding: 30px 16px 20px;
+  }
+
+  .auth-page-right {
+    padding: 25px 16px 35px;
+  }
+
+  .auth-illustration img {
+    max-height: 300px;
+  }
+
+  .auth-header h2 {
     font-size: 22px;
+  }
+
+  .back-to-home {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .back-to-home a {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
   }
 
   .form-group-inline {
@@ -860,107 +1154,55 @@ body.dark-mode .recaptcha-container {
     align-items: flex-start;
   }
 
-  .recaptcha-container {
-    min-height: 70px;
-  }
-
   .g-recaptcha {
     transform: scale(0.85);
-    transform-origin: left center;
-    -webkit-transform: scale(0.85);
-    -webkit-transform-origin: left center;
   }
 }
 
 @media (max-width: 380px) {
   .g-recaptcha {
     transform: scale(0.77);
-    transform-origin: left center;
-    -webkit-transform: scale(0.77);
-    -webkit-transform-origin: left center;
   }
 }
 
 /* ========================================
-   19. LOADING ANIMATION
+   22. CUSTOM SCROLLBAR (CHỈ CHO MOBILE)
    ======================================== */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+@media (max-width: 767px) {
+  .auth-page-right::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .auth-page-right::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+  }
+
+  .auth-page-right::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+  }
+
+  .auth-page-right::-webkit-scrollbar-thumb:hover {
+    background: var(--color-brand-primary);
   }
 }
 
-.fa-spinner.fa-spin {
-  animation: spin 0.8s linear infinite;
+/* ========================================
+   23. ACCESSIBILITY
+   ======================================== */
+.btn:focus,
+input:focus,
+.toggle-password:focus {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
 }
 
 /* ========================================
-   20. DIVIDER
+   24. PRINT STYLES
    ======================================== */
-.auth-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 30px 0;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
-}
-
-body.dark-mode .auth-divider::before,
-body.dark-mode .auth-divider::after {
-  border-bottom-color: var(--border-color, #333333);
-}
-
-.auth-divider span {
-  padding: 0 15px;
-  color: var(--text-muted, #999999);
-  font-size: 14px;
-}
-
-/* ========================================
-   21. SOCIAL LOGIN
-   ======================================== */
-.social-login {
-  display: flex;
-  gap: 15px;
-}
-
-.btn-social {
-  flex: 1;
-  padding: 12px 20px;
-  border: 1px solid var(--border-color, #e0e0e0);
-  background: var(--bg-secondary, #f5f5f5);
-  color: var(--text-primary, #333333);
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-body.dark-mode .btn-social {
-  background: var(--bg-secondary, #1a1a1a);
-  border-color: var(--border-color, #333333);
-  color: var(--text-primary, #e0e0e0);
-}
-
-.btn-google:hover {
-  background: #ea4335;
-  color: #fff;
-  border-color: #ea4335;
-}
-
-.btn-facebook:hover {
-  background: #1877f2;
-  color: #fff;
-  border-color: #1877f2;
+@media print {
+  .auth-page-container,
+  .auth-page-left {
+    display: none;
+  }
 }

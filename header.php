@@ -239,6 +239,8 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                 </nav>
             </div>
         </div>
+
+
     </header>
     <?php wp_footer(); ?>
 </body>

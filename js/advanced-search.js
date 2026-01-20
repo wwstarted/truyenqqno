@@ -1,8 +1,9 @@
 /**
- * Advanced Search with AJAX
+ * Advanced Search with AJAX (FIXED)
+ * ✅ Tích hợp global bookmark system
  *
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 (function () {
@@ -62,11 +63,13 @@
     initSelectListeners();
     initSearchButton();
     initPaginationListeners();
-    initBookmarkButtons();
 
     restoreGenreStates();
 
-    console.log("Advanced Search initialized", state);
+    console.log(
+      "✅ Advanced Search initialized (with global bookmarks)",
+      state,
+    );
   }
 
   function initFormToggle() {
@@ -112,13 +115,13 @@
         } else if (currentClass === "icon-tick") {
           this.className = "icon-cross";
           state.genresInclude = state.genresInclude.filter(
-            (id) => id !== genreId
+            (id) => id !== genreId,
           );
           state.genresExclude.push(genreId);
         } else if (currentClass === "icon-cross") {
           this.className = "icon-checkbox";
           state.genresExclude = state.genresExclude.filter(
-            (id) => id !== genreId
+            (id) => id !== genreId,
           );
         }
 
@@ -229,8 +232,6 @@
 
       const response = await fetch(apiUrl.toString());
 
-      console.log("Response status:", response.status);
-
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -242,6 +243,11 @@
         renderPagination(data.pagination);
         updateURL();
         scrollToTop();
+
+        // ✅ Check bookmark states
+        if (typeof window.TruyenqqBookmarks !== "undefined") {
+          window.TruyenqqBookmarks.check();
+        }
       } else {
         showError("Không thể tải dữ liệu truyện");
       }
@@ -271,14 +277,15 @@
         <div class="book_avatar">
           <a href="${comic.url}" title="${comic.title}">
             <img class="center" src="${comic.thumbnail}" alt="${
-          comic.title
-        }" loading="lazy">
+              comic.title
+            }" loading="lazy">
           </a>
           
-          <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi" data-id="${
+          <!-- ✅ FIXED: Bookmark badge -->
+          <span class="bookmark-badge" title="Theo dõi" data-post-id="${
             comic.id
           }">
-            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+            <i class="fa fa-bookmark-o"></i>
           </span>
           
           <div class="top-notice">
@@ -306,20 +313,23 @@
           
           <div class="last_chapter">
             <a href="${comic.url}" title="${comic.latest_chapter}">${
-          comic.latest_chapter
-        }</a>
+              comic.latest_chapter
+            }</a>
           </div>
         </div>
         
         <div class="clear"></div>
       </li>
-    `
+    `,
       )
       .join("");
 
     comicsGrid.innerHTML = html;
 
-    initBookmarkButtons();
+    // ✅ Init global bookmarks
+    if (typeof window.TruyenqqBookmarks !== "undefined") {
+      window.TruyenqqBookmarks.init();
+    }
   }
 
   function renderPagination(pagination) {
@@ -415,31 +425,6 @@
     showToast(message);
   }
 
-  function initBookmarkButtons() {
-    const bookmarkButtons = document.querySelectorAll(
-      ".list_grid .subscribed-badge"
-    );
-
-    bookmarkButtons.forEach((button) => {
-      button.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (this.classList.contains("not-subscribed")) {
-          this.classList.remove("not-subscribed");
-          this.classList.add("subscribed");
-          this.querySelector("i").className = "fa fa-bookmark";
-          showToast("Đã thêm vào theo dõi");
-        } else {
-          this.classList.remove("subscribed");
-          this.classList.add("not-subscribed");
-          this.querySelector("i").className = "fa fa-bookmark-o";
-          showToast("Đã bỏ theo dõi");
-        }
-      });
-    });
-  }
-
   function showToast(message) {
     let toastContainer = document.querySelector(".toast-container");
 
@@ -465,3 +450,5 @@
 
   init();
 })();
+
+console.log("🚀 Advanced Search - Script loaded (global bookmarks enabled)");

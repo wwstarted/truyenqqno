@@ -1,9 +1,9 @@
 <?php
 /**
- * Template Name: Register Page
+ * Template Name: Modern Register Page - Blue Dark Theme
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 3.3.0
  */
 
 // Redirect if already logged in
@@ -16,44 +16,49 @@ get_header('auth');
 ?>
 
 <div class="auth-page-container">
+
+    <!-- Back to Home Button - Fixed Bottom Right -->
+    <div class="back-to-home">
+        <a href="<?php echo home_url(); ?>" title="Về trang chủ" aria-label="Về trang chủ">
+            <i class="fa fa-home"></i>
+        </a>
+    </div>
+
     <div class="auth-page-wrapper">
         <div class="auth-page-content">
-            <!-- Left Side - Branding -->
+
+            <!-- LEFT SIDE - IMAGE ONLY -->
             <div class="auth-page-left">
                 <div class="auth-branding">
-                    <a href="<?php echo home_url(); ?>" class="brand-logo">
-                        <img src="https://st.truyenqqno.com/template/frontend/images/logo-icon.png"
+                    <!-- Logo - HIDDEN -->
+                    <a href="<?php echo home_url(); ?>" class="brand-logo" style="display: none;">
+                        <img src="<?php echo get_template_directory_uri(); ?>/images/logo.png"
                             alt="<?php bloginfo('name'); ?>">
                     </a>
-                    <h1>Tham gia cộng đồng!</h1>
-                    <p>Tạo tài khoản để trải nghiệm đầy đủ tính năng</p>
 
+                    <!-- Heading - HIDDEN -->
+                    <h1 style="display: none;">Tham gia cộng đồng!</h1>
+                    <p style="display: none;">Tạo tài khoản để trải nghiệm đầy đủ tính năng</p>
+
+                    <!-- Illustration - ONLY VISIBLE ELEMENT -->
                     <div class="auth-illustration">
-                        <img src="<?php echo get_template_directory_uri(); ?>/images/login.jpg" alt="Register">
+                        <img src="<?php echo get_template_directory_uri(); ?>/images/login.jpg"
+                            alt="Register Illustration" loading="lazy">
                     </div>
                 </div>
             </div>
 
-            <!-- Right Side - Form -->
+            <!-- RIGHT SIDE - REGISTER FORM -->
             <div class="auth-page-right">
                 <div class="auth-form-container">
-                    <!-- Step Indicator -->
-                    <!-- <div class="step-indicator">
-                        <div class="step active" data-step="1">
-                            <div class="step-number">1</div>
-                            <div class="step-label">Thông tin</div>
-                        </div>
-                        <div class="step-line"></div>
-                        <div class="step" data-step="2">
-                            <div class="step-number">2</div>
-                            <div class="step-label">Xác thực OTP</div>
-                        </div>
-                    </div> -->
 
                     <!-- Step 1: Register Form -->
                     <div class="auth-step active" data-step="1">
                         <div class="auth-header">
-                            <h2><i class="fa fa-user-plus"></i> Đăng Ký Tài Khoản</h2>
+                            <h2>
+                                <i class="fa fa-user-plus"></i>
+                                Đăng Ký Tài Khoản
+                            </h2>
                             <p>Điền thông tin để tạo tài khoản mới</p>
                         </div>
 
@@ -63,8 +68,8 @@ get_header('auth');
                                     <i class="fa fa-user"></i> Tên đăng nhập
                                 </label>
                                 <input type="text" id="register-username" name="username"
-                                    placeholder="Chữ, số và dấu gạch dưới" required>
-                                <small class="form-hint">Chỉ sử dụng chữ cái, số và dấu gạch dưới (_)</small>
+                                    placeholder="Chữ, số và dấu gạch dưới" required autocomplete="username">
+                                <!-- <small class="form-hint">Chỉ sử dụng chữ cái, số và dấu gạch dưới (_)</small> -->
                             </div>
 
                             <div class="form-group">
@@ -72,8 +77,8 @@ get_header('auth');
                                     <i class="fa fa-envelope"></i> Email
                                 </label>
                                 <input type="email" id="register-email" name="email" placeholder="email@example.com"
-                                    required>
-                                <small class="form-hint">Chúng tôi sẽ gửi mã OTP đến email này</small>
+                                    required autocomplete="email">
+                                <!-- <small class="form-hint">Chúng tôi sẽ gửi mã OTP đến email này</small> -->
                             </div>
 
                             <div class="form-group">
@@ -82,8 +87,8 @@ get_header('auth');
                                 </label>
                                 <div class="password-input">
                                     <input type="password" id="register-password" name="password"
-                                        placeholder="Ít nhất 6 ký tự" required>
-                                    <button type="button" class="toggle-password">
+                                        placeholder="Ít nhất 6 ký tự" required autocomplete="new-password">
+                                    <button type="button" class="toggle-password" aria-label="Toggle password">
                                         <i class="fa fa-eye"></i>
                                     </button>
                                 </div>
@@ -99,8 +104,8 @@ get_header('auth');
                                 </label>
                                 <div class="password-input">
                                     <input type="password" id="register-confirm-password" name="confirm_password"
-                                        placeholder="Nhập lại mật khẩu" required>
-                                    <button type="button" class="toggle-password">
+                                        placeholder="Nhập lại mật khẩu" required autocomplete="new-password">
+                                    <button type="button" class="toggle-password" aria-label="Toggle password">
                                         <i class="fa fa-eye"></i>
                                     </button>
                                 </div>
@@ -114,11 +119,11 @@ get_header('auth');
                                 </label>
                             </div>
 
-                            <!-- reCAPTCHA -->
+                            <!-- reCAPTCHA - DARK THEME, NO MARGIN -->
                             <div class="form-group recaptcha-container">
                                 <div class="g-recaptcha"
                                     data-sitekey="<?php echo get_option('truyenqq_recaptcha_site_key'); ?>"
-                                    data-size="normal" data-theme="light"></div>
+                                    data-size="normal" data-theme="dark"></div>
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-block">
@@ -137,7 +142,10 @@ get_header('auth');
                     <!-- Step 2: OTP Verification -->
                     <div class="auth-step" data-step="2">
                         <div class="auth-header">
-                            <h2><i class="fa fa-shield"></i> Xác Thực Email</h2>
+                            <h2>
+                                <i class="fa fa-shield"></i>
+                                Xác Thực Email
+                            </h2>
                         </div>
 
                         <div class="otp-info">
@@ -152,7 +160,7 @@ get_header('auth');
                                     <i class="fa fa-key"></i> Nhập mã OTP
                                 </label>
                                 <input type="text" id="register-otp" name="otp_code" placeholder="000000" maxlength="6"
-                                    required pattern="[0-9]{6}">
+                                    required pattern="[0-9]{6}" autocomplete="one-time-code">
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-block">
@@ -186,7 +194,9 @@ get_header('auth');
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
-<?php get_footer('auth');
+
+<?php get_footer('auth'); ?>

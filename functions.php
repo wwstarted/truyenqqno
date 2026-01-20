@@ -489,6 +489,8 @@ require_once get_template_directory() . '/inc/single-nettruyen-comics.php';
 require_once get_template_directory() . '/inc/class-top-comics-api.php';
 require_once get_template_directory() . '/inc/create-reading-history-table.php';
 require_once get_template_directory() . '/inc/reading-history-api.php';
+require_once get_template_directory() . '/inc/social-login.php';
+
 
 // ========================================
 // BOOKMARK SYSTEM
