@@ -115,8 +115,12 @@ body.dark-mode .truyenqq-footer .footer-top {
 .truyenqq-footer .newsletter-text h3 {
   font-size: 22px;
   font-weight: 700;
-  color: #fff;
+  color: #333333;
   margin: 0 0 5px 0;
+}
+
+body.dark-mode .truyenqq-footer .newsletter-text h3 {
+  color: #ffffff !important;
 }
 
 .truyenqq-footer .newsletter-text p {

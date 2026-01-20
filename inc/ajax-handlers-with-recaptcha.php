@@ -1,9 +1,9 @@
 <?php
 /**
- * AJAX Authentication Handlers with reCAPTCHA
+ * AJAX Authentication Handlers with reCAPTCHA & OAuth Support
  * 
  * @package TruyenQQ
- * @version 1.0.3 - COMPLETE FIXED
+ * @version 1.0.4 - OAUTH INTEGRATED
  */
 
 if (!defined('ABSPATH')) {
@@ -21,7 +21,6 @@ require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
  */
 function truyenqq_verify_recaptcha($recaptcha_token)
 {
-    // Allow empty for testing - remove in production
     if (empty($recaptcha_token)) {
         error_log('TruyenQQ: Empty reCAPTCHA token');
         return false;
@@ -31,7 +30,7 @@ function truyenqq_verify_recaptcha($recaptcha_token)
 
     if (empty($secret_key)) {
         error_log('TruyenQQ: reCAPTCHA secret key not configured');
-        return true; // Allow if not configured
+        return true; // Allow if not configured - REMOVE IN PRODUCTION
     }
 
     $verify_url = 'https://www.google.com/recaptcha/api/siteverify';
@@ -57,13 +56,60 @@ function truyenqq_verify_recaptcha($recaptcha_token)
         return true;
     }
 
-    // Log error codes if any
     if (isset($result['error-codes'])) {
         error_log('TruyenQQ reCAPTCHA Errors: ' . implode(', ', $result['error-codes']));
     }
 
     return false;
 }
+
+/**
+ * AJAX: Login
+ */
+function truyenqq_ajax_login()
+{
+    check_ajax_referer('truyenqq_auth_nonce', 'nonce');
+
+    // Verify reCAPTCHA
+    $recaptcha_response = isset($_POST['recaptcha_response']) ? sanitize_text_field($_POST['recaptcha_response']) : '';
+
+    if (!truyenqq_verify_recaptcha($recaptcha_response)) {
+        wp_send_json_error(array(
+            'message' => 'Xác thực reCAPTCHA thất bại. Vui lòng thử lại.'
+        ));
+        return;
+    }
+
+    $username = sanitize_text_field($_POST['username']);
+    $password = $_POST['password'];
+    $remember = isset($_POST['remember']) ? (bool) $_POST['remember'] : false;
+
+    $result = TruyenQQ_Auth_Handler::login($username, $password, $remember);
+
+    if ($result['success']) {
+        wp_send_json_success($result);
+    } else {
+        wp_send_json_error($result);
+    }
+}
+add_action('wp_ajax_nopriv_login', 'truyenqq_ajax_login');
+
+/**
+ * AJAX: Logout
+ */
+function truyenqq_ajax_logout()
+{
+    check_ajax_referer('truyenqq_auth_nonce', 'nonce');
+
+    $result = TruyenQQ_Auth_Handler::logout();
+
+    if ($result['success']) {
+        wp_send_json_success($result);
+    } else {
+        wp_send_json_error($result);
+    }
+}
+add_action('wp_ajax_logout', 'truyenqq_ajax_logout');
 
 /**
  * AJAX: Register - Send OTP
@@ -115,56 +161,6 @@ function truyenqq_ajax_register_verify_otp()
     }
 }
 add_action('wp_ajax_nopriv_register_verify_otp', 'truyenqq_ajax_register_verify_otp');
-
-/**
- * AJAX: Login - FIXED VERSION
- */
-function truyenqq_ajax_login()
-{
-    check_ajax_referer('truyenqq_auth_nonce', 'nonce');
-
-    // Verify reCAPTCHA FIRST
-    $recaptcha_response = isset($_POST['recaptcha_response']) ? sanitize_text_field($_POST['recaptcha_response']) : '';
-
-    if (!truyenqq_verify_recaptcha($recaptcha_response)) {
-        wp_send_json_error(array(
-            'message' => 'Xác thực reCAPTCHA thất bại. Vui lòng thử lại.'
-        ));
-        return; // Important: stop execution here
-    }
-
-    // If reCAPTCHA is valid, proceed with login
-    $username = sanitize_text_field($_POST['username']);
-    $password = $_POST['password'];
-    $remember = isset($_POST['remember']) ? (bool) $_POST['remember'] : false;
-
-    $result = TruyenQQ_Auth_Handler::login($username, $password, $remember);
-
-    // Send result without checking reCAPTCHA again
-    if ($result['success']) {
-        wp_send_json_success($result);
-    } else {
-        wp_send_json_error($result);
-    }
-}
-add_action('wp_ajax_nopriv_login', 'truyenqq_ajax_login');
-
-/**
- * AJAX: Logout
- */
-function truyenqq_ajax_logout()
-{
-    check_ajax_referer('truyenqq_auth_nonce', 'nonce');
-
-    $result = TruyenQQ_Auth_Handler::logout();
-
-    if ($result['success']) {
-        wp_send_json_success($result);
-    } else {
-        wp_send_json_error($result);
-    }
-}
-add_action('wp_ajax_logout', 'truyenqq_ajax_logout');
 
 /**
  * AJAX: Forgot Password - Send OTP
@@ -256,7 +252,7 @@ function truyenqq_ajax_resend_otp()
 add_action('wp_ajax_nopriv_resend_otp', 'truyenqq_ajax_resend_otp');
 
 /**
- * Enqueue scripts and styles - FIXED
+ * Enqueue scripts and styles
  */
 function truyenqq_enqueue_auth_scripts()
 {
@@ -282,7 +278,7 @@ function truyenqq_enqueue_auth_scripts()
         'truyenqq-auth-pages',
         get_template_directory_uri() . '/css/auth-pages.css',
         array(),
-        '1.0.3'
+        '1.0.4'
     );
 
     // Auth JS
@@ -290,7 +286,7 @@ function truyenqq_enqueue_auth_scripts()
         'truyenqq-auth-pages',
         get_template_directory_uri() . '/js/auth-pages.js',
         array('jquery'),
-        '1.0.3',
+        '1.0.4',
         true
     );
 

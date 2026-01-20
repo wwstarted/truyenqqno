@@ -1,10 +1,10 @@
 <?php
 /**
  * Authentication Handler Class
- * Xử lý Register, Login, Logout, Reset Password
+ * Xử lý Register, Login, Logout, Reset Password + OAuth (Google & Facebook)
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.1.1 - OAUTH INTEGRATED - FIXED AVATAR HANDLING
  */
 
 if (!defined('ABSPATH')) {
@@ -23,14 +23,12 @@ class TruyenQQ_Auth_Handler
      */
     public static function register_send_otp($username, $email, $password)
     {
-
         if (empty($username) || empty($email) || empty($password)) {
             return array(
                 'success' => false,
                 'message' => 'Vui lòng điền đầy đủ thông tin'
             );
         }
-
 
         if (username_exists($username)) {
             return array(
@@ -46,7 +44,6 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-
         if (!is_email($email)) {
             return array(
                 'success' => false,
@@ -61,7 +58,6 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-
         if (strlen($password) < 6) {
             return array(
                 'success' => false,
@@ -69,14 +65,12 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-
         $reg_data = array(
             'username' => $username,
             'email' => $email,
             'password' => $password
         );
         set_transient('truyenqq_reg_' . md5($email), $reg_data, 600);
-
 
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $otp_result = TruyenQQ_OTP_Manager::send_otp($email, 'register');
@@ -93,14 +87,12 @@ class TruyenQQ_Auth_Handler
      */
     public static function register_verify_otp($email, $otp_code)
     {
-
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $verify_result = TruyenQQ_OTP_Manager::verify_otp($email, $otp_code, 'register');
 
         if (!$verify_result['success']) {
             return $verify_result;
         }
-
 
         $reg_data = get_transient('truyenqq_reg_' . md5($email));
 
@@ -110,7 +102,6 @@ class TruyenQQ_Auth_Handler
                 'message' => 'Phiên đăng ký đã hết hạn. Vui lòng thử lại.'
             );
         }
-
 
         $user_id = wp_create_user(
             $reg_data['username'],
@@ -125,10 +116,8 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-
         $user = new WP_User($user_id);
         $user->set_role('subscriber');
-
 
         global $wpdb;
         $user_meta_table = $wpdb->prefix . 'nettruyen_user_meta';
@@ -143,13 +132,10 @@ class TruyenQQ_Auth_Handler
             array('%d', '%d', '%s', '%s')
         );
 
-
         delete_transient('truyenqq_reg_' . md5($email));
-
 
         wp_set_auth_cookie($user_id, true);
         do_action('wp_login', $reg_data['username'], $user);
-
 
         self::log_login_history($user_id, 'success');
 
@@ -171,14 +157,12 @@ class TruyenQQ_Auth_Handler
      */
     public static function login($username, $password, $remember = false)
     {
-
         if (empty($username) || empty($password)) {
             return array(
                 'success' => false,
                 'message' => 'Vui lòng nhập tên đăng nhập và mật khẩu'
             );
         }
-
 
         $credentials = array(
             'user_login' => $username,
@@ -189,7 +173,6 @@ class TruyenQQ_Auth_Handler
         $user = wp_signon($credentials, is_ssl());
 
         if (is_wp_error($user)) {
-
             self::log_login_history(0, 'failed');
 
             return array(
@@ -197,7 +180,6 @@ class TruyenQQ_Auth_Handler
                 'message' => 'Tên đăng nhập hoặc mật khẩu không đúng'
             );
         }
-
 
         self::log_login_history($user->ID, 'success');
 
@@ -233,14 +215,12 @@ class TruyenQQ_Auth_Handler
      */
     public static function forgot_password_send_otp($email)
     {
-
         if (empty($email) || !is_email($email)) {
             return array(
                 'success' => false,
                 'message' => 'Vui lòng nhập email hợp lệ'
             );
         }
-
 
         $user = get_user_by('email', $email);
         if (!$user) {
@@ -249,7 +229,6 @@ class TruyenQQ_Auth_Handler
                 'message' => 'Email không tồn tại trong hệ thống'
             );
         }
-
 
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $otp_result = TruyenQQ_OTP_Manager::send_otp($email, 'reset_password');
@@ -266,14 +245,12 @@ class TruyenQQ_Auth_Handler
      */
     public static function forgot_password_verify_otp($email, $otp_code)
     {
-
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $verify_result = TruyenQQ_OTP_Manager::verify_otp($email, $otp_code, 'reset_password');
 
         if (!$verify_result['success']) {
             return $verify_result;
         }
-
 
         $reset_token = wp_generate_password(32, false);
         set_transient('truyenqq_reset_' . $reset_token, $email, 600);
@@ -294,14 +271,12 @@ class TruyenQQ_Auth_Handler
      */
     public static function reset_password($reset_token, $new_password)
     {
-
         if (empty($reset_token) || empty($new_password)) {
             return array(
                 'success' => false,
                 'message' => 'Vui lòng nhập đầy đủ thông tin'
             );
         }
-
 
         $email = get_transient('truyenqq_reset_' . $reset_token);
         if (!$email) {
@@ -311,14 +286,12 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-
         if (strlen($new_password) < 6) {
             return array(
                 'success' => false,
                 'message' => 'Mật khẩu phải có ít nhất 6 ký tự'
             );
         }
-
 
         $user = get_user_by('email', $email);
         if (!$user) {
@@ -328,12 +301,9 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-
         wp_set_password($new_password, $user->ID);
 
-
         delete_transient('truyenqq_reset_' . $reset_token);
-
 
         wp_set_auth_cookie($user->ID, true);
 
@@ -344,17 +314,255 @@ class TruyenQQ_Auth_Handler
         );
     }
 
+    /* ========================================================================
+       OAUTH METHODS - GOOGLE & FACEBOOK LOGIN
+       ======================================================================== */
+
+    /**
+     * Create or login user from OAuth data - FIXED VERSION
+     * 
+     * @param array $oauth_data User data from OAuth provider
+     * @param string $provider 'google' or 'facebook'
+     * @return WP_User|WP_Error User object or error
+     */
+    public static function oauth_create_or_login_user($oauth_data, $provider)
+    {
+        $email = isset($oauth_data['email']) ? sanitize_email($oauth_data['email']) : '';
+
+        // Facebook sometimes doesn't provide email
+        if (empty($email)) {
+            // Generate a temporary email based on provider ID
+            $email = $provider . '_' . $oauth_data['id'] . '@truyenqq.local';
+        }
+
+        // Check if user exists by email
+        $user = get_user_by('email', $email);
+
+        if ($user) {
+            // User exists, just login
+            wp_set_current_user($user->ID);
+            wp_set_auth_cookie($user->ID, true);
+
+            // Update OAuth meta if not set
+            if (!get_user_meta($user->ID, 'oauth_provider', true)) {
+                update_user_meta($user->ID, 'oauth_provider', $provider);
+                update_user_meta($user->ID, 'oauth_id', $oauth_data['id']);
+            }
+
+            // ✅ UPDATE AVATAR - FIXED
+            self::update_oauth_avatar($user->ID, $oauth_data, $provider);
+
+            // Update last login via OAuth
+            update_user_meta($user->ID, 'last_oauth_login', current_time('mysql'));
+
+            // Log login history
+            self::log_login_history($user->ID, 'success', $provider . '_oauth');
+
+            do_action('wp_login', $user->user_login, $user);
+
+            return $user;
+        }
+
+        // ========================================
+        // CREATE NEW USER
+        // ========================================
+
+        $name = isset($oauth_data['name']) ? sanitize_text_field($oauth_data['name']) : '';
+
+        // Generate username from email or name
+        if (!empty($name)) {
+            $username = sanitize_user(strtolower(str_replace(' ', '_', $name)));
+        } else {
+            $username = $provider . '_user_' . $oauth_data['id'];
+        }
+
+        // Ensure unique username
+        $base_username = $username;
+        $counter = 1;
+        while (username_exists($username)) {
+            $username = $base_username . $counter;
+            $counter++;
+        }
+
+        // Create user
+        $user_id = wp_create_user($username, wp_generate_password(20, true, true), $email);
+
+        if (is_wp_error($user_id)) {
+            return $user_id;
+        }
+
+        // Update user meta
+        wp_update_user(array(
+            'ID' => $user_id,
+            'display_name' => $name,
+            'first_name' => $name,
+        ));
+
+        // Set role
+        $user = new WP_User($user_id);
+        $user->set_role('subscriber');
+
+        // Save OAuth meta
+        update_user_meta($user_id, 'oauth_provider', $provider);
+        update_user_meta($user_id, 'oauth_id', $oauth_data['id']);
+        update_user_meta($user_id, 'oauth_created_at', current_time('mysql'));
+
+        // ✅ SAVE AVATAR - FIXED
+        self::update_oauth_avatar($user_id, $oauth_data, $provider);
+
+        // Insert into custom user meta table
+        global $wpdb;
+        $user_meta_table = $wpdb->prefix . 'nettruyen_user_meta';
+
+        // Check if table exists
+        if ($wpdb->get_var("SHOW TABLES LIKE '$user_meta_table'") == $user_meta_table) {
+            $wpdb->insert(
+                $user_meta_table,
+                array(
+                    'user_id' => $user_id,
+                    'email_verified' => 1, // OAuth accounts are pre-verified
+                    'email_verified_at' => current_time('mysql'),
+                    'created_at' => current_time('mysql')
+                ),
+                array('%d', '%d', '%s', '%s')
+            );
+        }
+
+        // Login the new user
+        wp_set_current_user($user_id);
+        wp_set_auth_cookie($user_id, true);
+
+        // Log login history
+        self::log_login_history($user_id, 'success', $provider . '_oauth_register');
+
+        do_action('wp_login', $user->user_login, $user);
+
+        return $user;
+    }
+
+    /**
+     * Update OAuth avatar - HELPER METHOD (NEW)
+     * 
+     * @param int $user_id User ID
+     * @param array $oauth_data OAuth user data
+     * @param string $provider 'google' or 'facebook'
+     */
+    private static function update_oauth_avatar($user_id, $oauth_data, $provider)
+    {
+        $avatar_url = '';
+
+        if ($provider === 'google') {
+            // Google: picture is direct URL
+            if (isset($oauth_data['picture']) && !empty($oauth_data['picture'])) {
+                $avatar_url = $oauth_data['picture'];
+            }
+        } elseif ($provider === 'facebook') {
+            // Facebook: picture.data.url (nested structure)
+            if (isset($oauth_data['picture']['data']['url']) && !empty($oauth_data['picture']['data']['url'])) {
+                $avatar_url = $oauth_data['picture']['data']['url'];
+            }
+        }
+
+        // Save if URL exists and is valid
+        if (!empty($avatar_url) && filter_var($avatar_url, FILTER_VALIDATE_URL)) {
+            update_user_meta($user_id, 'oauth_avatar', esc_url_raw($avatar_url));
+        }
+    }
+
+    /**
+     * Get user's OAuth avatar (if exists)
+     * 
+     * @param int $user_id User ID
+     * @return string|false Avatar URL or false
+     */
+    public static function get_oauth_avatar($user_id)
+    {
+        $avatar = get_user_meta($user_id, 'oauth_avatar', true);
+
+        if (!empty($avatar)) {
+            return esc_url($avatar);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user is OAuth user
+     * 
+     * @param int $user_id User ID
+     * @return bool|string False or provider name ('google', 'facebook')
+     */
+    public static function is_oauth_user($user_id)
+    {
+        $provider = get_user_meta($user_id, 'oauth_provider', true);
+
+        if (!empty($provider)) {
+            return $provider;
+        }
+
+        return false;
+    }
+
+    /**
+     * Unlink OAuth account
+     * 
+     * @param int $user_id User ID
+     * @return array Response
+     */
+    public static function unlink_oauth_account($user_id)
+    {
+        $provider = self::is_oauth_user($user_id);
+
+        if (!$provider) {
+            return array(
+                'success' => false,
+                'message' => 'Tài khoản không liên kết với OAuth'
+            );
+        }
+
+        // Check if user has a password (for security)
+        $user = get_user_by('id', $user_id);
+        if (empty($user->user_pass)) {
+            return array(
+                'success' => false,
+                'message' => 'Vui lòng đặt mật khẩu trước khi hủy liên kết OAuth'
+            );
+        }
+
+        // Remove OAuth meta
+        delete_user_meta($user_id, 'oauth_provider');
+        delete_user_meta($user_id, 'oauth_id');
+        delete_user_meta($user_id, 'oauth_avatar');
+        delete_user_meta($user_id, 'last_oauth_login');
+        delete_user_meta($user_id, 'oauth_created_at');
+
+        return array(
+            'success' => true,
+            'message' => 'Đã hủy liên kết tài khoản ' . ucfirst($provider)
+        );
+    }
+
+    /* ========================================================================
+       END OAUTH METHODS
+       ======================================================================== */
+
     /**
      * Log login history
      * 
      * @param int $user_id User ID (0 for failed attempts)
      * @param string $status 'success' or 'failed'
+     * @param string $login_method Method used (default: 'password', or 'google_oauth', 'facebook_oauth')
      */
-    private static function log_login_history($user_id, $status)
+    private static function log_login_history($user_id, $status, $login_method = 'password')
     {
         global $wpdb;
 
         $login_history_table = $wpdb->prefix . 'nettruyen_login_history';
+
+        // Check if table exists
+        if ($wpdb->get_var("SHOW TABLES LIKE '$login_history_table'") != $login_history_table) {
+            return; // Table doesn't exist, skip logging
+        }
 
         $wpdb->insert(
             $login_history_table,
@@ -362,10 +570,11 @@ class TruyenQQ_Auth_Handler
                 'user_id' => $user_id,
                 'login_time' => current_time('mysql'),
                 'ip_address' => self::get_user_ip(),
-                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '',
-                'login_status' => $status
+                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 255) : '',
+                'login_status' => $status,
+                'login_method' => $login_method
             ),
-            array('%d', '%s', '%s', '%s', '%s')
+            array('%d', '%s', '%s', '%s', '%s', '%s')
         );
     }
 
@@ -406,7 +615,7 @@ class TruyenQQ_Auth_Handler
     }
 
     /**
-     * Get current user info
+     * Get current user info (with OAuth avatar support)
      * 
      * @return array|null User info or null
      */
@@ -418,12 +627,23 @@ class TruyenQQ_Auth_Handler
 
         $user = wp_get_current_user();
 
+        // Try to get OAuth avatar first
+        $avatar = self::get_oauth_avatar($user->ID);
+        if (!$avatar) {
+            $avatar = get_avatar_url($user->ID);
+        }
+
+        // Check if it's an OAuth user
+        $oauth_provider = self::is_oauth_user($user->ID);
+
         return array(
             'id' => $user->ID,
             'username' => $user->user_login,
             'email' => $user->user_email,
             'display_name' => $user->display_name,
-            'avatar' => get_avatar_url($user->ID)
+            'avatar' => $avatar,
+            'is_oauth' => $oauth_provider ? true : false,
+            'oauth_provider' => $oauth_provider ? $oauth_provider : null
         );
     }
 }

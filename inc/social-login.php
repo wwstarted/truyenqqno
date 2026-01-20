@@ -1,15 +1,12 @@
 <?php
 /**
- * Social Authentication Backend
+ * Social Authentication Backend - FIXED VERSION
  * Google & Facebook OAuth Integration
  * 
  * @package TruyenQQ
- * @version 1.0.0
- * 
- * Thêm vào functions.php hoặc tạo file riêng và require_once
+ * @version 1.0.3 - REMOVED DUPLICATE SETTINGS PAGE
  */
 
-// Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -32,12 +29,12 @@ function truyenqq_enqueue_social_login_scripts()
         'truyenqq-social-login',
         get_template_directory_uri() . '/js/social-login.js',
         array('jquery'),
-        '1.0.0',
+        '1.0.3',
         true
     );
 
-    // Localize script with OAuth config
-    wp_localize_script('truyenqq-social-login', 'truyenqqAuth', array(
+    // ✅ FIXED: Changed from 'truyenqqAuth' to 'truyenqqOAuth'
+    wp_localize_script('truyenqq-social-login', 'truyenqqOAuth', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('truyenqq_auth_nonce'),
         'google_client_id' => get_option('truyenqq_google_client_id', ''),
@@ -47,155 +44,10 @@ function truyenqq_enqueue_social_login_scripts()
     ));
 }
 
-/**
- * Register OAuth Settings in Admin
- */
-add_action('admin_menu', 'truyenqq_add_oauth_settings_page');
-function truyenqq_add_oauth_settings_page()
-{
-    add_options_page(
-        'Cài đặt OAuth',
-        'OAuth Settings',
-        'manage_options',
-        'truyenqq-oauth-settings',
-        'truyenqq_oauth_settings_page'
-    );
-}
-
-/**
- * OAuth Settings Page HTML
- */
-function truyenqq_oauth_settings_page()
-{
-    if (!current_user_can('manage_options')) {
-        return;
-    }
-
-    // Save settings
-    if (isset($_POST['truyenqq_oauth_settings_nonce'])) {
-        check_admin_referer('truyenqq_oauth_settings', 'truyenqq_oauth_settings_nonce');
-
-        update_option('truyenqq_google_client_id', sanitize_text_field($_POST['google_client_id']));
-        update_option('truyenqq_google_client_secret', sanitize_text_field($_POST['google_client_secret']));
-        update_option('truyenqq_facebook_app_id', sanitize_text_field($_POST['facebook_app_id']));
-        update_option('truyenqq_facebook_app_secret', sanitize_text_field($_POST['facebook_app_secret']));
-
-        echo '<div class="notice notice-success"><p>Đã lưu cài đặt OAuth!</p></div>';
-    }
-
-    $google_client_id = get_option('truyenqq_google_client_id', '');
-    $google_client_secret = get_option('truyenqq_google_client_secret', '');
-    $facebook_app_id = get_option('truyenqq_facebook_app_id', '');
-    $facebook_app_secret = get_option('truyenqq_facebook_app_secret', '');
-    ?>
-
-<div class="wrap">
-    <h1>Cài đặt OAuth - Social Login</h1>
-
-    <form method="post" action="">
-        <?php wp_nonce_field('truyenqq_oauth_settings', 'truyenqq_oauth_settings_nonce'); ?>
-
-        <h2>Google OAuth 2.0</h2>
-        <table class="form-table">
-            <tr>
-                <th scope="row">
-                    <label for="google_client_id">Google Client ID</label>
-                </th>
-                <td>
-                    <input type="text" id="google_client_id" name="google_client_id"
-                        value="<?php echo esc_attr($google_client_id); ?>" class="regular-text">
-                    <p class="description">
-                        Lấy từ <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud
-                            Console</a>
-                    </p>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="google_client_secret">Google Client Secret</label>
-                </th>
-                <td>
-                    <input type="text" id="google_client_secret" name="google_client_secret"
-                        value="<?php echo esc_attr($google_client_secret); ?>" class="regular-text">
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">Redirect URI</th>
-                <td>
-                    <code><?php echo home_url('/oauth/google/callback'); ?></code>
-                    <p class="description">Copy URL này vào Google Console</p>
-                </td>
-            </tr>
-        </table>
-
-        <h2>Facebook OAuth</h2>
-        <table class="form-table">
-            <tr>
-                <th scope="row">
-                    <label for="facebook_app_id">Facebook App ID</label>
-                </th>
-                <td>
-                    <input type="text" id="facebook_app_id" name="facebook_app_id"
-                        value="<?php echo esc_attr($facebook_app_id); ?>" class="regular-text">
-                    <p class="description">
-                        Lấy từ <a href="https://developers.facebook.com/apps/" target="_blank">Facebook Developers</a>
-                    </p>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="facebook_app_secret">Facebook App Secret</label>
-                </th>
-                <td>
-                    <input type="text" id="facebook_app_secret" name="facebook_app_secret"
-                        value="<?php echo esc_attr($facebook_app_secret); ?>" class="regular-text">
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">Redirect URI</th>
-                <td>
-                    <code><?php echo home_url('/oauth/facebook/callback'); ?></code>
-                    <p class="description">Copy URL này vào Facebook App Settings</p>
-                </td>
-            </tr>
-        </table>
-
-        <?php submit_button('Lưu cài đặt'); ?>
-    </form>
-
-    <hr>
-
-    <h2>Hướng dẫn cấu hình</h2>
-
-    <h3>Google OAuth:</h3>
-    <ol>
-        <li>Truy cập <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a></li>
-        <li>Tạo project mới hoặc chọn project có sẵn</li>
-        <li>Vào <strong>APIs & Services → Credentials</strong></li>
-        <li>Click <strong>Create Credentials → OAuth 2.0 Client ID</strong></li>
-        <li>Chọn <strong>Web application</strong></li>
-        <li>Thêm <strong>Authorized redirect URIs</strong>:
-            <code><?php echo home_url('/oauth/google/callback'); ?></code>
-        </li>
-        <li>Copy <strong>Client ID</strong> và <strong>Client Secret</strong> vào form trên</li>
-    </ol>
-
-    <h3>Facebook OAuth:</h3>
-    <ol>
-        <li>Truy cập <a href="https://developers.facebook.com/" target="_blank">Facebook Developers</a></li>
-        <li>Tạo app mới hoặc chọn app có sẵn</li>
-        <li>Vào <strong>Settings → Basic</strong></li>
-        <li>Copy <strong>App ID</strong> và <strong>App Secret</strong></li>
-        <li>Vào <strong>Facebook Login → Settings</strong></li>
-        <li>Thêm <strong>Valid OAuth Redirect URIs</strong>:
-            <code><?php echo home_url('/oauth/facebook/callback'); ?></code>
-        </li>
-        <li>Paste App ID và Secret vào form trên</li>
-    </ol>
-</div>
-
-<?php
-}
+/* ========================================================================
+   NOTE: OAuth Settings Page được quản lý trong admin-oauth-settings.php
+   Đã xóa duplicate code để tránh trùng lặp
+   ======================================================================== */
 
 /**
  * Register OAuth Callback Endpoints
@@ -224,6 +76,16 @@ function truyenqq_oauth_query_vars($vars)
 }
 
 /**
+ * Flush rewrite rules on theme activation
+ */
+add_action('after_switch_theme', 'truyenqq_oauth_flush_rewrite_rules');
+function truyenqq_oauth_flush_rewrite_rules()
+{
+    truyenqq_register_oauth_endpoints();
+    flush_rewrite_rules();
+}
+
+/**
  * Handle OAuth Callbacks
  */
 add_action('template_redirect', 'truyenqq_handle_oauth_callback');
@@ -243,6 +105,12 @@ function truyenqq_handle_oauth_callback()
  */
 function truyenqq_handle_google_callback()
 {
+    // Check for error from Google
+    if (isset($_GET['error'])) {
+        truyenqq_oauth_error('Đăng nhập Google bị hủy: ' . sanitize_text_field($_GET['error']));
+        return;
+    }
+
     if (!isset($_GET['code'])) {
         truyenqq_oauth_error('Không nhận được mã xác thực từ Google');
         return;
@@ -253,6 +121,12 @@ function truyenqq_handle_google_callback()
     $client_secret = get_option('truyenqq_google_client_secret');
     $redirect_uri = home_url('/oauth/google/callback');
 
+    // Validate configuration
+    if (empty($client_id) || empty($client_secret)) {
+        truyenqq_oauth_error('Google OAuth chưa được cấu hình. Vui lòng liên hệ quản trị viên.');
+        return;
+    }
+
     // Exchange code for access token
     $token_response = wp_remote_post('https://oauth2.googleapis.com/token', array(
         'body' => array(
@@ -262,6 +136,7 @@ function truyenqq_handle_google_callback()
             'redirect_uri' => $redirect_uri,
             'grant_type' => 'authorization_code',
         ),
+        'timeout' => 15,
     ));
 
     if (is_wp_error($token_response)) {
@@ -272,7 +147,8 @@ function truyenqq_handle_google_callback()
     $token_data = json_decode(wp_remote_retrieve_body($token_response), true);
 
     if (!isset($token_data['access_token'])) {
-        truyenqq_oauth_error('Không nhận được access token từ Google');
+        $error_msg = isset($token_data['error_description']) ? $token_data['error_description'] : 'Không nhận được access token';
+        truyenqq_oauth_error('Lỗi Google: ' . $error_msg);
         return;
     }
 
@@ -281,6 +157,7 @@ function truyenqq_handle_google_callback()
         'headers' => array(
             'Authorization' => 'Bearer ' . $token_data['access_token'],
         ),
+        'timeout' => 15,
     ));
 
     if (is_wp_error($user_response)) {
@@ -290,8 +167,14 @@ function truyenqq_handle_google_callback()
 
     $user_data = json_decode(wp_remote_retrieve_body($user_response), true);
 
+    if (!isset($user_data['id'])) {
+        truyenqq_oauth_error('Dữ liệu người dùng từ Google không hợp lệ');
+        return;
+    }
+
     // Create or login user
-    $user = truyenqq_oauth_create_or_login_user($user_data, 'google');
+    require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
+    $user = TruyenQQ_Auth_Handler::oauth_create_or_login_user($user_data, 'google');
 
     if (is_wp_error($user)) {
         truyenqq_oauth_error($user->get_error_message());
@@ -307,6 +190,13 @@ function truyenqq_handle_google_callback()
  */
 function truyenqq_handle_facebook_callback()
 {
+    // Check for error from Facebook
+    if (isset($_GET['error'])) {
+        $error_description = isset($_GET['error_description']) ? sanitize_text_field($_GET['error_description']) : sanitize_text_field($_GET['error']);
+        truyenqq_oauth_error('Đăng nhập Facebook bị hủy: ' . $error_description);
+        return;
+    }
+
     if (!isset($_GET['code'])) {
         truyenqq_oauth_error('Không nhận được mã xác thực từ Facebook');
         return;
@@ -317,6 +207,12 @@ function truyenqq_handle_facebook_callback()
     $app_secret = get_option('truyenqq_facebook_app_secret');
     $redirect_uri = home_url('/oauth/facebook/callback');
 
+    // Validate configuration
+    if (empty($app_id) || empty($app_secret)) {
+        truyenqq_oauth_error('Facebook OAuth chưa được cấu hình. Vui lòng liên hệ quản trị viên.');
+        return;
+    }
+
     // Exchange code for access token
     $token_url = 'https://graph.facebook.com/v18.0/oauth/access_token?' . http_build_query(array(
         'client_id' => $app_id,
@@ -325,7 +221,7 @@ function truyenqq_handle_facebook_callback()
         'code' => $code,
     ));
 
-    $token_response = wp_remote_get($token_url);
+    $token_response = wp_remote_get($token_url, array('timeout' => 15));
 
     if (is_wp_error($token_response)) {
         truyenqq_oauth_error('Lỗi kết nối Facebook: ' . $token_response->get_error_message());
@@ -335,13 +231,14 @@ function truyenqq_handle_facebook_callback()
     $token_data = json_decode(wp_remote_retrieve_body($token_response), true);
 
     if (!isset($token_data['access_token'])) {
-        truyenqq_oauth_error('Không nhận được access token từ Facebook');
+        $error_msg = isset($token_data['error']['message']) ? $token_data['error']['message'] : 'Không nhận được access token';
+        truyenqq_oauth_error('Lỗi Facebook: ' . $error_msg);
         return;
     }
 
-    // Get user info
-    $user_url = 'https://graph.facebook.com/v18.0/me?fields=id,name,email&access_token=' . $token_data['access_token'];
-    $user_response = wp_remote_get($user_url);
+    // Get user info (include picture with large size)
+    $user_url = 'https://graph.facebook.com/v18.0/me?fields=id,name,email,picture.type(large)&access_token=' . $token_data['access_token'];
+    $user_response = wp_remote_get($user_url, array('timeout' => 15));
 
     if (is_wp_error($user_response)) {
         truyenqq_oauth_error('Không thể lấy thông tin người dùng từ Facebook');
@@ -350,8 +247,14 @@ function truyenqq_handle_facebook_callback()
 
     $user_data = json_decode(wp_remote_retrieve_body($user_response), true);
 
+    if (!isset($user_data['id'])) {
+        truyenqq_oauth_error('Dữ liệu người dùng từ Facebook không hợp lệ');
+        return;
+    }
+
     // Create or login user
-    $user = truyenqq_oauth_create_or_login_user($user_data, 'facebook');
+    require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
+    $user = TruyenQQ_Auth_Handler::oauth_create_or_login_user($user_data, 'facebook');
 
     if (is_wp_error($user)) {
         truyenqq_oauth_error($user->get_error_message());
@@ -360,60 +263,6 @@ function truyenqq_handle_facebook_callback()
 
     // Login success
     truyenqq_oauth_success();
-}
-
-/**
- * Create or Login User from OAuth Data
- */
-function truyenqq_oauth_create_or_login_user($oauth_data, $provider)
-{
-    $email = isset($oauth_data['email']) ? sanitize_email($oauth_data['email']) : '';
-
-    if (empty($email)) {
-        return new WP_Error('no_email', 'Không thể lấy email từ ' . $provider);
-    }
-
-    // Check if user exists
-    $user = get_user_by('email', $email);
-
-    if ($user) {
-        // User exists, login
-        wp_set_auth_cookie($user->ID, true);
-        return $user;
-    }
-
-    // Create new user
-    $username = sanitize_user($email);
-    $name = isset($oauth_data['name']) ? sanitize_text_field($oauth_data['name']) : '';
-
-    // Generate unique username if needed
-    $base_username = $username;
-    $counter = 1;
-    while (username_exists($username)) {
-        $username = $base_username . $counter;
-        $counter++;
-    }
-
-    $user_id = wp_create_user($username, wp_generate_password(), $email);
-
-    if (is_wp_error($user_id)) {
-        return $user_id;
-    }
-
-    // Update user meta
-    wp_update_user(array(
-        'ID' => $user_id,
-        'display_name' => $name,
-    ));
-
-    update_user_meta($user_id, 'oauth_provider', $provider);
-    update_user_meta($user_id, 'oauth_id', $oauth_data['id']);
-
-    // Login
-    $user = get_user_by('id', $user_id);
-    wp_set_auth_cookie($user->ID, true);
-
-    return $user;
 }
 
 /**
@@ -426,18 +275,67 @@ function truyenqq_oauth_success()
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>Đăng nhập thành công</title>
+    <style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <div class="spinner"></div>
+        <h2>✓ Đăng nhập thành công!</h2>
+        <p>Đang chuyển hướng...</p>
+    </div>
+
     <script>
-    window.opener.postMessage({
-        type: '<?php echo esc_js(get_query_var('oauth_provider')); ?>-login-success',
-        redirect: '<?php echo esc_url(home_url()); ?>'
-    }, window.location.origin);
-    window.close();
+    // Send message to parent window
+    if (window.opener) {
+        window.opener.postMessage({
+            type: '<?php echo esc_js(get_query_var('oauth_provider')); ?>-login-success',
+            redirect: '<?php echo esc_url(home_url()); ?>'
+        }, window.location.origin);
+    }
+
+    // Close window after 1 second
+    setTimeout(function() {
+        window.close();
+    }, 1000);
     </script>
-    <p>Đăng nhập thành công! Đang đóng cửa sổ...</p>
 </body>
 
 </html>
@@ -450,32 +348,84 @@ function truyenqq_oauth_success()
  */
 function truyenqq_oauth_error($message)
 {
+    // Log error
+    error_log('TruyenQQ OAuth Error: ' . $message);
     ?>
 <!DOCTYPE html>
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>Lỗi đăng nhập</title>
+    <style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+    }
+
+    .container {
+        text-align: center;
+        max-width: 500px;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+    }
+
+    .error-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+    }
+
+    button {
+        margin-top: 20px;
+        padding: 12px 24px;
+        background: white;
+        color: #f5576c;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    button:hover {
+        background: #f0f0f0;
+    }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <div class="error-icon">✗</div>
+        <h2>Đăng nhập thất bại</h2>
+        <p><?php echo esc_html($message); ?></p>
+        <button onclick="window.close()">Đóng cửa sổ</button>
+    </div>
+
     <script>
-    window.opener.postMessage({
-        type: '<?php echo esc_js(get_query_var('oauth_provider')); ?>-login-error',
-        message: '<?php echo esc_js($message); ?>'
-    }, window.location.origin);
-    window.close();
+    // Send error message to parent window
+    if (window.opener) {
+        window.opener.postMessage({
+            type: '<?php echo esc_js(get_query_var('oauth_provider')); ?>-login-error',
+            message: '<?php echo esc_js($message); ?>'
+        }, window.location.origin);
+    }
+
+    // Auto close after 5 seconds
+    setTimeout(function() {
+        window.close();
+    }, 5000);
     </script>
-    <p>Có lỗi xảy ra:
-        <?php echo esc_html($message); ?>
-    </p>
-    <p>Đang đóng cửa sổ...</p>
 </body>
 
 </html>
 <?php
     exit;
 }
-
-// Don't forget to flush rewrite rules after adding this code
-// Go to Settings → Permalinks and click "Save Changes"

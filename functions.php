@@ -468,8 +468,8 @@ function toyota_enqueue_assets()
     // Google reCAPTCHA
 
     // Auth pages
-    wp_enqueue_style('truyenqq-auth', get_template_directory_uri() . '/css/auth-pages.css', array(), '1.0.1');
-    wp_enqueue_script('truyenqq-auth', get_template_directory_uri() . '/js/auth-pages.js', array('jquery'), '1.0.1', true);
+    // wp_enqueue_style('truyenqq-auth', get_template_directory_uri() . '/css/auth-pages.css', array(), '1.0.1');
+    // wp_enqueue_script('truyenqq-auth', get_template_directory_uri() . '/js/auth-pages.js', array('jquery'), '1.0.1', true);
 }
 add_action('wp_enqueue_scripts', 'toyota_enqueue_assets');
 
@@ -497,6 +497,10 @@ require_once get_template_directory() . '/inc/social-login.php';
 // ========================================
 require_once get_template_directory() . '/inc/create-bookmarks-table.php';
 require_once get_template_directory() . '/inc/bookmarks-api.php';
+
+require_once get_template_directory() . '/inc/admin-oauth-settings.php';
+// require_once get_template_directory() . '/inc/database-migration.php';
+
 
 /**
  * Helper function: Render bookmark badge with proper state
