@@ -27,7 +27,7 @@
     ) {
       const parts = pathname.split("/");
       const wpIndex = parts.findIndex(
-        (p) => p === "wp-admin" || p === "wp-content"
+        (p) => p === "wp-admin" || p === "wp-content",
       );
       wpRoot = parts.slice(0, wpIndex).join("/") + "/";
     }
@@ -86,7 +86,7 @@
         const errorText = await response.text();
         console.error("API Error:", response.status, errorText);
         throw new Error(
-          `HTTP ${response.status}: ${response.statusText || "API Error"}`
+          `HTTP ${response.status}: ${response.statusText || "API Error"}`,
         );
       }
 
@@ -153,49 +153,48 @@
     const continueUrl = `${item.post_url}?chapter=${item.chapter_slug}&page=${item.current_page}`;
 
     div.innerHTML = `
-      <div class="comic-card">
-        <div class="comic-avatar">
-          <a href="${item.post_url}" title="${escapeHtml(item.post_title)}">
-            <img src="${item.thumbnail}" alt="${escapeHtml(
-      item.post_title
-    )}" loading="lazy">
-          </a>
-          
-          <span class="remove-history" title="Xóa lịch sử" data-id="${item.id}">
-            <i class="fa fa-times-circle-o"></i>
-          </span>
-          
-          <div class="top-notice">
-            <span class="time-ago">${item.time_ago}</span>
-          </div>
-        </div>
-        
-        <div class="comic-info">
-          <h3 class="comic-name">
-            <a href="${item.post_url}" title="${escapeHtml(item.post_title)}">
-              ${escapeHtml(item.post_title)}
-            </a>
-          </h3>
-          
-          <div class="comic-stats">
-            <span class="stat-item">
-              <i class="fa fa-bookmark"></i>
-              ${formatNumber(item.follow_count)}
-            </span>
-            <span class="stat-item">
-              <i class="fa fa-eye"></i>
-              ${formatNumber(item.view_count)}
-            </span>
-          </div>
-          
-          <div class="latest-chapter">
-            <a href="${continueUrl}" title="Đọc tiếp ${item.chapter_name}">
-              Đọc tiếp chương ${item.chapter_name}
-            </a>
-          </div>
-        </div>
+  <div class="comic-card">
+    <div class="comic-avatar">
+      <a href="${item.post_url}" title="${escapeHtml(item.post_title)}">
+        <img src="${item.thumbnail}" alt="${escapeHtml(item.post_title)}" loading="lazy">
+      </a>
+      
+      <!-- ✅ CHỈ GIỮ remove-history button -->
+      <span class="remove-history" title="Xóa lịch sử" data-id="${item.id}">
+        <i class="fa fa-times-circle-o"></i>
+      </span>
+      
+      <div class="top-notice">
+        <span class="time-ago">${item.time_ago}</span>
       </div>
-    `;
+    </div>
+    
+    <div class="comic-info">
+      <h3 class="comic-name">
+        <a href="${item.post_url}" title="${escapeHtml(item.post_title)}">
+          ${escapeHtml(item.post_title)}
+        </a>
+      </h3>
+      
+      <div class="comic-stats">
+        <span class="stat-item">
+          <i class="fa fa-bookmark"></i>
+          ${formatNumber(item.follow_count)}
+        </span>
+        <span class="stat-item">
+          <i class="fa fa-eye"></i>
+          ${formatNumber(item.view_count)}
+        </span>
+      </div>
+      
+      <div class="latest-chapter">
+        <a href="${continueUrl}" title="Đọc tiếp ${item.chapter_name}">
+          Đọc tiếp chương ${item.chapter_name}
+        </a>
+      </div>
+    </div>
+  </div>
+`;
 
     return div;
   }
@@ -227,7 +226,7 @@
               headers: {
                 "X-WP-Nonce": getNonce(),
               },
-            }
+            },
           );
 
           if (!response.ok) {
@@ -264,7 +263,7 @@
           } else {
             showToast(
               result.message || "Xóa thất bại. Vui lòng thử lại.",
-              "error"
+              "error",
             );
           }
         } catch (error) {

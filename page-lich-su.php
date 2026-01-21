@@ -88,9 +88,7 @@ $exclusive_comics = new WP_Query($args);
                                 </a>
 
                                 <!-- Bookmark Button (UI Only) -->
-                                <span class="bookmark-badge" title="Theo dõi">
-                                    <i class="fa fa-bookmark-o"></i>
-                                </span>
+                                <?php truyenqq_render_bookmark_badge($post_id); ?>
 
                                 <!-- Top Notice: Time + Hot Badge -->
                                 <div class="top-notice">

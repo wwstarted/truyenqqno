@@ -1,11 +1,10 @@
 /**
- * Global Bookmark Handler (FIXED)
- * ✅ Fixed: UI color change on click
- * ✅ Fixed: Persist state on page load
- * ✅ Fixed: Better batch checking
+ * Global Bookmark Handler (FIXED - NO DUPLICATE TOAST)
+ * ✅ Fixed: Removed duplicate showToast
+ * ✅ Fixed: Use global toast function only
  *
  * @package TruyenQQ
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 (function () {
@@ -142,13 +141,22 @@
 
     if (!postId) {
       console.error("No post ID found on bookmark button");
-      showToast("Lỗi: Không tìm thấy ID truyện", "error");
+      // ✅ USE GLOBAL TOAST
+      if (window.TruyenqqToast && window.TruyenqqToast.show) {
+        window.TruyenqqToast.show("Lỗi: Không tìm thấy ID truyện", "error");
+      }
       return;
     }
 
     // Check if user is logged in
     if (typeof truyenqqConfig === "undefined" || !truyenqqConfig.isLoggedIn) {
-      showToast("Vui lòng đăng nhập để theo dõi truyện", "info");
+      // ✅ USE GLOBAL TOAST
+      if (window.TruyenqqToast && window.TruyenqqToast.show) {
+        window.TruyenqqToast.show(
+          "Vui lòng đăng nhập để theo dõi truyện",
+          "info",
+        );
+      }
       setTimeout(() => {
         window.location.href = "/dang-nhap";
       }, 1500);
@@ -158,10 +166,6 @@
     // Disable button during request
     button.style.pointerEvents = "none";
     button.style.opacity = "0.6";
-
-    // Optimistic UI update
-    const wasActive = button.classList.contains("active");
-    const icon = button.querySelector("i");
 
     try {
       const response = await fetch(`${API_BASE}/bookmarks/toggle`, {
@@ -181,7 +185,10 @@
       const result = await response.json();
 
       if (result.guest_mode) {
-        showToast(result.message, "info");
+        // ✅ USE GLOBAL TOAST
+        if (window.TruyenqqToast && window.TruyenqqToast.show) {
+          window.TruyenqqToast.show(result.message, "info");
+        }
         setTimeout(() => {
           window.location.href = "/dang-nhap";
         }, 1500);
@@ -191,19 +198,31 @@
       if (result.success) {
         // Update UI with animation
         updateBookmarkButton(postId, result.bookmarked, true);
-        showToast(result.message, "success");
+
+        // ✅ USE GLOBAL TOAST
+        if (window.TruyenqqToast && window.TruyenqqToast.show) {
+          window.TruyenqqToast.show(result.message, "success");
+        }
 
         // Update count if available
         if (result.bookmark_count !== undefined) {
           updateBookmarkCount(postId, result.bookmark_count);
         }
       } else {
-        // Revert optimistic update
-        showToast(result.message || "Lỗi khi thao tác", "error");
+        // ✅ USE GLOBAL TOAST
+        if (window.TruyenqqToast && window.TruyenqqToast.show) {
+          window.TruyenqqToast.show(
+            result.message || "Lỗi khi thao tác",
+            "error",
+          );
+        }
       }
     } catch (error) {
       console.error("Bookmark error:", error);
-      showToast("Lỗi kết nối. Vui lòng thử lại", "error");
+      // ✅ USE GLOBAL TOAST
+      if (window.TruyenqqToast && window.TruyenqqToast.show) {
+        window.TruyenqqToast.show("Lỗi kết nối. Vui lòng thử lại", "error");
+      }
     } finally {
       button.style.pointerEvents = "";
       button.style.opacity = "";
@@ -218,7 +237,7 @@
    */
   function updateBookmarkButton(postId, bookmarked, animate = false) {
     const buttons = document.querySelectorAll(
-      `.bookmark-badge[data-post-id="${postId}"]`
+      `.bookmark-badge[data-post-id="${postId}"]`,
     );
 
     buttons.forEach((button) => {
@@ -261,7 +280,7 @@
   function updateBookmarkCount(postId, count) {
     // Find any bookmark count displays and update them
     const countElements = document.querySelectorAll(
-      `[data-bookmark-count="${postId}"]`
+      `[data-bookmark-count="${postId}"]`,
     );
     countElements.forEach((el) => {
       el.textContent = formatNumber(count);
@@ -275,40 +294,6 @@
   function formatNumber(num) {
     if (!num) return "0";
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
-
-  /**
-   * Show toast notification
-   */
-  function showToast(message, type = "info") {
-    let toastContainer = document.querySelector(".toast-container");
-
-    if (!toastContainer) {
-      toastContainer = document.createElement("div");
-      toastContainer.className = "toast-container";
-      document.body.appendChild(toastContainer);
-    }
-
-    const iconMap = {
-      success: "check-circle",
-      error: "exclamation-circle",
-      info: "info-circle",
-    };
-
-    const toast = document.createElement("div");
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `
-      <i class="fa fa-${iconMap[type] || "info-circle"}"></i>
-      ${message}
-    `;
-
-    toastContainer.appendChild(toast);
-
-    setTimeout(() => toast.classList.add("show"), 10);
-    setTimeout(() => {
-      toast.classList.remove("show");
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
   }
 
   // Public API

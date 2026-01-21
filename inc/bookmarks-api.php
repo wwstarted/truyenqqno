@@ -388,6 +388,7 @@ function truyenqq_api_delete_bookmark($request)
             'success' => true,
             'message' => 'Đã xóa khỏi theo dõi'
         );
+
     } else {
         return new WP_Error('delete_failed', 'Xóa thất bại', array('status' => 500));
     }

@@ -24,11 +24,28 @@ function toyota_enqueue_assets()
     // ========================================
     // GLOBAL BOOKMARK HANDLER (load everywhere)
     // ========================================
+    // wp_enqueue_script(
+    //     'truyenqq-bookmarks',
+    //     get_template_directory_uri() . '/js/bookmarks.js',
+    //     array('jquery'),
+    //     '1.0.1',
+    //     true
+    // );
+
+    wp_enqueue_script(
+        'toast-utility',
+        get_template_directory_uri() . '/js/toast-utility.js',
+        array(),
+        '1.0.0',
+        true
+    );
+
+    // ✅ THEN LOAD BOOKMARKS (depends on toast-utility)
     wp_enqueue_script(
         'truyenqq-bookmarks',
         get_template_directory_uri() . '/js/bookmarks.js',
-        array('jquery'),
-        '1.0.1',
+        array('jquery', 'toast-utility'), // ← Add dependency
+        '1.0.2',
         true
     );
 
@@ -324,11 +341,24 @@ function toyota_enqueue_assets()
             true
         );
 
+        wp_localize_script('toyota-front-page', 'truyenqqConfig', array(
+            'apiBase' => esc_url_raw(rest_url('nettruyen/v1')),
+            'nonce' => wp_create_nonce('wp_rest'),
+            'homeUrl' => esc_url(home_url()),
+            'isLoggedIn' => is_user_logged_in()
+        ));
+
+
+
         wp_localize_script('reading-history-js', 'truyenqqConfig', array(
             'apiBase' => esc_url_raw(rest_url('nettruyen/v1')),
             'nonce' => wp_create_nonce('wp_rest'),
-            'homeUrl' => esc_url(home_url())
+            'homeUrl' => esc_url(home_url()),
+            'isLoggedIn' => is_user_logged_in()
+
         ));
+
+
     }
 
     // ========================================

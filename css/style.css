@@ -645,29 +645,30 @@ body.dark-mode .bookmark-badge {
 
 /* Hover state */
 .bookmark-badge:hover {
-  background-color: rgba(255, 107, 107, 0.9);
+  background-color: var(--color-blue-primary) !important;
   transform: scale(1.1);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Active state (đã bookmark) */
 .bookmark-badge.active {
-  background-color: #ff6b6b !important;
+  background-color: var(--color-blue-primary) !important;
   color: #fff !important;
   border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 12px rgba(255, 107, 107, 0.6);
+  box-shadow: 0 0 12px var(--blue-shadow-medium);
 }
 
 body.dark-mode .bookmark-badge.active {
-  background-color: #ff6b6b !important;
-  box-shadow: 0 0 16px rgba(255, 107, 107, 0.8);
+  background-color: var(--color-blue-primary) !important;
+
+  box-shadow: 0 0 12px var(--blue-shadow-medium);
 }
 
 /* Active hover */
 .bookmark-badge.active:hover {
-  background-color: #ff5252 !important;
+  background-color: var(--color-blue-primary) !important;
   transform: scale(1.15);
-  box-shadow: 0 0 16px rgba(255, 107, 107, 0.8);
+  box-shadow: 0 0 12px var(--blue-shadow-medium);
 }
 
 /* Icon inside */
