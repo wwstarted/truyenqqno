@@ -664,14 +664,12 @@ body.dark-mode .bookmark-badge.active {
   box-shadow: 0 0 12px var(--blue-shadow-medium);
 }
 
-/* Active hover */
 .bookmark-badge.active:hover {
   background-color: var(--color-blue-primary) !important;
   transform: scale(1.15);
   box-shadow: 0 0 12px var(--blue-shadow-medium);
 }
 
-/* Icon inside */
 .bookmark-badge i {
   font-size: 14px;
   transition: all 0.2s ease;
@@ -682,7 +680,6 @@ body.dark-mode .bookmark-badge.active {
   font-weight: 900;
 }
 
-/* Animation when clicking */
 @keyframes bookmarkPulse {
   0% {
     transform: scale(1);
@@ -699,7 +696,6 @@ body.dark-mode .bookmark-badge.active {
   animation: bookmarkPulse 0.3s ease;
 }
 
-/* Loading state */
 .bookmark-badge.loading {
   opacity: 0.6;
   pointer-events: none;
@@ -718,7 +714,6 @@ body.dark-mode .bookmark-badge.active {
   }
 }
 
-/* Responsive */
 @media (max-width: 767px) {
   .bookmark-badge {
     width: 28px;
@@ -838,7 +833,6 @@ body.dark-mode .toast {
   color: #2196f3;
 }
 
-/* Mobile toast */
 @media (max-width: 767px) {
   .toast-container {
     top: 10px;
@@ -859,7 +853,6 @@ body.dark-mode .toast {
 ===================================================== */
 
 :root {
-  /* Blue Theme Colors */
   --color-blue-primary: #4a9eff;
   --color-blue-light: #6fb1ff;
   --color-blue-dark: #2b7ee6;
@@ -870,23 +863,19 @@ body.dark-mode .toast {
     #4a9eff 100%
   );
 
-  /* Icon Colors - Blue Variations */
   --icon-star-blue: #4a9eff;
   --icon-book-blue: #5ba4ff;
   --icon-cloud-blue: #6fb1ff;
 
-  /* Hover & Shadow Colors */
   --blue-shadow-light: rgba(74, 158, 255, 0.3);
   --blue-shadow-medium: rgba(74, 158, 255, 0.4);
   --blue-shadow-strong: rgba(74, 158, 255, 0.5);
 
-  /* Badge Colors */
   --badge-hot-blue: #4a9eff;
   --badge-new-blue: #5ba4ff;
   --badge-exclusive-blue: #6fb1ff;
 }
 
-/* Dark Mode Blue Theme Variables */
 body.dark-mode {
   --blue-shadow-light: rgba(74, 158, 255, 0.4);
   --blue-shadow-medium: rgba(74, 158, 255, 0.5);
@@ -933,7 +922,6 @@ body.dark-mode .comic-card-standard:hover {
    HOMEPAGE SECTIONS - BLUE THEME OVERRIDE
 ===================================================== */
 
-/* Truyện Hay Section */
 .homepage-suggest .comic-card {
   background-color: var(--bg-secondary);
   border-radius: 8px;
@@ -969,7 +957,6 @@ body.dark-mode .homepage-suggest .comic-card:hover {
   animation: pulse 2s ease-in-out infinite;
 }
 
-/* Độc Quyền Truyện QQ Section */
 .homepage-exclusive .comic-card {
   background-color: var(--bg-secondary);
   border-radius: 8px;
@@ -1005,7 +992,6 @@ body.dark-mode .homepage-exclusive .comic-card:hover {
   animation: bookPulse 2s ease-in-out infinite;
 }
 
-/* Truyện Mới Cập Nhật Section */
 .homepage-new-update .comic-card {
   background-color: var(--bg-secondary);
   border-radius: 8px;

@@ -189,7 +189,6 @@
         updateURL();
         scrollToTop();
 
-        // ✅ Gọi global bookmark check sau khi render
         if (typeof window.TruyenqqBookmarks !== "undefined") {
           window.TruyenqqBookmarks.check();
         }
@@ -271,7 +270,6 @@
 
     comicsGrid.innerHTML = html;
 
-    // ✅ Gọi global bookmark init sau khi render HTML
     if (typeof window.TruyenqqBookmarks !== "undefined") {
       window.TruyenqqBookmarks.init();
     }

@@ -178,7 +178,7 @@
     try {
       const response = await fetch(
         `${CONFIG.searchAPI}?q=${encodeURIComponent(query)}`,
-        { signal: currentSearchController.signal }
+        { signal: currentSearchController.signal },
       );
 
       if (!response.ok) {

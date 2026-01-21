@@ -6,7 +6,7 @@
  * @version 1.0.0
  */
 
-// Redirect if already logged in
+
 if (is_user_logged_in()) {
     wp_redirect(home_url());
     exit;

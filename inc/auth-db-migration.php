@@ -6,7 +6,6 @@
  * @package TruyenQQ
  * @version 1.0.0
  * 
- * Usage: Thêm vào functions.php hoặc chạy khi activate theme
  */
 
 if (!defined('ABSPATH')) {

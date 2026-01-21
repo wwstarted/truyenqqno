@@ -1,7 +1,6 @@
 /**
  * Global Bookmark Handler (FIXED - NO DUPLICATE TOAST)
- * ✅ Fixed: Removed duplicate showToast
- * ✅ Fixed: Use global toast function only
+
  *
  * @package TruyenQQ
  * @version 1.0.2
@@ -66,11 +65,9 @@
     const buttons = document.querySelectorAll(".bookmark-badge");
 
     buttons.forEach((button) => {
-      // Remove old listeners
       const newButton = button.cloneNode(true);
       button.parentNode.replaceChild(newButton, button);
 
-      // Add new listener
       newButton.addEventListener("click", handleBookmarkClick);
     });
 
@@ -81,7 +78,6 @@
    * Check bookmark states for all comics on page
    */
   async function checkBookmarkStates() {
-    // Only check if user is logged in
     if (typeof truyenqqConfig === "undefined" || !truyenqqConfig.isLoggedIn) {
       console.log("👤 User not logged in, skipping bookmark check");
       return;
@@ -104,7 +100,6 @@
 
     console.log(`🔍 Checking bookmark status for ${postIds.length} posts...`);
 
-    // Batch check all posts
     try {
       const response = await fetch(`${API_BASE}/bookmarks/check-batch`, {
         method: "POST",
@@ -120,7 +115,7 @@
 
       if (result.success && result.bookmarks) {
         Object.entries(result.bookmarks).forEach(([postId, isBookmarked]) => {
-          updateBookmarkButton(postId, isBookmarked, false); // false = no animation
+          updateBookmarkButton(postId, isBookmarked, false);
         });
         console.log("✅ Bookmark states updated");
       }
@@ -141,16 +136,14 @@
 
     if (!postId) {
       console.error("No post ID found on bookmark button");
-      // ✅ USE GLOBAL TOAST
+
       if (window.TruyenqqToast && window.TruyenqqToast.show) {
         window.TruyenqqToast.show("Lỗi: Không tìm thấy ID truyện", "error");
       }
       return;
     }
 
-    // Check if user is logged in
     if (typeof truyenqqConfig === "undefined" || !truyenqqConfig.isLoggedIn) {
-      // ✅ USE GLOBAL TOAST
       if (window.TruyenqqToast && window.TruyenqqToast.show) {
         window.TruyenqqToast.show(
           "Vui lòng đăng nhập để theo dõi truyện",
@@ -163,7 +156,6 @@
       return;
     }
 
-    // Disable button during request
     button.style.pointerEvents = "none";
     button.style.opacity = "0.6";
 
@@ -185,7 +177,6 @@
       const result = await response.json();
 
       if (result.guest_mode) {
-        // ✅ USE GLOBAL TOAST
         if (window.TruyenqqToast && window.TruyenqqToast.show) {
           window.TruyenqqToast.show(result.message, "info");
         }
@@ -196,20 +187,16 @@
       }
 
       if (result.success) {
-        // Update UI with animation
         updateBookmarkButton(postId, result.bookmarked, true);
 
-        // ✅ USE GLOBAL TOAST
         if (window.TruyenqqToast && window.TruyenqqToast.show) {
           window.TruyenqqToast.show(result.message, "success");
         }
 
-        // Update count if available
         if (result.bookmark_count !== undefined) {
           updateBookmarkCount(postId, result.bookmark_count);
         }
       } else {
-        // ✅ USE GLOBAL TOAST
         if (window.TruyenqqToast && window.TruyenqqToast.show) {
           window.TruyenqqToast.show(
             result.message || "Lỗi khi thao tác",
@@ -219,7 +206,7 @@
       }
     } catch (error) {
       console.error("Bookmark error:", error);
-      // ✅ USE GLOBAL TOAST
+
       if (window.TruyenqqToast && window.TruyenqqToast.show) {
         window.TruyenqqToast.show("Lỗi kết nối. Vui lòng thử lại", "error");
       }
@@ -244,7 +231,6 @@
       const icon = button.querySelector("i");
       if (!icon) return;
 
-      // Apply animation
       if (animate) {
         button.style.transform = "scale(1.2)";
         setTimeout(() => {
@@ -253,21 +239,17 @@
       }
 
       if (bookmarked) {
-        // ACTIVE STATE: Đã theo dõi
         button.classList.add("active");
-        icon.className = "fa fa-bookmark"; // Solid bookmark
+        icon.className = "fa fa-bookmark";
         button.setAttribute("title", "Bỏ theo dõi");
 
-        // Change color/background
-        button.style.backgroundColor = "#ff6b6b"; // Red background
+        button.style.backgroundColor = "#ff6b6b";
         button.style.color = "#fff";
       } else {
-        // INACTIVE STATE: Chưa theo dõi
         button.classList.remove("active");
-        icon.className = "fa fa-bookmark-o"; // Outline bookmark
+        icon.className = "fa fa-bookmark-o";
         button.setAttribute("title", "Theo dõi");
 
-        // Reset to default
         button.style.backgroundColor = "";
         button.style.color = "";
       }
@@ -278,7 +260,6 @@
    * Update bookmark count display
    */
   function updateBookmarkCount(postId, count) {
-    // Find any bookmark count displays and update them
     const countElements = document.querySelectorAll(
       `[data-bookmark-count="${postId}"]`,
     );
@@ -296,7 +277,6 @@
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  // Public API
   window.TruyenqqBookmarks = {
     init: initBookmarkButtons,
     check: checkBookmarkStates,
@@ -306,10 +286,8 @@
     },
   };
 
-  // Auto-initialize
   init();
 
-  // Re-check on page visibility change (user switches tabs)
   document.addEventListener("visibilitychange", function () {
     if (!document.hidden) {
       checkBookmarkStates();

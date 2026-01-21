@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 add_action('wp_enqueue_scripts', 'truyenqq_enqueue_social_login_scripts');
 function truyenqq_enqueue_social_login_scripts()
 {
-    // Only load on auth pages
+
     if (
         !is_page_template('template-login.php') &&
         !is_page_template('template-register.php')
@@ -33,7 +33,7 @@ function truyenqq_enqueue_social_login_scripts()
         true
     );
 
-    // ✅ FIXED: Changed from 'truyenqqAuth' to 'truyenqqOAuth'
+
     wp_localize_script('truyenqq-social-login', 'truyenqqOAuth', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('truyenqq_auth_nonce'),
@@ -105,7 +105,7 @@ function truyenqq_handle_oauth_callback()
  */
 function truyenqq_handle_google_callback()
 {
-    // Check for error from Google
+
     if (isset($_GET['error'])) {
         truyenqq_oauth_error('Đăng nhập Google bị hủy: ' . sanitize_text_field($_GET['error']));
         return;
@@ -121,13 +121,13 @@ function truyenqq_handle_google_callback()
     $client_secret = get_option('truyenqq_google_client_secret');
     $redirect_uri = home_url('/oauth/google/callback');
 
-    // Validate configuration
+
     if (empty($client_id) || empty($client_secret)) {
         truyenqq_oauth_error('Google OAuth chưa được cấu hình. Vui lòng liên hệ quản trị viên.');
         return;
     }
 
-    // Exchange code for access token
+
     $token_response = wp_remote_post('https://oauth2.googleapis.com/token', array(
         'body' => array(
             'code' => $code,
@@ -152,7 +152,7 @@ function truyenqq_handle_google_callback()
         return;
     }
 
-    // Get user info
+
     $user_response = wp_remote_get('https://www.googleapis.com/oauth2/v2/userinfo', array(
         'headers' => array(
             'Authorization' => 'Bearer ' . $token_data['access_token'],
@@ -172,7 +172,7 @@ function truyenqq_handle_google_callback()
         return;
     }
 
-    // Create or login user
+
     require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
     $user = TruyenQQ_Auth_Handler::oauth_create_or_login_user($user_data, 'google');
 
@@ -181,7 +181,7 @@ function truyenqq_handle_google_callback()
         return;
     }
 
-    // Login success
+
     truyenqq_oauth_success();
 }
 
@@ -190,7 +190,7 @@ function truyenqq_handle_google_callback()
  */
 function truyenqq_handle_facebook_callback()
 {
-    // Check for error from Facebook
+
     if (isset($_GET['error'])) {
         $error_description = isset($_GET['error_description']) ? sanitize_text_field($_GET['error_description']) : sanitize_text_field($_GET['error']);
         truyenqq_oauth_error('Đăng nhập Facebook bị hủy: ' . $error_description);
@@ -207,13 +207,13 @@ function truyenqq_handle_facebook_callback()
     $app_secret = get_option('truyenqq_facebook_app_secret');
     $redirect_uri = home_url('/oauth/facebook/callback');
 
-    // Validate configuration
+
     if (empty($app_id) || empty($app_secret)) {
         truyenqq_oauth_error('Facebook OAuth chưa được cấu hình. Vui lòng liên hệ quản trị viên.');
         return;
     }
 
-    // Exchange code for access token
+
     $token_url = 'https://graph.facebook.com/v18.0/oauth/access_token?' . http_build_query(array(
         'client_id' => $app_id,
         'client_secret' => $app_secret,
@@ -236,7 +236,7 @@ function truyenqq_handle_facebook_callback()
         return;
     }
 
-    // Get user info (include picture with large size)
+
     $user_url = 'https://graph.facebook.com/v18.0/me?fields=id,name,email,picture.type(large)&access_token=' . $token_data['access_token'];
     $user_response = wp_remote_get($user_url, array('timeout' => 15));
 
@@ -252,7 +252,7 @@ function truyenqq_handle_facebook_callback()
         return;
     }
 
-    // Create or login user
+
     require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
     $user = TruyenQQ_Auth_Handler::oauth_create_or_login_user($user_data, 'facebook');
 
@@ -261,7 +261,7 @@ function truyenqq_handle_facebook_callback()
         return;
     }
 
-    // Login success
+
     truyenqq_oauth_success();
 }
 
@@ -323,7 +323,6 @@ function truyenqq_oauth_success()
     </div>
 
     <script>
-    // Send message to parent window
     if (window.opener) {
         window.opener.postMessage({
             type: '<?php echo esc_js(get_query_var('oauth_provider')); ?>-login-success',
@@ -331,7 +330,7 @@ function truyenqq_oauth_success()
         }, window.location.origin);
     }
 
-    // Close window after 1 second
+
     setTimeout(function() {
         window.close();
     }, 1000);
@@ -348,7 +347,7 @@ function truyenqq_oauth_success()
  */
 function truyenqq_oauth_error($message)
 {
-    // Log error
+
     error_log('TruyenQQ OAuth Error: ' . $message);
     ?>
 <!DOCTYPE html>
@@ -410,7 +409,6 @@ function truyenqq_oauth_error($message)
     </div>
 
     <script>
-    // Send error message to parent window
     if (window.opener) {
         window.opener.postMessage({
             type: '<?php echo esc_js(get_query_var('oauth_provider')); ?>-login-error',
@@ -418,7 +416,7 @@ function truyenqq_oauth_error($message)
         }, window.location.origin);
     }
 
-    // Auto close after 5 seconds
+
     setTimeout(function() {
         window.close();
     }, 5000);

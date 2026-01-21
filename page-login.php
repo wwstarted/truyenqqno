@@ -6,13 +6,13 @@
  * @version 2.1.0
  */
 
-// Redirect if already logged in
+
 if (is_user_logged_in()) {
     wp_redirect(home_url());
     exit;
 }
 
-get_header('auth'); // Load header-auth.php
+get_header('auth');
 ?>
 
 <div class="modern-auth-container">
@@ -152,4 +152,4 @@ get_header('auth'); // Load header-auth.php
     </div>
 </div>
 
-<?php get_footer('auth'); // Load footer-auth.php ?>
+<?php get_footer('auth');

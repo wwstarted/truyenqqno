@@ -4,7 +4,7 @@
  * Xử lý Register, Login, Logout, Reset Password + OAuth (Google & Facebook)
  * 
  * @package TruyenQQ
- * @version 1.1.1 - OAUTH INTEGRATED - FIXED AVATAR HANDLING
+ * @version 1.1.1 - OAUTH INTEGRATED 
  */
 
 if (!defined('ABSPATH')) {
@@ -329,33 +329,33 @@ class TruyenQQ_Auth_Handler
     {
         $email = isset($oauth_data['email']) ? sanitize_email($oauth_data['email']) : '';
 
-        // Facebook sometimes doesn't provide email
+
         if (empty($email)) {
-            // Generate a temporary email based on provider ID
+
             $email = $provider . '_' . $oauth_data['id'] . '@truyenqq.local';
         }
 
-        // Check if user exists by email
+
         $user = get_user_by('email', $email);
 
         if ($user) {
-            // User exists, just login
+
             wp_set_current_user($user->ID);
             wp_set_auth_cookie($user->ID, true);
 
-            // Update OAuth meta if not set
+
             if (!get_user_meta($user->ID, 'oauth_provider', true)) {
                 update_user_meta($user->ID, 'oauth_provider', $provider);
                 update_user_meta($user->ID, 'oauth_id', $oauth_data['id']);
             }
 
-            // ✅ UPDATE AVATAR - FIXED
+
             self::update_oauth_avatar($user->ID, $oauth_data, $provider);
 
-            // Update last login via OAuth
+
             update_user_meta($user->ID, 'last_oauth_login', current_time('mysql'));
 
-            // Log login history
+
             self::log_login_history($user->ID, 'success', $provider . '_oauth');
 
             do_action('wp_login', $user->user_login, $user);
@@ -363,20 +363,20 @@ class TruyenQQ_Auth_Handler
             return $user;
         }
 
-        // ========================================
-        // CREATE NEW USER
-        // ========================================
+
+
+
 
         $name = isset($oauth_data['name']) ? sanitize_text_field($oauth_data['name']) : '';
 
-        // Generate username from email or name
+
         if (!empty($name)) {
             $username = sanitize_user(strtolower(str_replace(' ', '_', $name)));
         } else {
             $username = $provider . '_user_' . $oauth_data['id'];
         }
 
-        // Ensure unique username
+
         $base_username = $username;
         $counter = 1;
         while (username_exists($username)) {
@@ -384,43 +384,43 @@ class TruyenQQ_Auth_Handler
             $counter++;
         }
 
-        // Create user
+
         $user_id = wp_create_user($username, wp_generate_password(20, true, true), $email);
 
         if (is_wp_error($user_id)) {
             return $user_id;
         }
 
-        // Update user meta
+
         wp_update_user(array(
             'ID' => $user_id,
             'display_name' => $name,
             'first_name' => $name,
         ));
 
-        // Set role
+
         $user = new WP_User($user_id);
         $user->set_role('subscriber');
 
-        // Save OAuth meta
+
         update_user_meta($user_id, 'oauth_provider', $provider);
         update_user_meta($user_id, 'oauth_id', $oauth_data['id']);
         update_user_meta($user_id, 'oauth_created_at', current_time('mysql'));
 
-        // ✅ SAVE AVATAR - FIXED
+
         self::update_oauth_avatar($user_id, $oauth_data, $provider);
 
-        // Insert into custom user meta table
+
         global $wpdb;
         $user_meta_table = $wpdb->prefix . 'nettruyen_user_meta';
 
-        // Check if table exists
+
         if ($wpdb->get_var("SHOW TABLES LIKE '$user_meta_table'") == $user_meta_table) {
             $wpdb->insert(
                 $user_meta_table,
                 array(
                     'user_id' => $user_id,
-                    'email_verified' => 1, // OAuth accounts are pre-verified
+                    'email_verified' => 1,
                     'email_verified_at' => current_time('mysql'),
                     'created_at' => current_time('mysql')
                 ),
@@ -428,11 +428,11 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Login the new user
+
         wp_set_current_user($user_id);
         wp_set_auth_cookie($user_id, true);
 
-        // Log login history
+
         self::log_login_history($user_id, 'success', $provider . '_oauth_register');
 
         do_action('wp_login', $user->user_login, $user);
@@ -452,18 +452,18 @@ class TruyenQQ_Auth_Handler
         $avatar_url = '';
 
         if ($provider === 'google') {
-            // Google: picture is direct URL
+
             if (isset($oauth_data['picture']) && !empty($oauth_data['picture'])) {
                 $avatar_url = $oauth_data['picture'];
             }
         } elseif ($provider === 'facebook') {
-            // Facebook: picture.data.url (nested structure)
+
             if (isset($oauth_data['picture']['data']['url']) && !empty($oauth_data['picture']['data']['url'])) {
                 $avatar_url = $oauth_data['picture']['data']['url'];
             }
         }
 
-        // Save if URL exists and is valid
+
         if (!empty($avatar_url) && filter_var($avatar_url, FILTER_VALIDATE_URL)) {
             update_user_meta($user_id, 'oauth_avatar', esc_url_raw($avatar_url));
         }
@@ -520,7 +520,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Check if user has a password (for security)
+
         $user = get_user_by('id', $user_id);
         if (empty($user->user_pass)) {
             return array(
@@ -529,7 +529,7 @@ class TruyenQQ_Auth_Handler
             );
         }
 
-        // Remove OAuth meta
+
         delete_user_meta($user_id, 'oauth_provider');
         delete_user_meta($user_id, 'oauth_id');
         delete_user_meta($user_id, 'oauth_avatar');
@@ -559,9 +559,9 @@ class TruyenQQ_Auth_Handler
 
         $login_history_table = $wpdb->prefix . 'nettruyen_login_history';
 
-        // Check if table exists
+
         if ($wpdb->get_var("SHOW TABLES LIKE '$login_history_table'") != $login_history_table) {
-            return; // Table doesn't exist, skip logging
+            return;
         }
 
         $wpdb->insert(
@@ -627,13 +627,13 @@ class TruyenQQ_Auth_Handler
 
         $user = wp_get_current_user();
 
-        // Try to get OAuth avatar first
+
         $avatar = self::get_oauth_avatar($user->ID);
         if (!$avatar) {
             $avatar = get_avatar_url($user->ID);
         }
 
-        // Check if it's an OAuth user
+
         $oauth_provider = self::is_oauth_user($user->ID);
 
         return array(

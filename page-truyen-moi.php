@@ -158,7 +158,7 @@ $current_page = max(1, $paged);
                     );
                     $view_count = $view_stats ? $view_stats->total_display_views : 0;
 
-                    // Badge "Mới" cho truyện đăng trong 3 ngày
+
                     $is_new = (time() - get_the_time('U')) < (3 * DAY_IN_SECONDS);
                     ?>
 

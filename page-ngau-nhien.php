@@ -14,7 +14,7 @@ $posts_per_page = 42;
 $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
 
-// Tạo seed dựa trên ngày để random consistent trong ngày
+
 $seed = date('Ymd');
 
 $args = array(

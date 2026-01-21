@@ -1,6 +1,6 @@
 <?php
 /**
- * Chapter URL Rewrite Rules - FIXED VERSION
+ * Chapter URL Rewrite Rules
  * Add to functions.php
  * 
  * Pattern: /truyen-tranh/{comic-slug}-chap-{chapter-slug}.html

@@ -1,5 +1,5 @@
 /**
- * Authentication Pages JavaScript - COMPLETE FIXED
+ * Authentication Pages JavaScript
  * Handle auth interactions with reCAPTCHA
  *
  * @package TruyenQQ
@@ -15,7 +15,6 @@
   });
 
   function initAuthPages() {
-    // Toggle password visibility
     $(document).on("click", ".toggle-password", function () {
       const input = $(this).siblings("input");
       const icon = $(this).find("i");
@@ -29,12 +28,10 @@
       }
     });
 
-    // Password strength checker
     $("#register-password, #new-password").on("input", function () {
       checkPasswordStrength($(this));
     });
 
-    // Form handlers
     $("#login-form").on("submit", handleLogin);
     $("#register-form").on("submit", handleRegisterSendOTP);
     $("#register-verify-form").on("submit", handleRegisterVerifyOTP);
@@ -42,7 +39,6 @@
     $("#forgot-verify-form").on("submit", handleForgotPasswordVerifyOTP);
     $("#reset-password-form").on("submit", handleResetPassword);
 
-    // OTP resend handlers
     $("#register-resend-otp").on("click", function (e) {
       e.preventDefault();
       resendOTP("register");
@@ -53,7 +49,6 @@
       resendOTP("reset_password");
     });
 
-    // Back button
     $("#back-to-register").on("click", function () {
       $(".auth-step").removeClass("active");
       $('.auth-step[data-step="1"]').addClass("active");
@@ -61,7 +56,6 @@
       $('.step[data-step="1"]').addClass("active");
     });
 
-    // Password match validation
     $("#register-confirm-password, #confirm-password").on("input", function () {
       validatePasswordMatch($(this));
     });
@@ -128,22 +122,20 @@
     const $btn = $form.find('button[type="submit"]');
     const $message = $form.find(".form-message");
 
-    // Check if reCAPTCHA is loaded
     if (typeof grecaptcha === "undefined") {
       console.error("TruyenQQ Auth: reCAPTCHA not loaded");
       showMessage(
         $message,
         "error",
-        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây và thử lại."
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây và thử lại.",
       );
       return;
     }
 
-    // Get reCAPTCHA response
     const recaptchaResponse = grecaptcha.getResponse();
     console.log(
       "TruyenQQ Auth: reCAPTCHA response:",
-      recaptchaResponse ? "exists" : "empty"
+      recaptchaResponse ? "exists" : "empty",
     );
 
     if (!recaptchaResponse) {
@@ -151,18 +143,15 @@
       return;
     }
 
-    // Get form data
     const username = $("#login-username").val().trim();
     const password = $("#login-password").val();
     const remember = $("#login-remember").is(":checked");
 
-    // Validate
     if (!username || !password) {
       showMessage($message, "error", "Vui lòng nhập đầy đủ thông tin");
       return;
     }
 
-    // Show loading state
     setLoadingState($btn, true);
     $message.removeClass("show");
 
@@ -181,29 +170,22 @@
         console.log("TruyenQQ Auth: Response received:", response);
         setLoadingState($btn, false);
 
-        // Handle wp_send_json_success format
         if (response.success && response.data) {
           const data = response.data;
           showMessage($message, "success", data.message);
           console.log("TruyenQQ Auth: Login successful, redirecting...");
 
-          // Redirect after short delay
           setTimeout(function () {
             window.location.href = data.redirect || window.location.href;
           }, 800);
-        }
-        // Handle wp_send_json_error format
-        else if (!response.success && response.data) {
+        } else if (!response.success && response.data) {
           console.error("TruyenQQ Auth: Login failed:", response.data.message);
           showMessage($message, "error", response.data.message);
 
-          // Reset reCAPTCHA on error
           if (typeof grecaptcha !== "undefined") {
             grecaptcha.reset();
           }
-        }
-        // Fallback for old format
-        else if (response.success) {
+        } else if (response.success) {
           showMessage($message, "success", response.message);
           setTimeout(function () {
             window.location.href = response.redirect || window.location.href;
@@ -223,7 +205,6 @@
         setLoadingState($btn, false);
         showMessage($message, "error", "Có lỗi xảy ra. Vui lòng thử lại.");
 
-        // Reset reCAPTCHA on error
         if (typeof grecaptcha !== "undefined") {
           grecaptcha.reset();
         }
@@ -243,7 +224,7 @@
       showMessage(
         $message,
         "error",
-        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây."
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây.",
       );
       return;
     }
@@ -287,7 +268,6 @@
       success: function (response) {
         setLoadingState($btn, false);
 
-        // Handle new format
         const data = response.data || response;
         const isSuccess = response.success;
 
@@ -302,7 +282,7 @@
           showMessage(
             $('.auth-step[data-step="2"] .form-message'),
             "success",
-            data.message
+            data.message,
           );
         } else {
           showMessage($message, "error", data.message);
@@ -381,7 +361,7 @@
       showMessage(
         $message,
         "error",
-        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây."
+        "reCAPTCHA chưa tải xong. Vui lòng đợi vài giây.",
       );
       return;
     }
@@ -423,7 +403,7 @@
           showMessage(
             $('.auth-step[data-step="2"] .form-message'),
             "success",
-            data.message
+            data.message,
           );
         } else {
           showMessage($message, "error", data.message);
@@ -485,7 +465,7 @@
           showMessage(
             $('.auth-step[data-step="3"] .form-message'),
             "success",
-            data.message
+            data.message,
           );
         } else {
           showMessage($message, "error", data.message);
@@ -625,7 +605,7 @@
         '<i class="fa fa-' +
           (type === "success" ? "check-circle" : "exclamation-circle") +
           '"></i> ' +
-          message
+          message,
       );
 
     setTimeout(function () {

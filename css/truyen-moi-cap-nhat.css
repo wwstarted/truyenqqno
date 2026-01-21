@@ -1,11 +1,3 @@
-/**
- * Truyện Mới Cập Nhật - CSS
- * ✅ FIXED: Đổi .subscribed-badge → .bookmark-badge
- * 
- * @package TruyenQQ
- * @version 1.0.1
- */
-
 #main_homepage {
   max-width: 1200px;
   margin: 0 auto;
@@ -183,18 +175,6 @@ body.dark-mode .story-list-bl01 ul.choose a {
 .list_grid li:hover .book_avatar img {
   transform: scale(1.1);
 }
-
-/* ========================================
-   ✅ BOOKMARK BADGE - FIXED
-   Xóa .subscribed-badge, dùng global .bookmark-badge
-======================================== */
-
-/* ❌ XÓA: .subscribed-badge styles */
-/* Global bookmark-badge.css sẽ handle tất cả */
-
-/* ========================================
-   TOP NOTICE (Time + Badge)
-======================================== */
 
 .list_grid .top-notice {
   position: absolute;

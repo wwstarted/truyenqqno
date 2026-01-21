@@ -4,13 +4,13 @@
  * Updated with User Menu Logic
  */
 
-// Lấy thông tin user hiện tại để hiển thị ngay lập tức
+
 $is_user_logged_in = is_user_logged_in();
 $current_user = wp_get_current_user();
 $display_name = $is_user_logged_in ? $current_user->display_name : 'Khách';
 $user_email = $is_user_logged_in ? $current_user->user_email : '';
 
-// Logic lấy Avatar (giống với file api-user-auth.php của bạn)
+
 $avatar_url = get_avatar_url($current_user->ID, array('size' => 100));
 if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar') !== false) {
     $avatar_url = 'https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
@@ -27,7 +27,6 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
 </noscript>
 
 <style>
-/* Critical CSS - Hide carousel until Swiper loads */
 .truyen-hay-swiper,
 .exclusive-swiper {
     visibility: hidden;
@@ -41,7 +40,7 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
     opacity: 1;
 }
 
-/* Skeleton loader (optional) */
+
 .homepage-suggest .swiper-wrapper,
 .homepage-exclusive .swiper-wrapper {
     min-height: 340px;
@@ -239,8 +238,6 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                 </nav>
             </div>
         </div>
-
-
 
     </header>
     <?php wp_footer(); ?>

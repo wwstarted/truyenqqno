@@ -1,11 +1,3 @@
-/* =====================================================
-   TRUYENQQ FOOTER - ISOLATED VERSION (NO CONFLICT)
-   ✅ Fixed: Namespace riêng, không ảnh hưởng global
-===================================================== */
-
-/* =====================================================
-   FOOTER RESET - Force Override Global Reset
-===================================================== */
 .truyenqq-footer * {
   box-sizing: border-box !important;
 }
@@ -42,8 +34,8 @@
    FOOTER ROOT - WITH DARK MODE SUPPORT
 ===================================================== */
 .truyenqq-footer {
-  background-color: #f5f5f5 !important; /* Light mode background */
-  color: #333333 !important; /* Light mode text */
+  background-color: #f5f5f5 !important;
+  color: #333333 !important;
   margin-top: 80px !important;
   margin-bottom: 0 !important;
   padding: 0 !important;
@@ -57,15 +49,15 @@
 }
 
 body.dark-mode .truyenqq-footer {
-  background-color: #0f0f0f !important; /* Dark mode background */
-  color: #e0e0e0 !important; /* Dark mode text */
+  background-color: #0f0f0f !important;
+  color: #e0e0e0 !important;
 }
 
 /* =====================================================
    FOOTER TOP - NEWSLETTER SECTION (DARK MODE)
 ===================================================== */
 .truyenqq-footer .footer-top {
-  background: #ffffff !important; /* Light mode */
+  background: #ffffff !important;
   padding: 40px 0 !important;
   margin: 0 !important;
   border-bottom: 1px solid rgba(74, 158, 255, 0.2);
@@ -139,26 +131,26 @@ body.dark-mode .truyenqq-footer .newsletter-text h3 {
 .truyenqq-footer .newsletter-input {
   flex: 1;
   padding: 14px 20px;
-  background-color: rgba(0, 0, 0, 0.05) !important; /* Light mode */
+  background-color: rgba(0, 0, 0, 0.05) !important;
   border: 1px solid rgba(74, 158, 255, 0.2);
   border-radius: 8px;
-  color: #333333 !important; /* Light mode */
+  color: #333333 !important;
   font-size: 14px;
   transition: all 0.3s ease;
 }
 
 body.dark-mode .truyenqq-footer .newsletter-input {
-  background-color: rgba(255, 255, 255, 0.08) !important; /* Dark mode */
-  color: #ffffff !important; /* Dark mode */
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
   border-color: rgba(74, 158, 255, 0.3);
 }
 
 .truyenqq-footer .newsletter-input::placeholder {
-  color: #999999; /* Light mode */
+  color: #999999;
 }
 
 body.dark-mode .truyenqq-footer .newsletter-input::placeholder {
-  color: #666666; /* Dark mode */
+  color: #666666;
 }
 
 .truyenqq-footer .newsletter-input:focus {
@@ -208,12 +200,12 @@ body.dark-mode .truyenqq-footer .newsletter-input:focus {
   padding: 60px 0 40px !important;
   margin: 0 !important;
   box-sizing: border-box !important;
-  background-color: #f5f5f5 !important; /* Light mode */
+  background-color: #f5f5f5 !important;
   transition: background-color 0.3s ease;
 }
 
 body.dark-mode .truyenqq-footer .footer-main {
-  background-color: #1a1a1a !important; /* Dark mode */
+  background-color: #1a1a1a !important;
 }
 
 .truyenqq-footer .footer-grid {
@@ -225,7 +217,6 @@ body.dark-mode .truyenqq-footer .footer-main {
   width: 100%;
 }
 
-/* Force grid items to display */
 .truyenqq-footer .footer-col {
   display: flex;
   flex-direction: column;
@@ -251,16 +242,15 @@ body.dark-mode .truyenqq-footer .footer-main {
 .truyenqq-footer .footer-description {
   font-size: 14px;
   line-height: 1.7;
-  color: #666666 !important; /* Light mode */
+  color: #666666 !important;
   margin-bottom: 25px;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .truyenqq-footer .footer-description {
-  color: #999999 !important; /* Dark mode */
+  color: #999999 !important;
 }
 
-/* Stats (Dark Mode) */
 .truyenqq-footer .footer-stats {
   display: flex;
   gap: 20px;
@@ -293,7 +283,7 @@ body.dark-mode .truyenqq-footer .footer-stats {
 
 .truyenqq-footer .stat-label {
   font-size: 12px;
-  color: #999999 !important; /* Light mode */
+  color: #999999 !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   line-height: 1.2;
@@ -301,10 +291,9 @@ body.dark-mode .truyenqq-footer .footer-stats {
 }
 
 body.dark-mode .truyenqq-footer .stat-label {
-  color: #666666 !important; /* Dark mode */
+  color: #666666 !important;
 }
 
-/* Contact Info (Dark Mode) */
 .truyenqq-footer .footer-contact {
   display: flex;
   flex-direction: column;
@@ -316,12 +305,12 @@ body.dark-mode .truyenqq-footer .stat-label {
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  color: #666666 !important; /* Light mode */
+  color: #666666 !important;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .truyenqq-footer .contact-item {
-  color: #999999 !important; /* Dark mode */
+  color: #999999 !important;
 }
 
 .truyenqq-footer .contact-item i {
@@ -330,13 +319,13 @@ body.dark-mode .truyenqq-footer .contact-item {
 }
 
 .truyenqq-footer .contact-item a {
-  color: #666666 !important; /* Light mode */
+  color: #666666 !important;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .truyenqq-footer .contact-item a {
-  color: #999999 !important; /* Dark mode */
+  color: #999999 !important;
 }
 
 .truyenqq-footer .contact-item a:hover {
@@ -355,7 +344,7 @@ body.dark-mode .truyenqq-footer .contact-item a {
 .truyenqq-footer .footer-heading {
   font-size: 16px;
   font-weight: 700;
-  color: #333333 !important; /* Light mode */
+  color: #333333 !important;
   margin: 0 0 20px 0 !important;
   padding: 0 0 12px 0 !important;
   border-bottom: 2px solid #4a9eff;
@@ -365,7 +354,7 @@ body.dark-mode .truyenqq-footer .contact-item a {
 }
 
 body.dark-mode .truyenqq-footer .footer-heading {
-  color: #ffffff !important; /* Dark mode */
+  color: #ffffff !important;
 }
 
 .truyenqq-footer .footer-heading::after {
@@ -395,7 +384,7 @@ body.dark-mode .truyenqq-footer .footer-heading {
 
 .truyenqq-footer .footer-links li a {
   font-size: 14px;
-  color: #666666 !important; /* Light mode */
+  color: #666666 !important;
   text-decoration: none !important;
   transition: all 0.3s ease;
   display: inline-block;
@@ -405,7 +394,7 @@ body.dark-mode .truyenqq-footer .footer-heading {
 }
 
 body.dark-mode .truyenqq-footer .footer-links li a {
-  color: #999999 !important; /* Dark mode */
+  color: #999999 !important;
 }
 
 .truyenqq-footer .footer-links li a::before {
@@ -430,7 +419,7 @@ body.dark-mode .truyenqq-footer .footer-links li a {
    FOOTER BOTTOM (DARK MODE)
 ===================================================== */
 .truyenqq-footer .footer-bottom {
-  background-color: #e0e0e0 !important; /* Light mode */
+  background-color: #e0e0e0 !important;
   padding: 20px 0 !important;
   margin: 0 !important;
   border-top: 1px solid rgba(74, 158, 255, 0.1);
@@ -441,7 +430,7 @@ body.dark-mode .truyenqq-footer .footer-links li a {
 }
 
 body.dark-mode .truyenqq-footer .footer-bottom {
-  background-color: #000000 !important; /* Dark mode */
+  background-color: #000000 !important;
   border-top-color: rgba(74, 158, 255, 0.15);
 }
 
@@ -455,12 +444,12 @@ body.dark-mode .truyenqq-footer .footer-bottom {
 
 .truyenqq-footer .copyright {
   font-size: 14px;
-  color: #666666 !important; /* Light mode */
+  color: #666666 !important;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .truyenqq-footer .copyright {
-  color: #666666 !important; /* Dark mode */
+  color: #666666 !important;
 }
 
 .truyenqq-footer .copyright p {
@@ -484,19 +473,19 @@ body.dark-mode .truyenqq-footer .copyright {
 .truyenqq-footer .social-link {
   width: 40px;
   height: 40px;
-  background-color: rgba(0, 0, 0, 0.05) !important; /* Light mode */
+  background-color: rgba(0, 0, 0, 0.05) !important;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666666 !important; /* Light mode */
+  color: #666666 !important;
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
 body.dark-mode .truyenqq-footer .social-link {
-  background-color: rgba(255, 255, 255, 0.08) !important; /* Dark mode */
-  color: #999999 !important; /* Dark mode */
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #999999 !important;
 }
 
 .truyenqq-footer .social-link:hover {

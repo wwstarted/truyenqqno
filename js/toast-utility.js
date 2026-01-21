@@ -80,7 +80,6 @@
     },
   };
 
-  // Expose globally
   window.TruyenqqToast = TruyenqqToast;
 
   console.log("✅ Global Toast System initialized");

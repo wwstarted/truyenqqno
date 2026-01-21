@@ -5,7 +5,7 @@
  * 
  * @package TruyenQQ
  * @version 1.0.1
- * ✅ Fixed: Permission callback & error handling
+
  */
 
 if (!defined('ABSPATH')) {
@@ -16,28 +16,28 @@ if (!defined('ABSPATH')) {
  * Register REST API routes
  */
 add_action('rest_api_init', function () {
-    // Get reading history
+
     register_rest_route('nettruyen/v1', '/reading-history', array(
         'methods' => 'GET',
         'callback' => 'truyenqq_api_get_reading_history',
         'permission_callback' => 'truyenqq_check_logged_in'
     ));
 
-    // Save/Update reading progress
+
     register_rest_route('nettruyen/v1', '/reading-history', array(
         'methods' => 'POST',
         'callback' => 'truyenqq_api_save_reading_history',
-        'permission_callback' => '__return_true' // ✅ Allow both logged in and guest
+        'permission_callback' => '__return_true'
     ));
 
-    // Delete history item
+
     register_rest_route('nettruyen/v1', '/reading-history/(?P<id>\d+)', array(
         'methods' => 'DELETE',
         'callback' => 'truyenqq_api_delete_reading_history',
         'permission_callback' => 'truyenqq_check_logged_in'
     ));
 
-    // Clear all history
+
     register_rest_route('nettruyen/v1', '/reading-history/clear', array(
         'methods' => 'POST',
         'callback' => 'truyenqq_api_clear_reading_history',
@@ -67,7 +67,7 @@ function truyenqq_api_get_reading_history($request)
     $table = $wpdb->prefix . 'nettruyen_reading_history';
     $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-    // Get history with post data
+
     $results = $wpdb->get_results($wpdb->prepare(
         "SELECT h.*, p.post_title, p.guid 
          FROM {$table} h
@@ -90,7 +90,7 @@ function truyenqq_api_get_reading_history($request)
     foreach ($results as $row) {
         $post_id = $row->post_id;
 
-        // Get thumbnail
+
         $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
         if (empty($thumbnail)) {
             $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -99,13 +99,13 @@ function truyenqq_api_get_reading_history($request)
             $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
         }
 
-        // Get manifest for chapter info
+
         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
         $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
         $total_chapters = !empty($manifest['chapters']) ? count($manifest['chapters']) : 0;
 
-        // Get stats
+
         $follow_count = (int) get_post_meta($post_id, '_nettruyen_follow_count', true);
         $view_stats = $wpdb->get_row($wpdb->prepare(
             "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
@@ -113,7 +113,7 @@ function truyenqq_api_get_reading_history($request)
         ));
         $view_count = $view_stats ? $view_stats->total_display_views : 0;
 
-        // Calculate time ago
+
         $time_ago = human_time_diff(strtotime($row->last_read_at), current_time('timestamp')) . ' trước';
 
         $history[] = array(
@@ -146,7 +146,7 @@ function truyenqq_api_get_reading_history($request)
  */
 function truyenqq_api_save_reading_history($request)
 {
-    // ✅ Allow guest users - just return success without saving
+
     if (!is_user_logged_in()) {
         return array(
             'success' => true,
@@ -169,12 +169,12 @@ function truyenqq_api_save_reading_history($request)
     $user_id = get_current_user_id();
     $table = $wpdb->prefix . 'nettruyen_reading_history';
 
-    // Check if table exists
+
     if ($wpdb->get_var("SHOW TABLES LIKE '{$table}'") != $table) {
         return new WP_Error('table_not_exists', 'Bảng lịch sử chưa được tạo', array('status' => 500));
     }
 
-    // Insert or update
+
     $existing = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM {$table} WHERE user_id = %d AND post_id = %d AND chapter_slug = %s",
         $user_id,
@@ -183,7 +183,7 @@ function truyenqq_api_save_reading_history($request)
     ));
 
     if ($existing) {
-        // Update existing record
+
         $result = $wpdb->update(
             $table,
             array(
@@ -205,7 +205,7 @@ function truyenqq_api_save_reading_history($request)
             return new WP_Error('update_failed', 'Lỗi cập nhật: ' . $wpdb->last_error, array('status' => 500));
         }
     } else {
-        // Insert new record
+
         $result = $wpdb->insert(
             $table,
             array(

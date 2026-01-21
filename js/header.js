@@ -26,7 +26,6 @@
 
     genresList: document.getElementById("genresList"),
 
-    // User menu elements
     userAvatar: document.getElementById("userAvatar"),
     userProfile: document.querySelector(".user-profile"),
     notificationBell: document.querySelector(".notification-bell"),
@@ -346,12 +345,7 @@
     }
   }
 
-  // ============================================
-  // USER MENU & NOTIFICATION HANDLERS
-  // ============================================
-
   function initUserMenu() {
-    // Chỉ thêm click handlers cho mobile/tablet
     if (elements.userAvatar && elements.userProfile) {
       elements.userAvatar.addEventListener("click", handleUserMenuToggle);
     }
@@ -363,7 +357,6 @@
       );
     }
 
-    // Close dropdowns when clicking outside
     document.addEventListener("click", handleOutsideClick);
   }
 
@@ -371,15 +364,12 @@
     e.preventDefault();
     e.stopPropagation();
 
-    // Trên desktop (> 1024px), hover sẽ xử lý, không cần toggle
     if (window.innerWidth > 1024) return;
 
-    // Close notification if open
     if (elements.notificationBell) {
       elements.notificationBell.classList.remove("active");
     }
 
-    // Toggle user dropdown
     if (elements.userProfile) {
       elements.userProfile.classList.toggle("active");
     }
@@ -389,25 +379,20 @@
     e.preventDefault();
     e.stopPropagation();
 
-    // Trên desktop (> 1024px), hover sẽ xử lý, không cần toggle
     if (window.innerWidth > 1024) return;
 
-    // Close user dropdown if open
     if (elements.userProfile) {
       elements.userProfile.classList.remove("active");
     }
 
-    // Toggle notification dropdown
     if (elements.notificationBell) {
       elements.notificationBell.classList.toggle("active");
     }
   }
 
   function handleOutsideClick(e) {
-    // Only handle on mobile/tablet
     if (window.innerWidth > 1024) return;
 
-    // Check if click is outside user menu
     if (
       elements.userProfile &&
       !elements.userProfile.contains(e.target) &&
@@ -416,7 +401,6 @@
       elements.userProfile.classList.remove("active");
     }
 
-    // Check if click is outside notification
     if (
       elements.notificationBell &&
       !elements.notificationBell.contains(e.target) &&
@@ -426,9 +410,7 @@
     }
   }
 
-  // Close dropdowns on window resize
   function handleResize() {
-    // If resizing to desktop, remove active classes
     if (window.innerWidth > 1024) {
       if (elements.userProfile) {
         elements.userProfile.classList.remove("active");
@@ -448,10 +430,9 @@
     initDarkMode();
     initSearch();
     initMobileMenu();
-    initUserMenu(); // Initialize user menu handlers
+    initUserMenu();
     loadGenres();
 
-    // Add resize listener
     window.addEventListener("resize", handleResize);
 
     console.log("TruyenQQ Header initialized successfully");

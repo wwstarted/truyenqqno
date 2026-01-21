@@ -4,26 +4,20 @@
  *
  * @package TruyenQQ
  * @version 1.0.1
- * ✅ Fixed: Proper REST API authentication
+
  */
 
 (function () {
   "use strict";
 
-  // const API_BASE =
-  //   "http://localhost/truyen_qqno/wordpress-6.8.3-vi/wordpress/wp-json/nettruyen/v1";
-
   function getApiBase() {
-    // Ưu tiên: Lấy từ PHP (được inject bởi wp_localize_script)
     if (typeof truyenqqConfig !== "undefined" && truyenqqConfig.apiBase) {
       return truyenqqConfig.apiBase;
     }
 
-    // Fallback: Tự động detect từ current URL
-    const origin = window.location.origin; // http://localhost
-    const pathname = window.location.pathname; // /truyen_qqno/wordpress-6.8.3-vi/wordpress/lich-su/
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
 
-    // Tách ra phần WordPress root
     let wpRoot = "/";
     if (pathname.includes("/wordpress/")) {
       wpRoot = pathname.substring(0, pathname.indexOf("/wordpress/") + 11);
@@ -33,7 +27,7 @@
     ) {
       const parts = pathname.split("/");
       const wpIndex = parts.findIndex(
-        (p) => p === "wp-admin" || p === "wp-content"
+        (p) => p === "wp-admin" || p === "wp-content",
       );
       wpRoot = parts.slice(0, wpIndex).join("/") + "/";
     }
@@ -46,10 +40,9 @@
   let lastSavedPage = -1;
   let isScrolling = false;
 
-  // Configuration
   const CONFIG = {
-    saveDelay: 2000, // Save after 2 seconds of no scrolling
-    minReadTime: 3000, // Minimum 3 seconds on a page before saving
+    saveDelay: 2000,
+    minReadTime: 3000,
   };
 
   /**
@@ -66,18 +59,14 @@
 
     console.log("📖 Reading tracker initialized:", readerData);
 
-    // Track current page on scroll
     window.addEventListener("scroll", handleScroll);
 
-    // Track when user leaves page
     window.addEventListener("beforeunload", saveCurrentProgress);
 
-    // Save initial load
     setTimeout(() => {
       saveProgress(readerData, 0);
     }, CONFIG.minReadTime);
 
-    // Observe images loading to track page changes
     observeImageVisibility(readerData);
   }
 
@@ -95,7 +84,6 @@
     const reader = document.getElementById("chapter_reader");
     if (!reader) return null;
 
-    // Try to get data from PHP-rendered attributes
     const comicId = reader.getAttribute("data-comic-id");
     const chapterSlug = reader.getAttribute("data-chapter-slug");
 
@@ -104,7 +92,6 @@
       return null;
     }
 
-    // Get chapter info from page title or breadcrumb
     const chapterName = extractChapterName();
     const totalPages = document.querySelectorAll(".page-chapter").length;
 
@@ -120,14 +107,12 @@
    * Extract chapter name from page
    */
   function extractChapterName() {
-    // Try multiple selectors
     const titleElement = document.querySelector(".chapter-header h1");
     if (titleElement) {
       const match = titleElement.textContent.match(/Chương\s+([^\s]+)/i);
       if (match) return match[1];
     }
 
-    // Fallback: from breadcrumb
     const breadcrumb = document.querySelector(".breadcrumb li:last-child");
     if (breadcrumb) {
       const match = breadcrumb.textContent.match(/Chương\s+([^\s]+)/i);
@@ -157,7 +142,6 @@
       }
     }
 
-    // Fallback: check if at bottom
     if (
       scrollTop + windowHeight >=
       document.documentElement.scrollHeight - 100
@@ -183,7 +167,6 @@
 
       const currentPage = getCurrentVisiblePage();
 
-      // Only save if page changed
       if (currentPage !== lastSavedPage) {
         console.log(`📄 Page changed: ${lastSavedPage} → ${currentPage}`);
         saveProgress(readerData, currentPage);
@@ -201,9 +184,8 @@
 
     const currentPage = getCurrentVisiblePage();
 
-    // Use synchronous XHR for beforeunload
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `${API_BASE}/reading-history`, false); // false = synchronous
+    xhr.open("POST", `${API_BASE}/reading-history`, false);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("X-WP-Nonce", getRestNonce());
 
@@ -223,18 +205,15 @@
    * Get WordPress REST API nonce
    */
   function getRestNonce() {
-    // Try to get from wp object
     if (typeof wpApiSettings !== "undefined" && wpApiSettings.nonce) {
       return wpApiSettings.nonce;
     }
 
-    // Try to get from meta tag
     const nonceMeta = document.querySelector('meta[name="wp-rest-nonce"]');
     if (nonceMeta) {
       return nonceMeta.content;
     }
 
-    // Fallback: get from cookies
     const cookies = document.cookie.split(";");
     for (let cookie of cookies) {
       const [name, value] = cookie.trim().split("=");
@@ -274,7 +253,7 @@
           console.log("ℹ️ Guest mode: Progress not saved (login required)");
         } else {
           console.log(
-            `✅ Saved: Page ${currentPage + 1}/${readerData.total_pages}`
+            `✅ Saved: Page ${currentPage + 1}/${readerData.total_pages}`,
           );
         }
       } else {
@@ -308,7 +287,6 @@
               if (!isNaN(pageIndex) && pageIndex !== lastSavedPage) {
                 console.log(`👁️ Page ${pageIndex} is visible (>50%)`);
 
-                // Save after minimum read time
                 setTimeout(() => {
                   if (!isScrolling) {
                     saveProgress(readerData, pageIndex);
@@ -321,9 +299,9 @@
         });
       },
       {
-        threshold: 0.5, // Trigger when 50% visible
+        threshold: 0.5,
         rootMargin: "0px",
-      }
+      },
     );
 
     images.forEach((img) => observer.observe(img));

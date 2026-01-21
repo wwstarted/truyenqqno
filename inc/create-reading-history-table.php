@@ -42,7 +42,7 @@ function truyenqq_create_reading_history_table()
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
 
-    // Verify table creation
+
     if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
         error_log('TruyenQQ: Reading history table created successfully');
         return true;
@@ -70,12 +70,12 @@ function truyenqq_auto_delete_old_history()
     }
 }
 
-// Schedule daily cleanup
+
 add_action('truyenqq_daily_cleanup', 'truyenqq_auto_delete_old_history');
 
 if (!wp_next_scheduled('truyenqq_daily_cleanup')) {
     wp_schedule_event(time(), 'daily', 'truyenqq_daily_cleanup');
 }
 
-// Create table on theme activation
+
 add_action('after_switch_theme', 'truyenqq_create_reading_history_table');

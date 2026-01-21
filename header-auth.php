@@ -29,7 +29,6 @@
 
     <!-- Dark Mode Detection -->
     <script>
-    // Apply saved theme immediately to prevent flash
     (function() {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {

@@ -15,49 +15,49 @@ class NetTruyen_Top_Comics_API
 
     public function register_routes()
     {
-        // Top Ngày
+
         register_rest_route('nettruyen/v1', '/comics/top-ngay', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_top_daily'),
             'permission_callback' => '__return_true'
         ));
 
-        // Top Tuần
+
         register_rest_route('nettruyen/v1', '/comics/top-tuan', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_top_weekly'),
             'permission_callback' => '__return_true'
         ));
 
-        // Top Tháng
+
         register_rest_route('nettruyen/v1', '/comics/top-thang', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_top_monthly'),
             'permission_callback' => '__return_true'
         ));
 
-        // Yêu Thích
+
         register_rest_route('nettruyen/v1', '/comics/yeu-thich', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_yeu_thich'),
             'permission_callback' => '__return_true'
         ));
 
-        // Truyện Mới
+
         register_rest_route('nettruyen/v1', '/comics/truyen-moi', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_truyen_moi'),
             'permission_callback' => '__return_true'
         ));
 
-        // Truyện Full
+
         register_rest_route('nettruyen/v1', '/comics/truyen-full', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_truyen_full'),
             'permission_callback' => '__return_true'
         ));
 
-        // Ngẫu Nhiên
+
         register_rest_route('nettruyen/v1', '/comics/ngau-nhien', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_ngau_nhien'),
@@ -103,7 +103,7 @@ class NetTruyen_Top_Comics_API
 
         $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-        // Lấy TẤT CẢ comic IDs, sắp xếp theo views (Giải pháp 2)
+
         $comic_ids = $wpdb->get_col("
             SELECT p.ID 
             FROM {$wpdb->posts} p

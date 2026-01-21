@@ -1,14 +1,14 @@
 <?php
 /**
  * Footer Template - TruyenQQ
- * FIXED: Proper placement outside containers
+
  * 
  * @package TruyenQQ
  * @version 1.0.3
  */
 
-// Close any open containers from main content
-// IMPORTANT: Phải đóng tất cả containers trước khi mở footer
+
+
 ?>
 
 </div><!-- Close main content container if exists -->

@@ -1,4 +1,3 @@
-/* Rank Badge */
 .list_grid .rank-badge {
   position: absolute;
   top: 8px;
@@ -41,7 +40,6 @@
   font-size: 12px;
 }
 
-/* Adjust subscribed badge khi có rank badge */
 /* .list_grid .book_avatar .subscribed-badge {
   top: 48px;
 } */

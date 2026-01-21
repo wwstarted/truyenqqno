@@ -1,16 +1,3 @@
-/**
- * Reading History Page Styles
- * Grid layout giống homepage-new-update
- *
- * @package TruyenQQ
- * @version 1.0.2
- * ✅ Updated: Grid layout, cyan accent color, centered content
- */
-
-/* ========================================
-   READING HISTORY PAGE
-======================================== */
-
 .reading-history-page {
   padding: 40px 0;
   background-color: var(--bg-primary);
@@ -22,7 +9,6 @@
   padding: 0 20px;
 }
 
-/* Section Header */
 .reading-history-page .section-header {
   display: flex;
   justify-content: space-between;
@@ -58,7 +44,6 @@ body.dark-mode .reading-history-page .section-title a {
   font-size: 26px;
 }
 
-/* History Actions */
 .history-actions {
   display: flex;
   gap: 10px;
@@ -90,7 +75,6 @@ body.dark-mode .reading-history-page .section-title a {
   font-size: 16px;
 }
 
-/* Loading State */
 .loading-state {
   text-align: center;
   padding: 80px 20px;
@@ -120,7 +104,6 @@ body.dark-mode .loading-state p {
   color: var(--text-secondary-dark, #999);
 }
 
-/* Empty State */
 .empty-state {
   text-align: center;
   padding: 80px 20px;
@@ -185,7 +168,6 @@ body.dark-mode .empty-state p {
   box-shadow: 0 6px 16px rgba(0, 188, 212, 0.4);
 }
 
-/* Comics Grid (giống homepage-new-update) */
 .reading-history-page .comics-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -197,7 +179,6 @@ body.dark-mode .empty-state p {
   width: 100%;
 }
 
-/* Comic Card Styles */
 .reading-history-page .comic-card {
   background-color: var(--bg-secondary);
   border-radius: 8px;
@@ -224,7 +205,6 @@ body.dark-mode .reading-history-page .comic-card:hover {
   box-shadow: 0 8px 20px rgba(0, 188, 212, 0.4);
 }
 
-/* Comic Avatar */
 .reading-history-page .comic-avatar {
   position: relative;
   width: 100%;
@@ -253,7 +233,6 @@ body.dark-mode .reading-history-page .comic-card:hover {
   transform: scale(1.1);
 }
 
-/* Remove History Button */
 .remove-history {
   position: absolute;
   top: 8px;
@@ -286,7 +265,6 @@ body.dark-mode .remove-history {
   transform: scale(1.1);
 }
 
-/* Top Notice */
 .reading-history-page .top-notice {
   position: absolute;
   bottom: 0;
@@ -308,7 +286,6 @@ body.dark-mode .remove-history {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-/* Comic Info (căn giữa) */
 .reading-history-page .comic-info {
   padding: 12px;
   flex: 1;
@@ -347,7 +324,6 @@ body.dark-mode .reading-history-page .comic-name a {
   color: #00bcd4;
 }
 
-/* Comic Stats */
 .reading-history-page .comic-stats {
   display: flex;
   align-items: center;
@@ -372,7 +348,6 @@ body.dark-mode .reading-history-page .comic-stats {
   color: #00bcd4;
 }
 
-/* Latest Chapter */
 .reading-history-page .latest-chapter a {
   display: inline-block;
   font-size: 13px;
@@ -386,7 +361,6 @@ body.dark-mode .reading-history-page .comic-stats {
   text-decoration: underline;
 }
 
-/* Toast Notification */
 .toast-container {
   position: fixed;
   top: 20px;
@@ -442,7 +416,6 @@ body.dark-mode .toast {
   color: #f44336;
 }
 
-/* Responsive */
 @media (max-width: 1023px) {
   .reading-history-page {
     padding: 30px 0;
@@ -600,7 +573,6 @@ body.dark-mode .toast {
   }
 }
 
-/* Animation for card removal */
 .reading-history-page .comic-item {
   transition:
     opacity 0.3s ease,

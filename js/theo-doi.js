@@ -74,7 +74,7 @@
         const errorText = await response.text();
         console.error("API Error:", response.status, errorText);
         throw new Error(
-          `HTTP ${response.status}: ${response.statusText || "API Error"}`
+          `HTTP ${response.status}: ${response.statusText || "API Error"}`,
         );
       }
 
@@ -126,10 +126,8 @@
       grid.appendChild(card);
     });
 
-    // Init remove buttons
     initRemoveButtons();
 
-    // Init bookmark buttons (for global handler)
     if (window.TruyenqqBookmarks) {
       window.TruyenqqBookmarks.init();
     }
@@ -143,7 +141,6 @@
     div.className = "comic-item";
     div.setAttribute("data-post-id", item.post_id);
 
-    // Calculate time since added
     const addedDate = new Date(item.created_at);
     const now = new Date();
     const diffMs = now - addedDate;
@@ -158,8 +155,8 @@
         <div class="comic-avatar">
           <a href="${item.post_url}" title="${escapeHtml(item.post_title)}">
             <img src="${item.thumbnail}" alt="${escapeHtml(
-      item.post_title
-    )}" loading="lazy">
+              item.post_title,
+            )}" loading="lazy">
           </a>
           
           <span class="remove-bookmark" title="Bỏ theo dõi" data-post-id="${
@@ -246,13 +243,11 @@
           const result = await response.json();
 
           if (result.success) {
-            // Remove card with animation
             card.style.opacity = "0";
             card.style.transform = "scale(0.9)";
             setTimeout(() => {
               card.remove();
 
-              // Check if grid is empty
               const grid = document.getElementById("bookmarks-grid");
               if (grid.children.length === 0) {
                 grid.style.display = "none";
@@ -273,7 +268,7 @@
           } else {
             showToast(
               result.message || "Xóa thất bại. Vui lòng thử lại.",
-              "error"
+              "error",
             );
           }
         } catch (error) {

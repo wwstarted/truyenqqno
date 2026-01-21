@@ -56,7 +56,7 @@ class ComicsListingBase {
     this.elements.paginationContainer =
       document.querySelector(".page_redirect");
     this.elements.filterLinks = document.querySelectorAll(
-      ".story-list-bl01 ul.choose a"
+      ".story-list-bl01 ul.choose a",
     );
   }
 
@@ -212,14 +212,13 @@ class ComicsListingBase {
   }
 
   renderComicCard(comic) {
-    // Override this method in child classes
     return `
       <li>
         <div class="book_avatar">
           <a href="${comic.url}" title="${comic.title}">
             <img class="center" src="${comic.thumbnail}" alt="${
-      comic.title
-    }" loading="lazy">
+              comic.title
+            }" loading="lazy">
           </a>
           
           <span class="subscribed-badge not-subscribed add-subscribe" title="Theo Dõi" data-id="${
@@ -253,8 +252,8 @@ class ComicsListingBase {
           
           <div class="last_chapter">
             <a href="${comic.url}" title="${comic.latest_chapter}">${
-      comic.latest_chapter
-    }</a>
+              comic.latest_chapter
+            }</a>
           </div>
         </div>
         
@@ -278,14 +277,12 @@ class ComicsListingBase {
     const start = Math.max(1, current_page - range);
     const end = Math.min(total_pages, current_page + range);
 
-    // Previous button
     if (current_page > 1) {
       html += `<a href="#" data-page="${
         current_page - 1
       }"><p><span>‹</span></p></a>`;
     }
 
-    // First page
     if (start > 1) {
       html += `<a href="#" data-page="1"><p>1</p></a>`;
       if (start > 2) {
@@ -293,7 +290,6 @@ class ComicsListingBase {
       }
     }
 
-    // Page numbers
     for (let i = start; i <= end; i++) {
       if (i === current_page) {
         html += `<a href="javascript:void(0)"><p class="active">${i}</p></a>`;
@@ -302,7 +298,6 @@ class ComicsListingBase {
       }
     }
 
-    // Last page
     if (end < total_pages) {
       if (end < total_pages - 1) {
         html += `<span class="dots">...</span>`;
@@ -310,7 +305,6 @@ class ComicsListingBase {
       html += `<a href="#" data-page="${total_pages}"><p>${total_pages}</p></a>`;
     }
 
-    // Next buttons
     if (current_page < total_pages) {
       html += `<a href="#" data-page="${
         current_page + 1
@@ -320,7 +314,6 @@ class ComicsListingBase {
 
     this.elements.paginationContainer.innerHTML = html;
 
-    // Re-bind pagination events
     this.elements.paginationContainer
       .querySelectorAll("a[data-page]")
       .forEach((link) => {
@@ -371,11 +364,10 @@ class ComicsListingBase {
 
   initBookmarkButtons() {
     const bookmarkButtons = document.querySelectorAll(
-      ".list_grid .subscribed-badge"
+      ".list_grid .subscribed-badge",
     );
 
     bookmarkButtons.forEach((button) => {
-      // Remove old listeners
       const newButton = button.cloneNode(true);
       button.parentNode.replaceChild(newButton, button);
 
@@ -422,7 +414,6 @@ class ComicsListingBase {
   }
 }
 
-// Export for use in other files
 if (typeof module !== "undefined" && module.exports) {
   module.exports = ComicsListingBase;
 }

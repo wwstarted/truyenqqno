@@ -652,7 +652,6 @@ body.dark-mode .notification-dropdown {
   border: 1px solid #333;
 }
 
-/* Desktop: Hover to show */
 @media (min-width: 1025px) {
   .notification-bell:hover .notification-dropdown {
     opacity: 1;
@@ -661,7 +660,6 @@ body.dark-mode .notification-dropdown {
   }
 }
 
-/* Mobile/Tablet: Click to show */
 .notification-bell.active .notification-dropdown {
   opacity: 1;
   visibility: visible;
@@ -821,7 +819,6 @@ body.dark-mode .user-dropdown {
   border: 1px solid #333;
 }
 
-/* Desktop: Hover to show */
 @media (min-width: 1025px) {
   .user-profile:hover .user-dropdown {
     opacity: 1;
@@ -830,7 +827,6 @@ body.dark-mode .user-dropdown {
   }
 }
 
-/* Mobile/Tablet: Click to show */
 .user-profile.active .user-dropdown {
   opacity: 1;
   visibility: visible;
@@ -1137,7 +1133,6 @@ body.dark-mode .user-menu-links a:hover {
     color: var(--accent-color);
   }
 
-  /* User Menu - Mobile/Tablet Adjustments */
   .notification-dropdown,
   .user-dropdown {
     position: fixed;
@@ -1236,7 +1231,6 @@ body.dark-mode .user-menu-links a:hover {
     font-size: 12px;
   }
 
-  /* User Menu - Mobile */
   .user-menu-list {
     gap: 10px;
   }

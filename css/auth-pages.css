@@ -1,16 +1,9 @@
-/* ========================================
-   MODERN AUTH PAGE - BLUE DARK THEME
-   100% Dark Mode - No Toggle - FIXED v3.1
-   Version: 3.1.0
-   ======================================== */
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
 /* ========================================
    1. VARIABLES - BLUE THEME
    ======================================== */
 :root {
-  /* Blue Brand Colors */
   --color-brand-primary: #009fd3;
   --color-brand-secondary: #95d3c5;
   --color-brand-gradient: linear-gradient(135deg, #95d3c5 0%, #009fd3 100%);
@@ -20,7 +13,6 @@
     #95d3c5 100%
   );
 
-  /* Dark Theme Colors */
   --bg-primary: #0a0a0a;
   --bg-secondary: #1a1a1a;
   --bg-tertiary: #2a2a2a;
@@ -33,23 +25,19 @@
   --border-color: #333333;
   --border-focus: #009fd3;
 
-  /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.7);
 
-  /* Blue Shadows */
   --shadow-blue-sm: 0 2px 12px rgba(0, 159, 211, 0.2);
   --shadow-blue-md: 0 4px 20px rgba(0, 159, 211, 0.3);
   --shadow-blue-lg: 0 8px 32px rgba(0, 159, 211, 0.4);
 
-  /* Status Colors */
   --color-success: #4caf50;
   --color-error: #ff5252;
   --color-warning: #ffa726;
 
-  /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-base: 0.3s ease;
   --transition-slow: 0.4s ease;
@@ -70,7 +58,6 @@
   overflow: hidden;
 }
 
-/* Animated Background Pattern */
 .auth-page-container::before {
   content: "";
   position: absolute;
@@ -102,7 +89,6 @@
   }
 }
 
-/* Floating Particles */
 .auth-page-container::after {
   content: "";
   position: absolute;
@@ -164,7 +150,6 @@
   overflow: hidden;
 }
 
-/* Gradient Overlay */
 .auth-page-left::before {
   content: "";
   position: absolute;
@@ -180,7 +165,6 @@
   z-index: 1;
 }
 
-/* Animated Circles */
 .auth-page-left::after {
   content: "";
   position: absolute;
@@ -216,18 +200,15 @@
   max-width: 600px;
 }
 
-/* Logo - HIDDEN */
 .brand-logo {
   display: none;
 }
 
-/* Headings - HIDDEN */
 .auth-branding h1,
 .auth-branding > p {
   display: none;
 }
 
-/* Illustration - ONLY ELEMENT VISIBLE */
 .auth-illustration {
   margin: 0;
   position: relative;
@@ -267,9 +248,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 30px 50px; /* Giảm từ 40px 60px */
+  padding: 30px 50px;
   position: relative;
-  overflow: hidden; /* NO SCROLL */
+  overflow: hidden;
 }
 
 .auth-form-container {
@@ -347,7 +328,7 @@
   color: var(--color-brand-primary);
   font-size: 24px;
   animation: iconPulse 2s ease-in-out infinite;
-  order: -1; /* Icon bên trái */
+  order: -1;
 }
 
 @keyframes iconPulse {
@@ -370,18 +351,18 @@
    8. FORM ELEMENTS - REDUCED SPACING
    ======================================== */
 .auth-form {
-  margin-top: 15px; /* Giảm từ 20px */
+  margin-top: 15px;
 }
 
 .form-group {
-  margin-bottom: 14px; /* Giảm từ 18px */
+  margin-bottom: 14px;
 }
 
 .form-group label {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 6px; /* Giảm từ 8px */
+  margin-bottom: 6px;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
@@ -392,16 +373,15 @@
   font-size: 13px;
 }
 
-/* Input Fields - REDUCED PADDING */
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="password"] {
   width: 100%;
-  padding: 12px 16px; /* Giảm từ 15px 18px */
-  font-size: 14px; /* Giảm từ 15px */
+  padding: 12px 16px;
+  font-size: 14px;
   font-family: "Inter", sans-serif;
   border: 2px solid var(--border-color);
-  border-radius: 10px; /* Giảm từ 12px */
+  border-radius: 10px;
   background: var(--bg-input);
   color: var(--text-primary);
   transition: all var(--transition-base);
@@ -415,10 +395,9 @@
   outline: none;
   border-color: var(--color-brand-primary);
   background: var(--bg-secondary);
-  box-shadow: 0 0 0 3px rgba(0, 159, 211, 0.15); /* Giảm từ 4px */
+  box-shadow: 0 0 0 3px rgba(0, 159, 211, 0.15);
 }
 
-/* Password Input with Toggle */
 .password-input {
   position: relative;
 }
@@ -460,7 +439,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px; /* Giảm từ 14px */
+  font-size: 13px;
   color: var(--text-secondary);
   cursor: pointer;
   font-weight: 500;
@@ -475,7 +454,7 @@
 }
 
 .link-text {
-  font-size: 13px; /* Giảm từ 14px */
+  font-size: 13px;
   color: var(--color-brand-primary);
   text-decoration: none;
   font-weight: 600;
@@ -495,10 +474,9 @@
   justify-content: flex-start;
   margin: 0;
   padding-bottom: 12px;
-  /* background: var(--bg-secondary); */
+
   background: #0a0a0a;
   border-radius: 10px;
-  /* border: 1px solid var(--border-color); */
 }
 
 .g-recaptcha {
@@ -509,11 +487,11 @@
    11. BUTTONS - REDUCED SIZE
    ======================================== */
 .btn {
-  padding: 13px 24px; /* Giảm từ 16px 28px */
-  font-size: 15px; /* Giảm từ 16px */
+  padding: 13px 24px;
+  font-size: 15px;
   font-weight: 700;
   font-family: "Inter", sans-serif;
-  border-radius: 10px; /* Giảm từ 12px */
+  border-radius: 10px;
   border: none;
   cursor: pointer;
   transition: all var(--transition-base);
@@ -670,10 +648,10 @@
    14. FORM MESSAGES - COMPACT
    ======================================== */
 .form-message {
-  margin-top: 16px; /* Giảm từ 20px */
-  padding: 12px 16px; /* Giảm từ 16px 20px */
+  margin-top: 16px;
+  padding: 12px 16px;
   border-radius: 10px;
-  font-size: 13px; /* Giảm từ 14px */
+  font-size: 13px;
   font-weight: 500;
   display: none;
   animation: slideDown 0.3s ease;
@@ -718,14 +696,14 @@
    ======================================== */
 .auth-footer {
   text-align: center;
-  padding: 15px 0 0; /* Giảm từ 20px */
+  padding: 15px 0 0;
   border-top: 1px solid var(--border-color);
-  margin-top: 18px; /* Giảm từ 25px */
+  margin-top: 18px;
 }
 
 .auth-footer p {
   margin: 0;
-  font-size: 13px; /* Giảm từ 14px */
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
@@ -819,19 +797,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px; /* Giảm từ 30px */
-  gap: 12px; /* Giảm từ 15px */
+  margin-bottom: 20px;
+  gap: 12px;
 }
 
 .step {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px; /* Giảm từ 8px */
+  gap: 6px;
 }
 
 .step-number {
-  width: 40px; /* Giảm từ 44px */
+  width: 40px;
   height: 40px;
   border-radius: 50%;
   background: var(--bg-secondary);
@@ -840,7 +818,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 15px; /* Giảm từ 16px */
+  font-size: 15px;
   transition: all var(--transition-base);
   border: 2px solid var(--border-color);
 }
@@ -854,7 +832,7 @@
 }
 
 .step-label {
-  font-size: 11px; /* Giảm từ 12px */
+  font-size: 11px;
   color: var(--text-muted);
   font-weight: 600;
 }
@@ -864,7 +842,7 @@
 }
 
 .step-line {
-  width: 50px; /* Giảm từ 60px */
+  width: 50px;
   height: 2px;
   background: var(--border-color);
 }
@@ -894,43 +872,43 @@
 
 .otp-info {
   text-align: center;
-  padding: 16px; /* Giảm từ 20px */
+  padding: 16px;
   background: rgba(0, 159, 211, 0.1);
-  border-radius: 10px; /* Giảm từ 12px */
-  margin-bottom: 16px; /* Giảm từ 20px */
+  border-radius: 10px;
+  margin-bottom: 16px;
   border: 1px solid rgba(0, 159, 211, 0.2);
 }
 
 .otp-info i {
-  font-size: 40px; /* Giảm từ 48px */
+  font-size: 40px;
   color: var(--color-brand-primary);
-  margin-bottom: 10px; /* Giảm từ 12px */
+  margin-bottom: 10px;
   display: block;
   animation: pulse 2s ease-in-out infinite;
 }
 
 .otp-info p {
-  margin: 8px 0; /* Giảm từ 10px */
-  font-size: 13px; /* Giảm từ 14px */
+  margin: 8px 0;
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
 .otp-info strong {
-  font-size: 14px; /* Giảm từ 15px */
+  font-size: 14px;
   color: var(--color-brand-primary);
   display: block;
-  margin-top: 5px; /* Giảm từ 6px */
+  margin-top: 5px;
 }
 
 .otp-resend {
   text-align: center;
-  margin-top: 14px; /* Giảm từ 18px */
+  margin-top: 14px;
 }
 
 .otp-resend p {
-  font-size: 12px; /* Giảm từ 13px */
+  font-size: 12px;
   color: var(--text-secondary);
-  margin: 6px 0; /* Giảm từ 8px */
+  margin: 6px 0;
 }
 
 .otp-resend a {
@@ -967,9 +945,8 @@
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-  /* TABLET - GIỮ 2 CỘT */
   .auth-page-content {
-    grid-template-columns: 1fr 1fr; /* Vẫn 2 cột */
+    grid-template-columns: 1fr 1fr;
   }
 
   .auth-page-left {
@@ -1042,7 +1019,6 @@
     padding: 0;
   }
 
-  /* MOBILE - 1 CỘT: ẢNH TRÊN, FORM DƯỚI */
   .auth-page-content {
     grid-template-columns: 1fr;
     height: auto;
@@ -1050,13 +1026,13 @@
   }
 
   .auth-page-left {
-    padding: 40px 20px 30px; /* Ảnh lên trên */
-    order: 1; /* Order 1 = lên trên */
+    padding: 40px 20px 30px;
+    order: 1;
   }
 
   .auth-page-right {
-    padding: 30px 20px 40px; /* Form xuống dưới */
-    order: 2; /* Order 2 = xuống dưới */
+    padding: 30px 20px 40px;
+    order: 2;
   }
 
   .auth-illustration img {
@@ -1075,7 +1051,7 @@
   }
 
   .form-group input {
-    font-size: 16px; /* Tránh zoom trên iOS */
+    font-size: 16px;
     padding: 13px 16px;
   }
 

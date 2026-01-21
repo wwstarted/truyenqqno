@@ -18,13 +18,10 @@
   });
 
   function initSocialLogin() {
-    // Google Login
     $("#login-google, #register-google").on("click", handleGoogleLogin);
 
-    // Facebook Login
     $("#login-facebook, #register-facebook").on("click", handleFacebookLogin);
 
-    // Listen for messages from popup
     window.addEventListener("message", handleOAuthMessage);
 
     console.log("TruyenQQ Social Login: Ready");
@@ -40,7 +37,6 @@
     const $btn = $(this);
     const originalHTML = $btn.html();
 
-    // Validate configuration
     if (
       typeof truyenqqOAuth === "undefined" ||
       !truyenqqOAuth.google_client_id
@@ -53,14 +49,11 @@
       return;
     }
 
-    // Show loading state
     setButtonLoading($btn, true, "Đang kết nối Google...");
 
-    // Build OAuth URL
     const authUrl = buildGoogleAuthUrl();
     console.log("Opening Google OAuth popup...");
 
-    // Open popup
     popupWindow = openOAuthPopup(authUrl, "googleLogin");
 
     if (!popupWindow) {
@@ -72,7 +65,6 @@
       return;
     }
 
-    // Poll popup status
     startPopupPolling($btn, originalHTML);
   }
 
@@ -86,7 +78,6 @@
     const $btn = $(this);
     const originalHTML = $btn.html();
 
-    // Validate configuration
     if (
       typeof truyenqqOAuth === "undefined" ||
       !truyenqqOAuth.facebook_app_id
@@ -99,14 +90,11 @@
       return;
     }
 
-    // Show loading state
     setButtonLoading($btn, true, "Đang kết nối Facebook...");
 
-    // Build OAuth URL
     const authUrl = buildFacebookAuthUrl();
     console.log("Opening Facebook OAuth popup...");
 
-    // Open popup
     popupWindow = openOAuthPopup(authUrl, "facebookLogin");
 
     if (!popupWindow) {
@@ -118,7 +106,6 @@
       return;
     }
 
-    // Poll popup status
     startPopupPolling($btn, originalHTML);
   }
 
@@ -175,13 +162,11 @@
 
     const popup = window.open(url, name, features);
 
-    // Check if popup was blocked
     if (!popup || popup.closed || typeof popup.closed === "undefined") {
       console.error("Popup blocked by browser");
       return null;
     }
 
-    // Focus popup
     if (popup.focus) {
       popup.focus();
     }
@@ -207,7 +192,6 @@
    * Handle messages from OAuth popup
    */
   function handleOAuthMessage(event) {
-    // Verify origin
     if (event.origin !== window.location.origin) {
       console.warn("Message from unauthorized origin:", event.origin);
       return;
@@ -221,22 +205,17 @@
 
     console.log("OAuth message received:", data.type);
 
-    // Clear polling
     if (pollTimer) {
       clearInterval(pollTimer);
       pollTimer = null;
     }
 
-    // Handle success
     if (
       data.type === "google-login-success" ||
       data.type === "facebook-login-success"
     ) {
       handleOAuthSuccess(data);
-    }
-
-    // Handle error
-    else if (
+    } else if (
       data.type === "google-login-error" ||
       data.type === "facebook-login-error"
     ) {
@@ -250,15 +229,12 @@
   function handleOAuthSuccess(data) {
     console.log("OAuth login successful");
 
-    // Close popup if still open
     if (popupWindow && !popupWindow.closed) {
       popupWindow.close();
     }
 
-    // Show success message
     showMessage("success", "Đăng nhập thành công! Đang chuyển hướng...");
 
-    // Redirect after short delay
     setTimeout(function () {
       const redirectUrl = data.redirect || window.location.href;
       window.location.href = redirectUrl;
@@ -271,12 +247,10 @@
   function handleOAuthError(data) {
     console.error("OAuth login error:", data.message);
 
-    // Close popup if still open
     if (popupWindow && !popupWindow.closed) {
       popupWindow.close();
     }
 
-    // Reset all buttons
     $(".btn-social").each(function () {
       const $btn = $(this);
       const isGoogle = $btn.attr("id").includes("google");
@@ -285,7 +259,6 @@
       setButtonLoading($btn, false, `<i class="${icon}"></i> ${originalText}`);
     });
 
-    // Show error message
     const errorMessage =
       data.message || "Đăng nhập thất bại. Vui lòng thử lại.";
     showMessage("error", errorMessage);
@@ -310,7 +283,6 @@
    * Show message (toast notification)
    */
   function showMessage(type, message) {
-    // Try to use form message if available
     const $formMessage = $(".form-message");
     if ($formMessage.length) {
       const iconClass =
@@ -327,7 +299,6 @@
       return;
     }
 
-    // Otherwise create toast
     showToast(type, message);
   }
 
@@ -335,14 +306,12 @@
    * Show toast notification
    */
   function showToast(type, message) {
-    // Ensure toast container exists
     let $container = $(".toast-container");
     if (!$container.length) {
       $container = $('<div class="toast-container"></div>');
       $("body").append($container);
     }
 
-    // Create toast
     const iconClass =
       type === "success" ? "fa-check-circle" : "fa-exclamation-circle";
     const $toast = $(`
@@ -352,15 +321,12 @@
       </div>
     `);
 
-    // Add to container
     $container.append($toast);
 
-    // Show toast
     setTimeout(function () {
       $toast.addClass("show");
     }, 100);
 
-    // Auto hide after 5 seconds
     setTimeout(function () {
       $toast.removeClass("show");
       setTimeout(function () {
@@ -380,7 +346,6 @@
     );
   }
 
-  // Clean up on page unload
   $(window).on("beforeunload", function () {
     if (pollTimer) {
       clearInterval(pollTimer);

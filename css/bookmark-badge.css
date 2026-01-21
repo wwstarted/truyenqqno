@@ -1,22 +1,3 @@
-/**
- * Bookmark Badge Global Styles
- * File: css/bookmark-badge.css
- * 
- * @package TruyenQQ
- * @version 1.0.0
- * 
- * Usage: Dùng cho TẤT CẢ các trang có bookmark badge
- * - Trang chủ
- * - Listing pages (mới cập nhật, top ngày, tuần, tháng...)
- * - Thể loại
- * - Tìm kiếm
- * - Theo dõi
- */
-
-/* ========================================
-   BOOKMARK BADGE BASE STYLES
-======================================== */
-
 .bookmark-badge {
   position: absolute;
   top: 8px;
@@ -125,7 +106,6 @@ body.dark-mode .bookmark-badge.active:hover {
    ANIMATION EFFECTS
 ======================================== */
 
-/* Click animation */
 @keyframes bookmarkPulse {
   0% {
     transform: scale(1);
@@ -142,7 +122,6 @@ body.dark-mode .bookmark-badge.active:hover {
   animation: bookmarkPulse 0.3s ease;
 }
 
-/* Success animation */
 @keyframes bookmarkSuccess {
   0% {
     transform: scale(1);
@@ -298,7 +277,6 @@ body.dark-mode .toast {
   color: #ff9800;
 }
 
-/* Toast responsive */
 @media (max-width: 767px) {
   .toast-container {
     top: 10px;
@@ -354,15 +332,11 @@ body.dark-mode .bookmark-count {
    COMPATIBILITY FIXES
 ======================================== */
 
-/* Fix cho các trang có multiple bookmark badges */
 .comic-card .bookmark-badge {
-  /* Override positioning nếu cần */
 }
 
-/* Fix cho mobile touch */
 @media (hover: none) and (pointer: coarse) {
   .bookmark-badge:hover {
-    /* Disable hover effect on touch devices */
     background-color: rgba(0, 0, 0, 0.7);
     transform: scale(1);
   }
@@ -372,7 +346,6 @@ body.dark-mode .bookmark-count {
   }
 }
 
-/* Prevent text selection */
 .bookmark-badge {
   user-select: none;
   -webkit-user-select: none;
@@ -380,7 +353,6 @@ body.dark-mode .bookmark-count {
   -ms-user-select: none;
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
   .bookmark-badge {
     border: 2px solid #fff;
@@ -391,7 +363,6 @@ body.dark-mode .bookmark-count {
   }
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .bookmark-badge,
   .bookmark-badge i,

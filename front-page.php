@@ -637,7 +637,7 @@ $hot_comic_ids = $wpdb->get_col(
  * @version 1.0.0
  */
 
-// Demo data - Replace với WP_Query khi có CPT Blog
+
 $featured_articles = array(
     array(
         'id' => 1,

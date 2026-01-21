@@ -1,6 +1,6 @@
 /**
- * Advanced Search with AJAX (FIXED)
- * ✅ Tích hợp global bookmark system
+ * Advanced Search with AJAX
+ * Tích hợp global bookmark system
  *
  * @package TruyenQQ
  * @version 1.0.1
@@ -244,7 +244,6 @@
         updateURL();
         scrollToTop();
 
-        // ✅ Check bookmark states
         if (typeof window.TruyenqqBookmarks !== "undefined") {
           window.TruyenqqBookmarks.check();
         }
@@ -326,7 +325,6 @@
 
     comicsGrid.innerHTML = html;
 
-    // ✅ Init global bookmarks
     if (typeof window.TruyenqqBookmarks !== "undefined") {
       window.TruyenqqBookmarks.init();
     }

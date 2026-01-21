@@ -6,7 +6,7 @@
  * @version 1.0.0
  */
 
-// Redirect if not logged in
+
 if (!is_user_logged_in()) {
     wp_redirect(home_url('/dang-nhap?redirect_to=' . urlencode($_SERVER['REQUEST_URI'])));
     exit;

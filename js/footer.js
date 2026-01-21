@@ -27,48 +27,21 @@
       const submitBtn = form.querySelector(".newsletter-btn");
       const email = emailInput.value.trim();
 
-      // Validate email
       if (!isValidEmail(email)) {
         showToast("Vui lòng nhập email hợp lệ!", "error");
         return;
       }
 
-      // Disable button & show loading
       const originalHTML = submitBtn.innerHTML;
       submitBtn.disabled = true;
       submitBtn.innerHTML =
         '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
 
-      // Simulate AJAX call (replace with real API later)
       setTimeout(() => {
-        // Success
         showToast("Đăng ký thành công! Cảm ơn bạn đã theo dõi.", "success");
         emailInput.value = "";
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalHTML;
-
-        // TODO: Replace with real AJAX call
-        // fetch('/wp-json/truyenqq/v1/newsletter', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ email: email })
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //   if (data.success) {
-        //     showToast(data.message, 'success');
-        //     emailInput.value = '';
-        //   } else {
-        //     showToast(data.message, 'error');
-        //   }
-        // })
-        // .catch(error => {
-        //   showToast('Có lỗi xảy ra. Vui lòng thử lại!', 'error');
-        // })
-        // .finally(() => {
-        //   submitBtn.disabled = false;
-        //   submitBtn.innerHTML = originalHTML;
-        // });
       }, 1500);
     });
   }
@@ -129,7 +102,6 @@
 
     const button = backToTopBtn.querySelector("button");
 
-    // Show/hide button based on scroll position
     window.addEventListener("scroll", function () {
       if (window.pageYOffset > 300) {
         backToTopBtn.classList.add("show");
@@ -138,7 +110,6 @@
       }
     });
 
-    // Scroll to top on click
     button.addEventListener("click", function () {
       window.scrollTo({
         top: 0,
@@ -168,7 +139,7 @@
           const targetElement = document.querySelector(targetId);
           if (targetElement) {
             e.preventDefault();
-            const offsetTop = targetElement.offsetTop - 80; // 80px for fixed header
+            const offsetTop = targetElement.offsetTop - 80;
             window.scrollTo({
               top: offsetTop,
               behavior: "smooth",

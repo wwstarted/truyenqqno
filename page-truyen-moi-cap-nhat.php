@@ -2,8 +2,6 @@
 /**
  * Template Name: Truyện Mới Cập Nhật
  * 
- * Trang listing tất cả truyện với filter + pagination
- * ✅ FIXED: Tích hợp bookmark system
  * 
  * @package TruyenQQ
  * @version 1.0.1

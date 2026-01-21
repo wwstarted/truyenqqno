@@ -1,16 +1,11 @@
 <?php
 /**
  * Database Migration for OAuth Support
- * Tự động thêm cột login_method vào bảng login_history
- * 
+
  * @package TruyenQQ
  * @version 1.0.0
  * 
- * HƯỚNG DẪN SỬ DỤNG:
- * 1. Copy file này vào thư mục inc/
- * 2. Thêm vào functions.php: require_once get_template_directory() . '/inc/database-migration.php';
- * 3. Chạy 1 lần để migration
- * 4. Sau đó comment lại hoặc xóa dòng require_once
+
  */
 
 if (!defined('ABSPATH')) {
@@ -26,13 +21,13 @@ function truyenqq_run_database_migration()
 
     $login_history_table = $wpdb->prefix . 'nettruyen_login_history';
 
-    // Check if table exists
+
     if ($wpdb->get_var("SHOW TABLES LIKE '$login_history_table'") != $login_history_table) {
         error_log('TruyenQQ Migration: Table ' . $login_history_table . ' does not exist');
         return;
     }
 
-    // Check if login_method column already exists
+
     $column_exists = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
@@ -49,7 +44,7 @@ function truyenqq_run_database_migration()
         return;
     }
 
-    // Add login_method column
+
     $sql = "ALTER TABLE `$login_history_table` 
             ADD COLUMN `login_method` VARCHAR(50) NOT NULL DEFAULT 'password' 
             COMMENT 'Login method: password, google_oauth, facebook_oauth, google_oauth_register, facebook_oauth_register'
@@ -62,7 +57,7 @@ function truyenqq_run_database_migration()
         return;
     }
 
-    // Add indexes
+
     $wpdb->query("ALTER TABLE `$login_history_table` ADD INDEX `idx_login_method` (`login_method`)");
     $wpdb->query("ALTER TABLE `$login_history_table` ADD INDEX `idx_user_status_method` (`user_id`, `login_status`, `login_method`)");
 
@@ -82,7 +77,7 @@ function truyenqq_check_and_run_migration()
         truyenqq_run_database_migration();
         update_option('truyenqq_db_migration_version', $migration_version);
 
-        // Show admin notice
+
         add_action('admin_notices', function () {
             ?>
 <div class="notice notice-success is-dismissible">
@@ -114,7 +109,7 @@ function truyenqq_render_migration_page()
         return;
     }
 
-    // Handle manual migration trigger
+
     if (isset($_POST['run_migration'])) {
         check_admin_referer('truyenqq_run_migration');
 
@@ -127,7 +122,7 @@ function truyenqq_render_migration_page()
     global $wpdb;
     $login_history_table = $wpdb->prefix . 'nettruyen_login_history';
 
-    // Check current status
+
     $column_exists = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT * FROM INFORMATION_SCHEMA.COLUMNS 

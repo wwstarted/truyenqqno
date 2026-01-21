@@ -605,8 +605,6 @@ select:focus {
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-/* css for badge =================== */
-
 /**
  * Bookmark Badge Styles
  * Thêm vào file CSS chính của bạn (style.css hoặc front-page-v2.css)
@@ -619,7 +617,6 @@ select:focus {
    BOOKMARK BADGE STYLES
 ======================================== */
 
-/* Default state (chưa bookmark) */
 .bookmark-badge {
   position: absolute;
   top: 8px;
@@ -643,14 +640,12 @@ body.dark-mode .bookmark-badge {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Hover state */
 .bookmark-badge:hover {
   background-color: rgba(255, 107, 107, 0.9);
   transform: scale(1.1);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Active state (đã bookmark) */
 .bookmark-badge.active {
   background-color: #ff6b6b !important;
   color: #fff !important;
@@ -663,14 +658,12 @@ body.dark-mode .bookmark-badge.active {
   box-shadow: 0 0 16px rgba(255, 107, 107, 0.8);
 }
 
-/* Active hover */
 .bookmark-badge.active:hover {
   background-color: #ff5252 !important;
   transform: scale(1.15);
   box-shadow: 0 0 16px rgba(255, 107, 107, 0.8);
 }
 
-/* Icon inside */
 .bookmark-badge i {
   font-size: 14px;
   transition: all 0.2s ease;
@@ -681,7 +674,6 @@ body.dark-mode .bookmark-badge.active {
   font-weight: 900;
 }
 
-/* Animation when clicking */
 @keyframes bookmarkPulse {
   0% {
     transform: scale(1);
@@ -698,7 +690,6 @@ body.dark-mode .bookmark-badge.active {
   animation: bookmarkPulse 0.3s ease;
 }
 
-/* Loading state */
 .bookmark-badge.loading {
   opacity: 0.6;
   pointer-events: none;
@@ -717,7 +708,6 @@ body.dark-mode .bookmark-badge.active {
   }
 }
 
-/* Responsive */
 @media (max-width: 767px) {
   .bookmark-badge {
     width: 28px;
@@ -837,7 +827,6 @@ body.dark-mode .toast {
   color: #2196f3;
 }
 
-/* Mobile toast */
 @media (max-width: 767px) {
   .toast-container {
     top: 10px;

@@ -8,16 +8,13 @@
 (function () {
   "use strict";
   function getApiBase() {
-    // Ưu tiên: Lấy từ PHP (được inject bởi wp_localize_script)
     if (typeof truyenqqConfig !== "undefined" && truyenqqConfig.apiBase) {
       return truyenqqConfig.apiBase;
     }
 
-    // Fallback: Tự động detect từ current URL
-    const origin = window.location.origin; // http://localhost
-    const pathname = window.location.pathname; // /truyen_qqno/wordpress-6.8.3-vi/wordpress/lich-su/
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
 
-    // Tách ra phần WordPress root
     let wpRoot = "/";
     if (pathname.includes("/wordpress/")) {
       wpRoot = pathname.substring(0, pathname.indexOf("/wordpress/") + 11);
@@ -46,7 +43,7 @@
     const page = document.querySelector(".reading-history-page");
     if (!page) return;
 
-    console.log("📍 API Base:", API_BASE); // Debug log
+    console.log("📍 API Base:", API_BASE);
     loadHistory();
     initClearAllButton();
   }
@@ -81,7 +78,6 @@
         },
       });
 
-      // Check HTTP status
       if (!response.ok) {
         const errorText = await response.text();
         console.error("API Error:", response.status, errorText);
@@ -138,7 +134,6 @@
       grid.appendChild(card);
     });
 
-    // Init delete buttons
     initDeleteButtons();
   }
 
@@ -236,13 +231,11 @@
           const result = await response.json();
 
           if (result.success) {
-            // Remove card with animation
             card.style.opacity = "0";
             card.style.transform = "scale(0.9)";
             setTimeout(() => {
               card.remove();
 
-              // Check if grid is empty
               const grid = document.getElementById("history-grid");
               if (grid.children.length === 0) {
                 grid.style.display = "none";

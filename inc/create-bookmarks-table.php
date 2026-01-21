@@ -36,7 +36,7 @@ function truyenqq_create_bookmarks_table()
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
 
-    // Verify table creation
+
     if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
         error_log('TruyenQQ: Bookmarks table created successfully');
         return true;
@@ -99,7 +99,7 @@ function truyenqq_update_bookmark_counts()
     global $wpdb;
     $table = $wpdb->prefix . 'nettruyen_bookmarks';
 
-    // Get all posts with bookmarks
+
     $results = $wpdb->get_results(
         "SELECT post_id, COUNT(*) as count 
          FROM {$table} 
@@ -113,12 +113,12 @@ function truyenqq_update_bookmark_counts()
     error_log('TruyenQQ: Updated bookmark counts for ' . count($results) . ' posts');
 }
 
-// Schedule daily update
+
 add_action('truyenqq_daily_bookmark_update', 'truyenqq_update_bookmark_counts');
 
 if (!wp_next_scheduled('truyenqq_daily_bookmark_update')) {
     wp_schedule_event(time(), 'daily', 'truyenqq_daily_bookmark_update');
 }
 
-// Create table on theme activation
+
 add_action('after_switch_theme', 'truyenqq_create_bookmarks_table');

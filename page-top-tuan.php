@@ -17,7 +17,7 @@ $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-// Lấy TẤT CẢ truyện, sắp xếp theo weekly_views (Giải pháp 2)
+
 $comic_ids = $wpdb->get_col("
     SELECT p.ID 
     FROM {$wpdb->posts} p

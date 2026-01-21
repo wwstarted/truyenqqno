@@ -17,7 +17,7 @@ $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-// ✅ FIXED: Lấy TẤT CẢ truyện, sắp xếp theo daily_views (Giải pháp 2)
+
 $comic_ids = $wpdb->get_col("
     SELECT p.ID 
     FROM {$wpdb->posts} p
@@ -43,7 +43,7 @@ $args = array(
     'orderby' => 'post__in'
 );
 
-// Filter theo status
+
 if ($status !== '') {
     $args['meta_query'] = array(
         array(
@@ -54,7 +54,7 @@ if ($status !== '') {
     );
 }
 
-// Filter theo country
+
 if ($country !== '') {
     $args['tax_query'] = array(
         array(
@@ -189,7 +189,7 @@ $current_page = max(1, $paged);
                         $follow_count = 0;
                     }
 
-                    // Lấy view count từ stats
+
                     $view_stats = $wpdb->get_row(
                         $wpdb->prepare(
                             "SELECT daily_views FROM {$stats_table} WHERE post_id = %d",

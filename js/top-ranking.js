@@ -1,6 +1,6 @@
 /**
  * Top Ranking Comics (Daily/Weekly/Monthly)
- * ✅ FIXED: Tích hợp global bookmark system
+
  *
  * @package TruyenQQ
  * @version 1.0.1
@@ -14,7 +14,6 @@ class TopRankingComics extends ComicsListingBase {
   init() {
     super.init();
 
-    // Detect filter type from data attribute
     if (this.elements.mainContainer) {
       const filterType = this.elements.mainContainer.dataset.filterType;
       if (filterType) {
@@ -86,10 +85,8 @@ class TopRankingComics extends ComicsListingBase {
    * ✅ Override renderComics để init global bookmarks
    */
   renderComics(comics) {
-    // Gọi parent renderComics
     super.renderComics(comics);
 
-    // ✅ Init global bookmarks sau khi render
     if (typeof window.TruyenqqBookmarks !== "undefined") {
       window.TruyenqqBookmarks.init();
     }
@@ -101,14 +98,12 @@ class TopRankingComics extends ComicsListingBase {
   async loadComics() {
     await super.loadComics();
 
-    // ✅ Check bookmark states sau khi load
     if (typeof window.TruyenqqBookmarks !== "undefined") {
       window.TruyenqqBookmarks.check();
     }
   }
 }
 
-// Auto-initialize khi DOM ready
 (function () {
   "use strict";
 
@@ -118,15 +113,12 @@ class TopRankingComics extends ComicsListingBase {
 
     const filterType = mainContainer.dataset.filterType;
 
-    // Chỉ khởi tạo nếu là trang top ranking
     if (!filterType || !filterType.startsWith("top-")) return;
 
-    // Determine API endpoint based on filter type
     let apiEndpoint = "";
     if (typeof nettruyenData !== "undefined") {
       apiEndpoint = nettruyenData.restUrl;
     } else {
-      // Fallback endpoints
       switch (filterType) {
         case "top-ngay":
           apiEndpoint = "/wp-json/nettruyen/v1/comics/top-ngay";

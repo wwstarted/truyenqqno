@@ -119,18 +119,15 @@
       return parent.querySelector(selector);
     },
 
-    // Safe query selector all
     qsa(selector, parent = document) {
       return Array.from(parent.querySelectorAll(selector));
     },
 
-    // Check if element is in viewport
     isInViewport(el) {
       const rect = el.getBoundingClientRect();
       return rect.bottom > 0 && rect.top < window.innerHeight;
     },
 
-    // Email validation
     isValidEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
@@ -164,10 +161,6 @@
       elements.forEach((el) => observer.observe(el));
     },
   };
-
-  // ===========================================
-  // HERO & ABOUT SECTION
-  // ===========================================
 
   const HeroSection = {
     init() {
@@ -292,10 +285,6 @@
     },
   };
 
-  // ===========================================
-  // SERVICES SECTION
-  // ===========================================
-
   const ServicesSection = {
     init() {
       const items = Utils.qsa(".pp-service-item");
@@ -305,7 +294,7 @@
 
       items.forEach((item) => {
         item.addEventListener("click", () =>
-          this.handleClick(item, items, images)
+          this.handleClick(item, items, images),
         );
       });
     },
@@ -321,7 +310,7 @@
       clicked.classList.add("active");
 
       const targetImage = Utils.qs(
-        `.pp-service-image[data-service="${serviceType}"]`
+        `.pp-service-image[data-service="${serviceType}"]`,
       );
       if (targetImage) {
         setTimeout(() => targetImage.classList.add("active"), 100);
@@ -332,10 +321,6 @@
       }
     },
   };
-
-  // ===========================================
-  // WHY CHOOSE US SECTION
-  // ===========================================
 
   const WhyChooseUsSection = {
     init() {
@@ -356,7 +341,7 @@
       });
 
       const elements = Utils.qsa(
-        ".pp-why-header, .pp-stat-card, .pp-why-image-wrapper, .pp-feature-item"
+        ".pp-why-header, .pp-stat-card, .pp-why-image-wrapper, .pp-feature-item",
       );
       elements.forEach((el) => observer.observe(el));
     },
@@ -431,16 +416,12 @@
             }
           });
         },
-        { threshold: 0.5 }
+        { threshold: 0.5 },
       );
 
       Utils.qsa(".pp-stat-number").forEach((num) => observer.observe(num));
     },
   };
-
-  // ===========================================
-  // USER REVIEWS SECTION
-  // ===========================================
 
   const UserReviewsSection = {
     init() {
@@ -457,10 +438,6 @@
       });
     },
   };
-
-  // ===========================================
-  // PROCESS SECTION
-  // ===========================================
 
   const ProcessSection = {
     currentStep: 2,
@@ -524,7 +501,7 @@
         step.classList.remove(
           "state-completed",
           "state-active",
-          "state-pending"
+          "state-pending",
         );
         if (i < activeIndex) step.classList.add("state-completed");
         else if (i === activeIndex) step.classList.add("state-active");
@@ -562,7 +539,7 @@
             </svg>
             <span>${item}</span>
           </div>
-        `
+        `,
           )
           .join("");
       }
@@ -591,10 +568,6 @@
       if (nextBtn) nextBtn.disabled = index === PROCESS_STEPS.length - 1;
     },
   };
-
-  // ===========================================
-  // CONTACT SECTION
-  // ===========================================
 
   const ContactSection = {
     init() {
@@ -638,7 +611,7 @@
             if (input)
               field.classList.toggle("has-value", input.value.trim() !== "");
           }),
-        100
+        100,
       );
     },
 
@@ -696,7 +669,7 @@
         e.preventDefault();
 
         Utils.qsa(".pp-form-input", form).forEach((input) =>
-          this.clearError(input)
+          this.clearError(input),
         );
 
         let isValid = true;
@@ -742,7 +715,7 @@
         this.showSuccess(form);
         form.reset();
         Utils.qsa(".pp-form-field", form).forEach((field) =>
-          field.classList.remove("has-value")
+          field.classList.remove("has-value"),
         );
         btn.disabled = false;
         btn.querySelector("span:first-child").textContent = originalText;
@@ -797,10 +770,6 @@
     },
   };
 
-  // ===========================================
-  // BLOG SECTION
-  // ===========================================
-
   const BlogSection = {
     currentPage: 1,
     totalPages: 0,
@@ -822,7 +791,7 @@
       });
 
       const elements = Utils.qsa(
-        ".badge-wrapper, .section-title, .section-description, .blog-grid, .view-all-wrapper"
+        ".badge-wrapper, .section-title, .section-description, .blog-grid, .view-all-wrapper",
       );
       elements.forEach((el) => observer.observe(el));
     },
@@ -888,7 +857,7 @@
           direction === "next" ? "translateX(-30px)" : "translateX(30px)";
         setTimeout(
           () => (card.style.display = "none"),
-          CONFIG.ANIMATION_DURATION
+          CONFIG.ANIMATION_DURATION,
         );
       });
 
@@ -918,10 +887,6 @@
       });
     },
   };
-
-  // ===========================================
-  // FAQ SECTION
-  // ===========================================
 
   const FAQSection = {
     init() {
@@ -962,7 +927,7 @@
 
           setTimeout(() => {
             Utils.qsa(".faq-group").forEach((g) =>
-              g.classList.remove("active")
+              g.classList.remove("active"),
             );
 
             const targetGroup = Utils.qs(`.faq-group[data-tab="${targetTab}"]`);
@@ -1097,10 +1062,6 @@
     },
   };
 
-  // ===========================================
-  // GLOBAL UTILITIES
-  // ===========================================
-
   const GlobalUtils = {
     init() {
       this.setupSmoothScroll();
@@ -1136,14 +1097,9 @@
     },
   };
 
-  // ===========================================
-  // MAIN INITIALIZATION
-  // ===========================================
-
   function init() {
     console.log("Pixel Perfect - Initializing...");
 
-    // Initialize all sections
     HeroSection.init();
     ServicesSection.init();
     WhyChooseUsSection.init();
@@ -1156,10 +1112,6 @@
 
     console.log("Pixel Perfect - All sections initialized successfully");
   }
-
-  // ===========================================
-  // DOM READY CHECK
-  // ===========================================
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

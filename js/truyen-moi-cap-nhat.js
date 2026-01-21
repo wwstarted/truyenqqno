@@ -1,8 +1,5 @@
 /**
- * Truyện Mới Cập Nhật - JavaScript (FIXED)
- * ✅ Xóa logic bookmark cục bộ
- * ✅ Dùng global TruyenqqBookmarks
- * ✅ Fix AJAX rendering với bookmark API
+
  *
  * @package TruyenQQ
  * @version 1.0.1
@@ -151,7 +148,6 @@
         updateURL();
         scrollToTop();
 
-        // ✅ Gọi global bookmark check sau khi render
         if (typeof window.TruyenqqBookmarks !== "undefined") {
           window.TruyenqqBookmarks.check();
         }
@@ -233,7 +229,6 @@
 
     comicsGrid.innerHTML = html;
 
-    // ✅ Gọi global bookmark init sau khi render HTML
     if (typeof window.TruyenqqBookmarks !== "undefined") {
       window.TruyenqqBookmarks.init();
     }

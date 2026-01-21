@@ -30,7 +30,7 @@ function truyenqq_verify_recaptcha($recaptcha_token)
 
     if (empty($secret_key)) {
         error_log('TruyenQQ: reCAPTCHA secret key not configured');
-        return true; // Allow if not configured - REMOVE IN PRODUCTION
+        return true;
     }
 
     $verify_url = 'https://www.google.com/recaptcha/api/siteverify';
@@ -70,7 +70,7 @@ function truyenqq_ajax_login()
 {
     check_ajax_referer('truyenqq_auth_nonce', 'nonce');
 
-    // Verify reCAPTCHA
+
     $recaptcha_response = isset($_POST['recaptcha_response']) ? sanitize_text_field($_POST['recaptcha_response']) : '';
 
     if (!truyenqq_verify_recaptcha($recaptcha_response)) {
@@ -118,7 +118,7 @@ function truyenqq_ajax_register_send_otp()
 {
     check_ajax_referer('truyenqq_auth_nonce', 'nonce');
 
-    // Verify reCAPTCHA
+
     $recaptcha_response = isset($_POST['recaptcha_response']) ? sanitize_text_field($_POST['recaptcha_response']) : '';
 
     if (!truyenqq_verify_recaptcha($recaptcha_response)) {
@@ -169,7 +169,7 @@ function truyenqq_ajax_forgot_password_send_otp()
 {
     check_ajax_referer('truyenqq_auth_nonce', 'nonce');
 
-    // Verify reCAPTCHA
+
     $recaptcha_response = isset($_POST['recaptcha_response']) ? sanitize_text_field($_POST['recaptcha_response']) : '';
 
     if (!truyenqq_verify_recaptcha($recaptcha_response)) {
@@ -264,7 +264,7 @@ function truyenqq_enqueue_auth_scripts()
         return;
     }
 
-    // Google reCAPTCHA
+
     wp_enqueue_script(
         'google-recaptcha',
         'https://www.google.com/recaptcha/api.js',
@@ -273,7 +273,7 @@ function truyenqq_enqueue_auth_scripts()
         true
     );
 
-    // Auth CSS
+
     wp_enqueue_style(
         'truyenqq-auth-pages',
         get_template_directory_uri() . '/css/auth-pages.css',
@@ -281,7 +281,7 @@ function truyenqq_enqueue_auth_scripts()
         '1.0.4'
     );
 
-    // Auth JS
+
     wp_enqueue_script(
         'truyenqq-auth-pages',
         get_template_directory_uri() . '/js/auth-pages.js',
@@ -290,7 +290,7 @@ function truyenqq_enqueue_auth_scripts()
         true
     );
 
-    // Localize script
+
     wp_localize_script('truyenqq-auth-pages', 'truyenqqAuth', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('truyenqq_auth_nonce'),

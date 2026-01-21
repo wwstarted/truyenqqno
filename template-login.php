@@ -6,18 +6,18 @@
  * @version 3.1.0 - FIXED LAYOUT
  */
 
-// Redirect if already logged in
+
 if (is_user_logged_in()) {
     wp_redirect(home_url());
     exit;
 }
 
-get_header('auth'); // Load header-auth.php
+get_header('auth');
 ?>
 
 <div class="auth-page-container">
 
-    <!-- Back to Home Button - Fixed Bottom Right -->
+    <!-- Back to Home Button  -->
     <div class="back-to-home">
         <a href="<?php echo home_url(); ?>" title="Về trang chủ" aria-label="Về trang chủ">
             <i class="fa fa-home"></i>
@@ -156,4 +156,4 @@ get_header('auth'); // Load header-auth.php
     </div>
 </div>
 
-<?php get_footer('auth'); // Load footer-auth.php ?>
+<?php get_footer('auth');

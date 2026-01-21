@@ -18,11 +18,11 @@ add_action('admin_menu', 'truyenqq_add_oauth_settings_menu');
 function truyenqq_add_oauth_settings_menu()
 {
     add_options_page(
-        'Cài đặt OAuth',           // Page title
-        'OAuth Settings',          // Menu title
-        'manage_options',          // Capability
-        'truyenqq-oauth-settings', // Menu slug
-        'truyenqq_render_oauth_settings_page' // Callback
+        'Cài đặt OAuth',
+        'OAuth Settings',
+        'manage_options',
+        'truyenqq-oauth-settings',
+        'truyenqq_render_oauth_settings_page'
     );
 }
 
@@ -32,7 +32,7 @@ function truyenqq_add_oauth_settings_menu()
 add_action('admin_init', 'truyenqq_register_oauth_settings');
 function truyenqq_register_oauth_settings()
 {
-    // Google OAuth
+
     register_setting('truyenqq_oauth_settings', 'truyenqq_google_client_id', array(
         'type' => 'string',
         'sanitize_callback' => 'sanitize_text_field',
@@ -45,7 +45,7 @@ function truyenqq_register_oauth_settings()
         'default' => ''
     ));
 
-    // Facebook OAuth
+
     register_setting('truyenqq_oauth_settings', 'truyenqq_facebook_app_id', array(
         'type' => 'string',
         'sanitize_callback' => 'sanitize_text_field',
@@ -68,13 +68,13 @@ function truyenqq_render_oauth_settings_page()
         wp_die(__('Bạn không có quyền truy cập trang này.'));
     }
 
-    // Get current values
+
     $google_client_id = get_option('truyenqq_google_client_id', '');
     $google_client_secret = get_option('truyenqq_google_client_secret', '');
     $facebook_app_id = get_option('truyenqq_facebook_app_id', '');
     $facebook_app_secret = get_option('truyenqq_facebook_app_secret', '');
 
-    // Check if settings are saved
+
     $is_google_configured = !empty($google_client_id) && !empty($google_client_secret);
     $is_facebook_configured = !empty($facebook_app_id) && !empty($facebook_app_secret);
 

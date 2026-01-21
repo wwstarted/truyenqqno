@@ -9,11 +9,11 @@
 
 get_header();
 
-// Get comic info
+
 $post_id = get_the_ID();
 $comic_slug = get_post_field('post_name', $post_id);
 
-// Get meta data
+
 $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
 if (empty($thumbnail)) {
     $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -42,7 +42,7 @@ $other_names = get_post_meta($post_id, '_nettruyen_other_name', true);
 $description = get_post_meta($post_id, '_nettruyen_short_description', true);
 $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true) ?: 0;
 
-// Get view count
+
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 $view_count = 0;
@@ -56,17 +56,17 @@ if ($view_stats) {
     $view_count = $view_stats->total_display_views;
 }
 
-// Get author taxonomy
+
 $authors = get_the_terms($post_id, 'nettruyen_author');
 $author_name = 'Đang Cập Nhật';
 if ($authors && !is_wp_error($authors)) {
     $author_name = $authors[0]->name;
 }
 
-// Get genres
+
 $genres = get_the_terms($post_id, 'nettruyen_genre');
 
-// Get chapters from manifest JSON (more reliable)
+
 $chapters_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
 $chapters = [];
 
@@ -77,7 +77,7 @@ if (!empty($chapters_json)) {
     }
 }
 
-// If JSON fails, try serialized data
+
 if (empty($chapters)) {
     $chapters_data = get_post_meta($post_id, '_nettruyen_chapter_manifest', true);
     if (!empty($chapters_data)) {
@@ -88,30 +88,30 @@ if (empty($chapters)) {
     }
 }
 
-// Reverse chapters để hiển thị mới nhất trước
+
 if (!empty($chapters)) {
     $chapters = array_reverse($chapters);
 }
 
-// Get first and latest chapter for CTA buttons
+
 $first_chapter_url = '';
 $latest_chapter_url = '';
 
 if (!empty($chapters) && is_array($chapters)) {
-    // Latest chapter (first in reversed array)
+
     $latest_chapter = $chapters[0];
     if (isset($latest_chapter['slug'])) {
         $latest_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$latest_chapter['slug']}.html");
     }
 
-    // First chapter (last in reversed array)
+
     $first_chapter = end($chapters);
     if (isset($first_chapter['slug'])) {
         $first_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$first_chapter['slug']}.html");
     }
 }
 
-// Format numbers
+
 $follow_count_formatted = number_format($follow_count);
 $view_count_formatted = number_format($view_count);
 ?>
@@ -261,7 +261,7 @@ $view_count_formatted = number_format($view_count);
                 <?php if (!empty($chapters) && is_array($chapters)): ?>
                 <?php foreach ($chapters as $chapter): ?>
                 <?php
-                        // Safely get chapter data
+
                         if (!is_array($chapter))
                             continue;
 

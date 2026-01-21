@@ -5,8 +5,7 @@
  * 
  * @package TruyenQQ
  * @version 1.0.1
- * ✅ Fixed: Permission callback issues
- * ✅ Fixed: Better error handling
+
  */
 
 if (!defined('ABSPATH')) {
@@ -18,7 +17,7 @@ if (!defined('ABSPATH')) {
  */
 function truyenqq_check_logged_in_flexible($request)
 {
-    // Always return true for GET (we'll check inside the function)
+
     if ($request->get_method() === 'GET') {
         return true;
     }
@@ -30,42 +29,42 @@ function truyenqq_check_logged_in_flexible($request)
  * Register REST API routes
  */
 add_action('rest_api_init', function () {
-    // Get user's bookmarks
+
     register_rest_route('nettruyen/v1', '/bookmarks', array(
         'methods' => 'GET',
         'callback' => 'truyenqq_api_get_bookmarks',
-        'permission_callback' => '__return_true' // ← FIX: Allow access, check inside
+        'permission_callback' => '__return_true'
     ));
 
-    // Toggle bookmark (add/remove)
+
     register_rest_route('nettruyen/v1', '/bookmarks/toggle', array(
         'methods' => 'POST',
         'callback' => 'truyenqq_api_toggle_bookmark',
-        'permission_callback' => '__return_true' // ← FIX: Allow, validate inside
+        'permission_callback' => '__return_true'
     ));
 
-    // Check bookmark status
+
     register_rest_route('nettruyen/v1', '/bookmarks/check', array(
         'methods' => 'POST',
         'callback' => 'truyenqq_api_check_bookmark',
         'permission_callback' => '__return_true'
     ));
 
-    // Batch check multiple bookmarks
+
     register_rest_route('nettruyen/v1', '/bookmarks/check-batch', array(
         'methods' => 'POST',
         'callback' => 'truyenqq_api_check_bookmarks_batch',
         'permission_callback' => '__return_true'
     ));
 
-    // Delete bookmark
+
     register_rest_route('nettruyen/v1', '/bookmarks/(?P<post_id>\d+)', array(
         'methods' => 'DELETE',
         'callback' => 'truyenqq_api_delete_bookmark',
         'permission_callback' => '__return_true'
     ));
 
-    // Clear all bookmarks
+
     register_rest_route('nettruyen/v1', '/bookmarks/clear-all', array(
         'methods' => 'POST',
         'callback' => 'truyenqq_api_clear_bookmarks',
@@ -78,7 +77,7 @@ add_action('rest_api_init', function () {
  */
 function truyenqq_api_get_bookmarks($request)
 {
-    // Check login inside function
+
     if (!is_user_logged_in()) {
         return array(
             'success' => false,
@@ -93,7 +92,7 @@ function truyenqq_api_get_bookmarks($request)
     $table = $wpdb->prefix . 'nettruyen_bookmarks';
     $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-    // Check if table exists
+
     if ($wpdb->get_var("SHOW TABLES LIKE '{$table}'") != $table) {
         return new WP_Error(
             'table_not_exists',
@@ -102,7 +101,7 @@ function truyenqq_api_get_bookmarks($request)
         );
     }
 
-    // Get bookmarks with post data
+
     $results = $wpdb->get_results($wpdb->prepare(
         "SELECT b.*, p.post_title, p.guid 
          FROM {$table} b
@@ -125,7 +124,7 @@ function truyenqq_api_get_bookmarks($request)
     foreach ($results as $row) {
         $post_id = $row->post_id;
 
-        // Get thumbnail
+
         $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
         if (empty($thumbnail)) {
             $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -134,7 +133,7 @@ function truyenqq_api_get_bookmarks($request)
             $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
         }
 
-        // Get manifest for chapter info
+
         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
         $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
@@ -150,7 +149,7 @@ function truyenqq_api_get_bookmarks($request)
         $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_post_modified_time('U', false, $post_id);
         $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-        // Get stats
+
         $follow_count = (int) get_post_meta($post_id, '_nettruyen_follow_count', true);
         $bookmark_count = truyenqq_get_bookmark_count($post_id);
 
@@ -189,7 +188,7 @@ function truyenqq_api_get_bookmarks($request)
  */
 function truyenqq_api_toggle_bookmark($request)
 {
-    // Guest users get friendly message
+
     if (!is_user_logged_in()) {
         return array(
             'success' => false,
@@ -205,7 +204,7 @@ function truyenqq_api_toggle_bookmark($request)
         return new WP_Error('missing_post_id', 'Thiếu ID truyện', array('status' => 400));
     }
 
-    // Verify post exists
+
     $post = get_post($post_id);
     if (!$post || $post->post_type !== 'nettruyen_comic') {
         return new WP_Error('invalid_post', 'Truyện không tồn tại', array('status' => 404));
@@ -215,7 +214,7 @@ function truyenqq_api_toggle_bookmark($request)
     $user_id = get_current_user_id();
     $table = $wpdb->prefix . 'nettruyen_bookmarks';
 
-    // Check if table exists
+
     if ($wpdb->get_var("SHOW TABLES LIKE '{$table}'") != $table) {
         return new WP_Error(
             'table_not_exists',
@@ -224,7 +223,7 @@ function truyenqq_api_toggle_bookmark($request)
         );
     }
 
-    // Check if already bookmarked
+
     $exists = $wpdb->get_var($wpdb->prepare(
         "SELECT COUNT(*) FROM {$table} WHERE user_id = %d AND post_id = %d",
         $user_id,
@@ -232,7 +231,7 @@ function truyenqq_api_toggle_bookmark($request)
     ));
 
     if ($exists) {
-        // Remove bookmark
+
         $deleted = $wpdb->delete(
             $table,
             array('user_id' => $user_id, 'post_id' => $post_id),
@@ -240,7 +239,7 @@ function truyenqq_api_toggle_bookmark($request)
         );
 
         if ($deleted !== false) {
-            // Update count in post meta
+
             $new_count = truyenqq_get_bookmark_count($post_id);
             update_post_meta($post_id, '_nettruyen_bookmark_count', $new_count);
 
@@ -254,7 +253,7 @@ function truyenqq_api_toggle_bookmark($request)
             return new WP_Error('delete_failed', 'Lỗi bỏ theo dõi: ' . $wpdb->last_error, array('status' => 500));
         }
     } else {
-        // Add bookmark
+
         $inserted = $wpdb->insert(
             $table,
             array(
@@ -266,7 +265,7 @@ function truyenqq_api_toggle_bookmark($request)
         );
 
         if ($inserted !== false) {
-            // Update count in post meta
+
             $new_count = truyenqq_get_bookmark_count($post_id);
             update_post_meta($post_id, '_nettruyen_bookmark_count', $new_count);
 
@@ -331,10 +330,10 @@ function truyenqq_api_check_bookmarks_batch($request)
     $user_id = get_current_user_id();
     $table = $wpdb->prefix . 'nettruyen_bookmarks';
 
-    // Build placeholders
+
     $placeholders = implode(',', array_fill(0, count($post_ids), '%d'));
 
-    // Prepare query
+
     $query = $wpdb->prepare(
         "SELECT post_id FROM {$table} WHERE user_id = %d AND post_id IN ($placeholders)",
         array_merge(array($user_id), $post_ids)
@@ -342,7 +341,7 @@ function truyenqq_api_check_bookmarks_batch($request)
 
     $bookmarked_posts = $wpdb->get_col($query);
 
-    // Convert to associative array
+
     $result = array();
     foreach ($post_ids as $post_id) {
         $result[$post_id] = in_array($post_id, $bookmarked_posts);
@@ -380,7 +379,7 @@ function truyenqq_api_delete_bookmark($request)
     );
 
     if ($deleted !== false) {
-        // Update count
+
         $new_count = truyenqq_get_bookmark_count($post_id);
         update_post_meta($post_id, '_nettruyen_bookmark_count', $new_count);
 
