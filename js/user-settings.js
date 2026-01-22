@@ -169,7 +169,7 @@
         user.avatar ||
         `${userSettingsData.templateUrl}/images/info-user-img01.png`;
 
-      const levelProgress = user.level_progress || 0;
+      const levelProgress = user.level_progress || 22;
       const currentLevel = user.level || 1;
       const nextLevel = currentLevel + 1;
 

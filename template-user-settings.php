@@ -36,8 +36,9 @@ $is_oauth_user = get_user_meta($current_user->ID, 'oauth_provider', true);
             <section class="main-content user-settings-page">
                 <div class="container">
                     <div class="messages columns search-option-with-frame">
-                        <img src="<?php echo get_template_directory_uri(); ?>/images/tet/tet-search-frame.svg" alt=""
+                        <!-- <img src="<?php echo get_template_directory_uri(); ?>/images/videoframe_5699.png" alt=""
                             class="frame-search-option">
+ -->
 
                         <!-- SIDEBAR - Left Navigation -->
                         <div class="column is-narrow col-md-3 col-sm-12">

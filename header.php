@@ -10,11 +10,34 @@ $current_user = wp_get_current_user();
 $display_name = $is_user_logged_in ? $current_user->display_name : 'Khách';
 $user_email = $is_user_logged_in ? $current_user->user_email : '';
 
+$avatar_url = '';
 
-$avatar_url = get_avatar_url($current_user->ID, array('size' => 100));
+if ($is_user_logged_in) {
+
+    $custom_avatar_id = get_user_meta($current_user->ID, 'avatar', true);
+
+    if (!empty($custom_avatar_id)) {
+        $img_attr = wp_get_attachment_image_src($custom_avatar_id, 'thumbnail');
+        if ($img_attr) {
+            $avatar_url = $img_attr[0];
+        }
+    }
+
+    if (empty($avatar_url)) {
+        $avatar_url = get_avatar_url($current_user->ID, array('size' => 100));
+    }
+}
+
 if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar') !== false) {
     $avatar_url = 'https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
 }
+
+
+
+// $avatar_url = get_avatar_url($current_user->ID, array('size' => 100));
+// if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar') !== false) {
+//     $avatar_url = 'https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
+// }
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
