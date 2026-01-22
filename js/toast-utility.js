@@ -51,30 +51,18 @@
       }, duration);
     },
 
-    /**
-     * Show success toast
-     */
     success: function (message, duration = 3000) {
       this.show(message, "success", duration);
     },
 
-    /**
-     * Show error toast
-     */
     error: function (message, duration = 3000) {
       this.show(message, "error", duration);
     },
 
-    /**
-     * Show info toast
-     */
     info: function (message, duration = 3000) {
       this.show(message, "info", duration);
     },
 
-    /**
-     * Show warning toast
-     */
     warning: function (message, duration = 3000) {
       this.show(message, "warning", duration);
     },
@@ -82,5 +70,5 @@
 
   window.TruyenqqToast = TruyenqqToast;
 
-  console.log("✅ Global Toast System initialized");
+  console.log("Global Toast System initialized");
 })();

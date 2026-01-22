@@ -77,5 +77,4 @@ if (!wp_next_scheduled('truyenqq_daily_cleanup')) {
     wp_schedule_event(time(), 'daily', 'truyenqq_daily_cleanup');
 }
 
-
 add_action('after_switch_theme', 'truyenqq_create_reading_history_table');

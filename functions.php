@@ -1,36 +1,24 @@
 <?php
 /**
  * Toyota Theme Functions
+ * FIXED: Removed duplicate user info API, added media upload permission
  * 
  * @package Toyota_Theme
+ * @version 1.0.1 - FIXED
  */
 
 function toyota_enqueue_assets()
 {
     wp_enqueue_script('jquery');
 
-
     wp_enqueue_style('toyota-global', get_template_directory_uri() . '/css/style.css', array(), '1.0.1');
     wp_enqueue_style('toyota-header', get_template_directory_uri() . '/css/header-v1.css', array('toyota-global'), '1.0.1');
     wp_enqueue_style('toyota-footer', get_template_directory_uri() . '/css/footer.css', array('toyota-global'), '1.0.1');
 
-
     wp_enqueue_style('bookmark-badge', get_template_directory_uri() . '/css/bookmark-badge.css', array('toyota-global'), '1.0.1');
-
 
     wp_enqueue_style('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', [], '11.0.0');
     wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], '11.0.0', true);
-
-
-
-
-
-
-
-
-
-
-
 
     wp_enqueue_script(
         'toast-utility',
@@ -40,7 +28,6 @@ function toyota_enqueue_assets()
         true
     );
 
-
     wp_enqueue_script(
         'truyenqq-bookmarks',
         get_template_directory_uri() . '/js/bookmarks.js',
@@ -49,16 +36,12 @@ function toyota_enqueue_assets()
         true
     );
 
-
     wp_localize_script('truyenqq-bookmarks', 'truyenqqConfig', array(
         'apiBase' => esc_url_raw(rest_url('nettruyen/v1')),
         'nonce' => wp_create_nonce('wp_rest'),
         'homeUrl' => esc_url(home_url()),
         'isLoggedIn' => is_user_logged_in()
     ));
-
-
-
 
     $listing_templates = array(
         'page-truyen-moi-cap-nhat.php',
@@ -96,9 +79,6 @@ function toyota_enqueue_assets()
         );
     }
 
-
-
-
     if (is_page_template('page-truyen-moi-cap-nhat.php')) {
         wp_enqueue_script(
             'truyen-moi-cap-nhat-js',
@@ -113,9 +93,6 @@ function toyota_enqueue_assets()
             'nonce' => wp_create_nonce('wp_rest'),
         ));
     }
-
-
-
 
     if (is_page_template('page-top-ngay.php')) {
         wp_enqueue_style(
@@ -139,9 +116,6 @@ function toyota_enqueue_assets()
         ));
     }
 
-
-
-
     if (is_page_template('page-top-tuan.php')) {
         wp_enqueue_style(
             'top-ngay-css',
@@ -163,9 +137,6 @@ function toyota_enqueue_assets()
             'nonce' => wp_create_nonce('wp_rest'),
         ));
     }
-
-
-
 
     if (is_page_template('page-top-thang.php')) {
         wp_enqueue_style(
@@ -189,9 +160,6 @@ function toyota_enqueue_assets()
         ));
     }
 
-
-
-
     if (is_page_template('page-yeu-thich.php')) {
         wp_enqueue_style(
             'top-ngay-css',
@@ -214,9 +182,6 @@ function toyota_enqueue_assets()
         ));
     }
 
-
-
-
     if (is_page_template('page-truyen-moi.php')) {
         wp_enqueue_script(
             'truyen-moi-cap-nhat-js',
@@ -231,9 +196,6 @@ function toyota_enqueue_assets()
             'nonce' => wp_create_nonce('wp_rest'),
         ));
     }
-
-
-
 
     if (is_page_template('page-truyen-full.php')) {
         wp_enqueue_script(
@@ -250,9 +212,6 @@ function toyota_enqueue_assets()
         ));
     }
 
-
-
-
     if (is_page_template('page-ngau-nhien.php')) {
         wp_enqueue_script(
             'truyen-moi-cap-nhat-js',
@@ -268,11 +227,7 @@ function toyota_enqueue_assets()
         ));
     }
 
-
-
-
     if (is_page_template('page-theo-doi.php')) {
-
         wp_enqueue_style(
             'toyota-front-page',
             get_template_directory_uri() . '/css/front-page-v2.css',
@@ -280,14 +235,12 @@ function toyota_enqueue_assets()
             '1.0.1'
         );
 
-
         wp_enqueue_style(
             'reading-history-css',
             get_template_directory_uri() . '/css/reading-history.css',
             array('toyota-front-page'),
             '1.0.1'
         );
-
 
         wp_enqueue_script(
             'toyota-front-page',
@@ -297,7 +250,6 @@ function toyota_enqueue_assets()
             true
         );
 
-
         wp_enqueue_script(
             'theo-doi-js',
             get_template_directory_uri() . '/js/theo-doi.js',
@@ -306,9 +258,6 @@ function toyota_enqueue_assets()
             true
         );
     }
-
-
-
 
     if (is_page_template('page-lich-su.php')) {
         wp_enqueue_style(
@@ -348,21 +297,13 @@ function toyota_enqueue_assets()
             'isLoggedIn' => is_user_logged_in()
         ));
 
-
-
         wp_localize_script('reading-history-js', 'truyenqqConfig', array(
             'apiBase' => esc_url_raw(rest_url('nettruyen/v1')),
             'nonce' => wp_create_nonce('wp_rest'),
             'homeUrl' => esc_url(home_url()),
             'isLoggedIn' => is_user_logged_in()
-
         ));
-
-
     }
-
-
-
 
     if (is_page_template('page-thuythu.php')) {
         wp_enqueue_style('thuythu', get_template_directory_uri() . '/css/thuythu.css', array('toyota-global'), '1.0.1');
@@ -422,7 +363,6 @@ function toyota_enqueue_assets()
         ));
     }
 
-
     wp_enqueue_script('toyota-header', get_template_directory_uri() . '/js/header.js', array('jquery'), '1.0.1', true);
     wp_localize_script('toyota-header', 'TRUYENQQ_CONFIG', array(
         'restUrl' => esc_url_raw(rest_url()),
@@ -430,7 +370,6 @@ function toyota_enqueue_assets()
     ));
 
     wp_enqueue_script('toyota-footer', get_template_directory_uri() . '/js/footer.js', array('jquery'), '1.0.1', true);
-
 
     if (is_singular('nettruyen_comic')) {
         wp_enqueue_style('single-comic-css', get_template_directory_uri() . '/css/single-comic.css', array('toyota-global'), '1.0.1');
@@ -468,14 +407,12 @@ function toyota_enqueue_assets()
             true
         );
 
-
         wp_enqueue_style(
             'truyenqq-auth-pages',
             get_template_directory_uri() . '/css/auth-pages.css',
             array(),
             '2.1.0'
         );
-
 
         wp_enqueue_script(
             'truyenqq-auth-pages',
@@ -485,21 +422,30 @@ function toyota_enqueue_assets()
             true
         );
 
-
         wp_localize_script('truyenqq-auth-pages', 'truyenqqAuth', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('truyenqq_auth_nonce'),
             'is_logged_in' => is_user_logged_in(),
             'current_user' => TruyenQQ_Auth_Handler::get_current_user()
         ));
-
     }
 
+    if (is_page_template('template-user-settings.php')) {
+        wp_enqueue_style(
+            'truyenqq-user-settings',
+            get_template_directory_uri() . '/css/user-settings.css',
+            array('toyota-global'),
+            '1.0.0'
+        );
 
-
-
-
-
+        wp_enqueue_script(
+            'truyenqq-user-settings',
+            get_template_directory_uri() . '/js/user-settings.js',
+            array('jquery'),
+            '1.0.0',
+            true
+        );
+    }
 }
 add_action('wp_enqueue_scripts', 'toyota_enqueue_assets');
 
@@ -507,29 +453,142 @@ add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $u
     return home_url('/dang-nhap');
 }, 10, 3);
 
+// ========================================
+// REQUIRE FILES - PROPER ORDER
+// ========================================
 
+// Auth System
 require_once get_template_directory() . '/inc/auth-db-migration.php';
-require_once get_template_directory() . '/inc/api-user-auth.php';
 require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
 require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
-require_once get_template_directory() . '/inc/ajax-handlers-with-recaptcha.php';
+require_once get_template_directory() . '/inc/ajax-handlers-with-recaptcha.php'; // ✅ FIXED VERSION
+
+// Comics & Search
 require_once get_template_directory() . '/inc/class-nettruyen-comics-rest-api.php';
 require_once get_template_directory() . '/inc/class-advanced-search-api.php';
 require_once get_template_directory() . '/inc/single-nettruyen-comics.php';
 require_once get_template_directory() . '/inc/class-top-comics-api.php';
+
+// Reading History
 require_once get_template_directory() . '/inc/create-reading-history-table.php';
 require_once get_template_directory() . '/inc/reading-history-api.php';
-require_once get_template_directory() . '/inc/social-login.php';
 
-
-
-
-
+// Bookmarks
 require_once get_template_directory() . '/inc/create-bookmarks-table.php';
 require_once get_template_directory() . '/inc/bookmarks-api.php';
 
+// OAuth & User Settings
+require_once get_template_directory() . '/inc/social-login.php';
 require_once get_template_directory() . '/inc/admin-oauth-settings.php';
 
+// ✅ USER SETTINGS API - MUST BE LOADED LAST
+require_once get_template_directory() . '/inc/class-user-settings-api.php';
+
+// ========================================
+// MEDIA UPLOAD PERMISSION FOR LOGGED-IN USERS
+// ========================================
+
+/**
+ * Allow logged-in users to upload images for avatar
+ * Security: Checks login status and nonce verification
+ */
+add_filter('rest_pre_dispatch', function ($result, $server, $request) {
+    // Only intercept media upload requests
+    if ($request->get_route() !== '/wp/v2/media' || $request->get_method() !== 'POST') {
+        return $result;
+    }
+
+    // Must be logged in
+    if (!is_user_logged_in()) {
+        return new WP_Error(
+            'rest_cannot_create',
+            'Bạn cần đăng nhập để tải ảnh lên.',
+            array('status' => 401)
+        );
+    }
+
+    // Verify nonce for security
+    $nonce = $request->get_header('X-WP-Nonce');
+    if (!wp_verify_nonce($nonce, 'wp_rest')) {
+        return new WP_Error(
+            'rest_cookie_invalid_nonce',
+            'Phiên làm việc không hợp lệ. Vui lòng tải lại trang.',
+            array('status' => 403)
+        );
+    }
+
+    // Allow the upload
+    return $result;
+}, 10, 3);
+
+/**
+ * Limit file upload size for avatars (5MB max)
+ */
+add_filter('upload_size_limit', function ($size) {
+    // Only for user settings page
+    if (is_page_template('template-user-settings.php')) {
+        return 5 * 1024 * 1024; // 5MB
+    }
+    return $size;
+});
+
+// ========================================
+// USER SETTINGS PAGE AUTO-CREATION
+// ========================================
+
+function truyenqq_create_user_settings_page()
+{
+    $page_check = get_page_by_path('quan-ly-tai-khoan');
+
+    if (!$page_check) {
+        $page_id = wp_insert_post(array(
+            'post_title' => 'Quản lý tài khoản',
+            'post_name' => 'quan-ly-tai-khoan',
+            'post_content' => '',
+            'post_status' => 'publish',
+            'post_type' => 'page',
+            'post_author' => 1,
+            'page_template' => 'template-user-settings.php'
+        ));
+
+        if ($page_id) {
+            update_option('truyenqq_user_settings_page_id', $page_id);
+        }
+    }
+}
+add_action('after_switch_theme', 'truyenqq_create_user_settings_page');
+
+/**
+ * Initialize default user meta on registration
+ */
+function truyenqq_init_user_settings_meta($user_id)
+{
+    update_user_meta($user_id, 'gender', '0');
+    update_user_meta($user_id, 'rank', '0');
+    update_user_meta($user_id, 'points', 0);
+    update_user_meta($user_id, 'level', 1);
+    update_user_meta($user_id, 'level_progress', 0);
+}
+
+/**
+ * Add User Settings link to admin bar
+ */
+function truyenqq_add_settings_to_admin_bar($wp_admin_bar)
+{
+    if (!is_user_logged_in()) {
+        return;
+    }
+
+    $user_settings_url = home_url('/quan-ly-tai-khoan');
+
+    $wp_admin_bar->add_node(array(
+        'id' => 'user-settings',
+        'title' => '<span class="ab-icon dashicons dashicons-admin-users"></span> Cài đặt tài khoản',
+        'href' => $user_settings_url,
+        'parent' => 'user-actions',
+    ));
+}
+add_action('admin_bar_menu', 'truyenqq_add_settings_to_admin_bar', 100);
 
 
 /**
@@ -560,20 +619,6 @@ function truyenqq_render_bookmark_badge($post_id, $is_bookmarked = null)
         esc_attr($icon_class)
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 add_action('init', function () {
     static $flushed = false;

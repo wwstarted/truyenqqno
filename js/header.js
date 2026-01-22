@@ -4,6 +4,7 @@
   const CONFIG = {
     searchAPI: TRUYENQQ_CONFIG.restUrl + "nettruyen/v1/search",
     genresAPI: TRUYENQQ_CONFIG.restUrl + "wp/v2/nettruyen_genre",
+    userInfoAPI: TRUYENQQ_CONFIG.restUrl + "nettruyen/v1/user/info",
     searchDebounceDelay: 500,
     maxSearchResults: 20,
     localStorageKey: "truyenqq_dark_mode",
@@ -30,8 +31,15 @@
     userProfile: document.querySelector(".user-profile"),
     notificationBell: document.querySelector(".notification-bell"),
     iconNotification: document.querySelector(".icon-notification"),
+
+    // Avatar elements
+    userAvatarImg: document.getElementById("userAvatarImg"),
+    userDropdownAvatar: document.getElementById("userDropdownAvatar"),
   };
 
+  // ========================================
+  // DARK MODE
+  // ========================================
   function initDarkMode() {
     const savedMode = localStorage.getItem(CONFIG.localStorageKey);
 
@@ -56,6 +64,9 @@
     }, 300);
   }
 
+  // ========================================
+  // SEARCH FUNCTIONALITY
+  // ========================================
   let searchTimeout = null;
   let currentSearchController = null;
 
@@ -174,29 +185,29 @@
 
   function getLoadingHTML() {
     return `
-            <div class="search-loading">
-                <i class="fa fa-spinner"></i>
-                <p>Đang tìm kiếm...</p>
-            </div>
-        `;
+      <div class="search-loading">
+        <i class="fa fa-spinner"></i>
+        <p>Đang tìm kiếm...</p>
+      </div>
+    `;
   }
 
   function getNoResultsHTML() {
     return `
-            <div class="search-no-results">
-                <i class="fa fa-search"></i>
-                <p>Không tìm thấy kết quả</p>
-            </div>
-        `;
+      <div class="search-no-results">
+        <i class="fa fa-search"></i>
+        <p>Không tìm thấy kết quả</p>
+      </div>
+    `;
   }
 
   function getErrorHTML() {
     return `
-            <div class="search-no-results">
-                <i class="fa fa-exclamation-triangle"></i>
-                <p>Có lỗi xảy ra, vui lòng thử lại</p>
-            </div>
-        `;
+      <div class="search-no-results">
+        <i class="fa fa-exclamation-triangle"></i>
+        <p>Có lỗi xảy ra, vui lòng thử lại</p>
+      </div>
+    `;
   }
 
   function getResultsHTML(results) {
@@ -210,29 +221,32 @@
         const chapter = item.latest_chapter || "Đang cập nhật";
 
         return `
-                <a href="${item.link}" class="search-result-item">
-                    <div class="search-result-avatar">
-                        <img src="${thumbnail}" 
-                             alt="${item.title}"
-                             onerror="this.src='https://via.placeholder.com/60x80?text=No+Image'">
-                    </div>
-                    <div class="search-result-info">
-                        <div class="search-result-title">${item.title}</div>
-                        ${
-                          altTitle
-                            ? `<div class="search-result-alt-title">${altTitle}</div>`
-                            : ""
-                        }
-                        <div class="search-result-chapter">${chapter}</div>
-                    </div>
-                </a>
-            `;
+          <a href="${item.link}" class="search-result-item">
+            <div class="search-result-avatar">
+              <img src="${thumbnail}" 
+                   alt="${item.title}"
+                   onerror="this.src='https://via.placeholder.com/60x80?text=No+Image'">
+            </div>
+            <div class="search-result-info">
+              <div class="search-result-title">${item.title}</div>
+              ${
+                altTitle
+                  ? `<div class="search-result-alt-title">${altTitle}</div>`
+                  : ""
+              }
+              <div class="search-result-chapter">${chapter}</div>
+            </div>
+          </a>
+        `;
       })
       .join("");
 
     return `<div class="search-results-list">${itemsHTML}</div>`;
   }
 
+  // ========================================
+  // MOBILE MENU
+  // ========================================
   function initMobileMenu() {
     if (elements.mobileMenuToggle) {
       elements.mobileMenuToggle.addEventListener("click", toggleMobileMenu);
@@ -284,6 +298,9 @@
     parentLi.classList.toggle("active");
   }
 
+  // ========================================
+  // SCROLL BEHAVIOR
+  // ========================================
   let lastScroll = 0;
 
   function handleScroll() {
@@ -314,6 +331,9 @@
     });
   }
 
+  // ========================================
+  // GENRES LOADING
+  // ========================================
   async function loadGenres() {
     if (!elements.genresList) return;
 
@@ -338,13 +358,16 @@
     } catch (error) {
       console.error("Error loading genres:", error);
       elements.genresList.innerHTML = `
-                <div class="loading-genres">
-                    <i class="fa fa-exclamation-triangle"></i> Không thể tải thể loại
-                </div>
-            `;
+        <div class="loading-genres">
+          <i class="fa fa-exclamation-triangle"></i> Không thể tải thể loại
+        </div>
+      `;
     }
   }
 
+  // ========================================
+  // USER MENU
+  // ========================================
   function initUserMenu() {
     if (elements.userAvatar && elements.userProfile) {
       elements.userAvatar.addEventListener("click", handleUserMenuToggle);
@@ -421,6 +444,97 @@
     }
   }
 
+  // ========================================
+  // ✅ AVATAR UPDATE FUNCTIONALITY
+  // ========================================
+
+  /**
+   * Update header avatar images
+   * @param {string} avatarUrl - New avatar URL
+   */
+  function updateHeaderAvatar(avatarUrl) {
+    console.log("TruyenQQ Header: Updating avatar to:", avatarUrl);
+
+    if (elements.userAvatarImg) {
+      elements.userAvatarImg.src = avatarUrl;
+      elements.userAvatarImg.onerror = function () {
+        this.src =
+          "https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3";
+      };
+    }
+
+    if (elements.userDropdownAvatar) {
+      elements.userDropdownAvatar.src = avatarUrl;
+      elements.userDropdownAvatar.onerror = function () {
+        this.src =
+          "https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3";
+      };
+    }
+
+    console.log("TruyenQQ Header: Avatar updated successfully");
+  }
+
+  /**
+   * Fetch latest user info and update avatar
+   */
+  async function refreshUserAvatar() {
+    try {
+      const response = await fetch(CONFIG.userInfoAPI, {
+        method: "GET",
+        headers: {
+          "X-WP-Nonce": TRUYENQQ_CONFIG.nonce,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user info");
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.user && data.user.avatar) {
+        updateHeaderAvatar(data.user.avatar);
+      }
+    } catch (error) {
+      console.error("TruyenQQ Header: Error refreshing avatar:", error);
+    }
+  }
+
+  /**
+   * Initialize global event system for cross-script communication
+   */
+  function initGlobalEvents() {
+    if (!window.TruyenQQ_Events) {
+      window.TruyenQQ_Events = {
+        listeners: {},
+
+        on: function (event, callback) {
+          if (!this.listeners[event]) {
+            this.listeners[event] = [];
+          }
+          this.listeners[event].push(callback);
+        },
+
+        trigger: function (event, data) {
+          if (this.listeners[event]) {
+            this.listeners[event].forEach((callback) => callback(data));
+          }
+        },
+      };
+    }
+
+    // Listen for avatar update events
+    window.TruyenQQ_Events.on("avatar:updated", function (data) {
+      console.log("TruyenQQ Header: Received avatar update event", data);
+      if (data && data.url) {
+        updateHeaderAvatar(data.url);
+      }
+    });
+  }
+
+  // ========================================
+  // INITIALIZATION
+  // ========================================
   function init() {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", init);
@@ -431,9 +545,16 @@
     initSearch();
     initMobileMenu();
     initUserMenu();
+    initGlobalEvents(); // ✅ Initialize event system
     loadGenres();
 
     window.addEventListener("resize", handleResize);
+
+    // Expose functions globally for external access
+    window.TruyenQQ_Header = {
+      updateAvatar: updateHeaderAvatar,
+      refreshAvatar: refreshUserAvatar,
+    };
 
     console.log("TruyenQQ Header initialized successfully");
   }

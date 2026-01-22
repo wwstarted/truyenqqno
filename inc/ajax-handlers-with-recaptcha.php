@@ -1,9 +1,10 @@
 <?php
 /**
  * AJAX Authentication Handlers with reCAPTCHA & OAuth Support
+ * FIXED: Removed duplicate /user/info endpoint
  * 
  * @package TruyenQQ
- * @version 1.0.4 - OAUTH INTEGRATED
+ * @version 1.0.5 - FIXED DUPLICATE ENDPOINT
  */
 
 if (!defined('ABSPATH')) {
@@ -70,7 +71,6 @@ function truyenqq_ajax_login()
 {
     check_ajax_referer('truyenqq_auth_nonce', 'nonce');
 
-
     $recaptcha_response = isset($_POST['recaptcha_response']) ? sanitize_text_field($_POST['recaptcha_response']) : '';
 
     if (!truyenqq_verify_recaptcha($recaptcha_response)) {
@@ -117,7 +117,6 @@ add_action('wp_ajax_logout', 'truyenqq_ajax_logout');
 function truyenqq_ajax_register_send_otp()
 {
     check_ajax_referer('truyenqq_auth_nonce', 'nonce');
-
 
     $recaptcha_response = isset($_POST['recaptcha_response']) ? sanitize_text_field($_POST['recaptcha_response']) : '';
 
@@ -168,7 +167,6 @@ add_action('wp_ajax_nopriv_register_verify_otp', 'truyenqq_ajax_register_verify_
 function truyenqq_ajax_forgot_password_send_otp()
 {
     check_ajax_referer('truyenqq_auth_nonce', 'nonce');
-
 
     $recaptcha_response = isset($_POST['recaptcha_response']) ? sanitize_text_field($_POST['recaptcha_response']) : '';
 
@@ -264,7 +262,6 @@ function truyenqq_enqueue_auth_scripts()
         return;
     }
 
-
     wp_enqueue_script(
         'google-recaptcha',
         'https://www.google.com/recaptcha/api.js',
@@ -273,14 +270,12 @@ function truyenqq_enqueue_auth_scripts()
         true
     );
 
-
     wp_enqueue_style(
         'truyenqq-auth-pages',
         get_template_directory_uri() . '/css/auth-pages.css',
         array(),
         '1.0.4'
     );
-
 
     wp_enqueue_script(
         'truyenqq-auth-pages',
@@ -289,7 +284,6 @@ function truyenqq_enqueue_auth_scripts()
         '1.0.4',
         true
     );
-
 
     wp_localize_script('truyenqq-auth-pages', 'truyenqqAuth', array(
         'ajax_url' => admin_url('admin-ajax.php'),

@@ -66,10 +66,7 @@
 
     restoreGenreStates();
 
-    console.log(
-      "✅ Advanced Search initialized (with global bookmarks)",
-      state,
-    );
+    console.log("Advanced Search initialized (with global bookmarks)", state);
   }
 
   function initFormToggle() {
@@ -449,4 +446,4 @@
   init();
 })();
 
-console.log("🚀 Advanced Search - Script loaded (global bookmarks enabled)");
+console.log("Advanced Search - Script loaded (global bookmarks enabled)");

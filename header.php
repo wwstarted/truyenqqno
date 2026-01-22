@@ -140,15 +140,17 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                                         <img src="<?php echo esc_url($avatar_url); ?>" alt="User Avatar"
                                             id="userDropdownAvatar">
                                         <div class="user-details">
-                                            <div class="user-name" id="userName"><?php echo esc_html($display_name); ?>
+                                            <div class="user-name" id="userName">
+                                                <?php echo esc_html($display_name); ?>
                                             </div>
-                                            <div class="user-email" id="userEmail"><?php echo esc_html($user_email); ?>
+                                            <div class="user-email" id="userEmail">
+                                                <?php echo esc_html($user_email); ?>
                                             </div>
                                         </div>
                                     </div>
                                     <ul class="user-menu-links">
                                         <li>
-                                            <a href="<?php echo home_url('/truyen-dang-theo-doi'); ?>">
+                                            <a href="<?php echo home_url('/theo-doi'); ?>">
                                                 <i class="fa fa-heart"></i> Danh sách theo dõi
                                             </a>
                                         </li>
@@ -238,7 +240,6 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                 </nav>
             </div>
         </div>
-
     </header>
     <?php wp_footer(); ?>
 </body>

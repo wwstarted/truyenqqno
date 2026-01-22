@@ -6,9 +6,6 @@
  * @package TruyenQQ
  * @version 1.0.3
  */
-
-
-
 ?>
 
 </div><!-- Close main content container if exists -->

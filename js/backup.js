@@ -3,7 +3,7 @@
  * Single Page Application for User Info & Change Password
  *
  * @package TruyenQQ
- * @version 1.0.2 - FIXED: Loading, Data sync, OTP, Avatar upload
+ * @version 1.0.1 - FIXED: Loading, Data sync, OTP for password change
  */
 
 (function ($) {
@@ -476,17 +476,13 @@
       if (!file) return;
 
       if (!file.type.match("image.*")) {
-        this.showMessage(
-          $("#user-info-form .form-message"),
-          "error",
-          "Vui lòng chọn file ảnh",
-        );
+        this.showMessage(".form-message", "error", "Vui lòng chọn file ảnh");
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
         this.showMessage(
-          $("#user-info-form .form-message"),
+          ".form-message",
           "error",
           "Kích thước ảnh không được vượt quá 5MB",
         );
@@ -525,11 +521,6 @@
             $("#avatar-input").val(response.id);
             $(".btn-avatar").text("Chọn hình").prop("disabled", false);
 
-            // ✅ UPDATE HEADER AVATAR IMMEDIATELY
-            if (response.url) {
-              self.updateHeaderAvatar(response.url);
-            }
-
             // Show success message in form
             self.showMessage(
               $("#user-info-form .form-message"),
@@ -557,27 +548,6 @@
           );
         },
       });
-    },
-
-    /**
-     * ✅ NEW: Update header avatar in real-time
-     */
-    updateHeaderAvatar: function (avatarUrl) {
-      console.log("Updating header avatar to:", avatarUrl);
-
-      // Update all avatar images in header
-      const $headerAvatars = $("#userAvatarImg, #userDropdownAvatar");
-
-      $headerAvatars.each(function () {
-        $(this).attr("src", avatarUrl);
-      });
-
-      // Dispatch custom event for other scripts
-      if (window.TruyenQQ_Events) {
-        window.TruyenQQ_Events.trigger("avatar:updated", { url: avatarUrl });
-      }
-
-      console.log("Header avatar updated successfully");
     },
 
     handleUserInfoSubmit: function (e) {

@@ -41,21 +41,21 @@
       .then((result) => {
         if (result.success) {
           console.log(
-            "✅ View tracked:",
-            result.counted ? "COUNTED" : "ALREADY COUNTED"
+            "View tracked:",
+            result.counted ? "COUNTED" : "ALREADY COUNTED",
           );
         } else {
-          console.warn("⚠️ Tracking failed:", result.message);
+          console.warn("Tracking failed:", result.message);
         }
       })
       .catch((error) => {
-        console.error("❌ Tracking error:", error);
+        console.error("Tracking error:", error);
       });
   }
 
   function autoTrackOnLoad() {
     const readerElement = document.querySelector(
-      "[data-comic-id][data-chapter-slug]"
+      "[data-comic-id][data-chapter-slug]",
     );
 
     if (!readerElement) {

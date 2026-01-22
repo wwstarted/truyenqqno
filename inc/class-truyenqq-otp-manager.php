@@ -296,6 +296,9 @@ class TruyenQQ_OTP_Manager
         if ($purpose === 'register') {
             $subject = "[{$site_name}] Mã xác thực đăng ký tài khoản";
             $action = "đăng ký tài khoản";
+        } elseif ($purpose === 'change_password') {
+            $subject = "[{$site_name}] Mã xác thực đổi mật khẩu";
+            $action = "đổi mật khẩu";
         } else {
             $subject = "[{$site_name}] Mã xác thực đặt lại mật khẩu";
             $action = "đặt lại mật khẩu";
