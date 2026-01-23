@@ -43,45 +43,45 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
 <html <?php language_attributes(); ?>>
 
 <?php if (is_front_page()): ?>
-<link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" as="style"
-    onload="this.onload=null;this.rel='stylesheet'">
-<noscript>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-</noscript>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    </noscript>
 
-<style>
-.truyen-hay-swiper,
-.exclusive-swiper {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
+    <style>
+        .truyen-hay-swiper,
+        .exclusive-swiper {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-.truyen-hay-swiper.swiper-initialized,
-.exclusive-swiper.swiper-initialized {
-    visibility: visible;
-    opacity: 1;
-}
+        .truyen-hay-swiper.swiper-initialized,
+        .exclusive-swiper.swiper-initialized {
+            visibility: visible;
+            opacity: 1;
+        }
 
 
-.homepage-suggest .swiper-wrapper,
-.homepage-exclusive .swiper-wrapper {
-    min-height: 340px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: skeleton-loading 1.5s ease-in-out infinite;
-}
+        .homepage-suggest .swiper-wrapper,
+        .homepage-exclusive .swiper-wrapper {
+            min-height: 340px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+        }
 
-@keyframes skeleton-loading {
-    0% {
-        background-position: 200% 0;
-    }
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
 
-    100% {
-        background-position: -200% 0;
-    }
-}
-</style>
+            100% {
+                background-position: -200% 0;
+            }
+        }
+    </style>
 <?php endif; ?>
 
 <head>
@@ -90,13 +90,13 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <?php wp_head(); ?>
     <script>
-    (function() {
-        const savedMode = localStorage.getItem('darkMode');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (savedMode === 'true' || (!savedMode && prefersDark)) {
-            document.documentElement.classList.add('dark-mode');
-        }
-    })();
+        (function () {
+            const savedMode = localStorage.getItem('darkMode');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedMode === 'true' || (!savedMode && prefersDark)) {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
     </script>
 </head>
 
