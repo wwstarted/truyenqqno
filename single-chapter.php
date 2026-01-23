@@ -1,11 +1,11 @@
 <?php
 /**
- * Template Name: Single Chapter Reading Page
+ * Template Name: Single Chapter Reading Page - FIXED
  * Template for reading comic chapters
  * 
  * @package TruyenQQ
- * @version 1.0.1
- * ✅ Fixed: querySelectorAll typo
+ * @version 1.1.0
+ * ✅ FIXED: empty() check for chapter_slug "0"
  * ✅ Added: Dark mode compatibility
  * ✅ Added: Reading history tracking with data attributes
  */
@@ -15,8 +15,13 @@ get_header();
 $chapter_slug = get_query_var('chapter');
 $comic_slug = get_query_var('nettruyen_comic');
 
-if (empty($chapter_slug) || empty($comic_slug)) {
-    wp_die('Invalid chapter URL');
+// ✅ FIX: Use isset() and strlen() instead of empty()
+// empty("0") returns TRUE, but we need "0" to be valid
+$has_chapter = isset($chapter_slug) && strlen($chapter_slug) > 0;
+$has_comic = isset($comic_slug) && strlen($comic_slug) > 0;
+
+if (!$has_chapter || !$has_comic) {
+    wp_die('Invalid chapter URL - Missing chapter or comic slug');
 }
 
 $post_id = get_the_ID();
@@ -31,7 +36,8 @@ $current_chapter = null;
 $current_index = -1;
 
 foreach ($chapters as $index => $chapter) {
-    if ($chapter['slug'] === $chapter_slug) {
+    // ✅ FIX: Use == instead of === to handle string/int comparison
+    if ($chapter['slug'] == $chapter_slug) {
         $current_chapter = $chapter;
         $current_index = $index;
         break;
@@ -39,7 +45,7 @@ foreach ($chapters as $index => $chapter) {
 }
 
 if (!$current_chapter) {
-    wp_die('Chapter not found');
+    wp_die('Chapter not found - Chapter slug: ' . esc_html($chapter_slug));
 }
 
 $image_domain = isset($current_chapter['image_domain']) ? $current_chapter['image_domain'] : '';
@@ -280,7 +286,8 @@ if (class_exists('NetTruyen_View_Tracker')) {
                     <?php foreach ($chapters as $index => $chap): ?>
                     <?php
                         $chap_url = nettruyen_get_chapter_url($post_id, $chap['slug']);
-                        $is_current = $chap['slug'] === $chapter_slug;
+                        // ✅ FIX: Use == instead of === for comparison
+                        $is_current = $chap['slug'] == $chapter_slug;
                         ?>
                     <a href="<?php echo esc_url($chap_url); ?>"
                         class="chapter-item <?php echo $is_current ? 'current' : ''; ?>">

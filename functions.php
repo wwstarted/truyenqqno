@@ -20,6 +20,23 @@ function toyota_enqueue_assets()
     wp_enqueue_style('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', [], '11.0.0');
     wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], '11.0.0', true);
 
+    if (is_404()) {
+        wp_enqueue_style(
+            'truyenqq-404-style',
+            get_template_directory_uri() . '/css/404.css',
+            array(),
+            '1.0.0'
+        );
+
+        wp_enqueue_script(
+            'truyenqq-404-script',
+            get_template_directory_uri() . '/js/404.js',
+            array(),
+            '1.0.0',
+            true
+        );
+    }
+
     wp_enqueue_script(
         'toast-utility',
         get_template_directory_uri() . '/js/toast-utility.js',
@@ -1019,30 +1036,30 @@ function nettruyen_migration_notices()
 {
     if (get_transient('nettruyen_migration_success')) {
         ?>
-        <div class="notice notice-success is-dismissible">
-            <p><strong>✅ NetTruyen View System:</strong> Database tables created successfully!</p>
-            <p>
-                <a href="<?php echo admin_url('tools.php?page=nettruyen-migration-debug'); ?>" class="button button-primary">
-                    🔍 View Migration Status
-                </a>
-            </p>
-        </div>
-        <?php
+<div class="notice notice-success is-dismissible">
+    <p><strong>✅ NetTruyen View System:</strong> Database tables created successfully!</p>
+    <p>
+        <a href="<?php echo admin_url('tools.php?page=nettruyen-migration-debug'); ?>" class="button button-primary">
+            🔍 View Migration Status
+        </a>
+    </p>
+</div>
+<?php
         delete_transient('nettruyen_migration_success');
     }
 
     if (get_transient('nettruyen_migration_error')) {
         ?>
-        <div class="notice notice-error is-dismissible">
-            <p><strong>❌ NetTruyen View System:</strong> Failed to create database tables!</p>
-            <p>Check error log at: <code>wp-content/debug.log</code></p>
-            <p>
-                <a href="<?php echo admin_url('tools.php?page=nettruyen-migration-debug'); ?>" class="button button-secondary">
-                    🔧 Debug Migration
-                </a>
-            </p>
-        </div>
-        <?php
+<div class="notice notice-error is-dismissible">
+    <p><strong>❌ NetTruyen View System:</strong> Failed to create database tables!</p>
+    <p>Check error log at: <code>wp-content/debug.log</code></p>
+    <p>
+        <a href="<?php echo admin_url('tools.php?page=nettruyen-migration-debug'); ?>" class="button button-secondary">
+            🔧 Debug Migration
+        </a>
+    </p>
+</div>
+<?php
         delete_transient('nettruyen_migration_error');
     }
 }
@@ -1086,111 +1103,111 @@ function nettruyen_migration_debug_page()
     );
 
     ?>
-    <div class="wrap">
-        <h1>🔧 NetTruyen View System - Migration Debug</h1>
+<div class="wrap">
+    <h1>🔧 NetTruyen View System - Migration Debug</h1>
 
-        <!-- Status Card -->
-        <div class="card" style="max-width: 800px; margin: 20px 0;">
-            <h2>📊 Migration Status</h2>
-            <table class="form-table">
-                <tr>
-                    <th style="width: 200px;">Status:</th>
-                    <td>
-                        <?php if ($needs_migration): ?>
-                            <span style="color: orange; font-weight: bold;">⚠️ NOT INSTALLED</span>
-                        <?php else: ?>
-                            <span style="color: green; font-weight: bold;">✅ INSTALLED</span>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Version:</th>
-                    <td><code><?php echo esc_html($version); ?></code></td>
-                </tr>
-                <tr>
-                    <th>Install Date:</th>
-                    <td><?php echo esc_html($date); ?></td>
-                </tr>
-                <tr>
-                    <th>Migration File:</th>
-                    <td>
-                        <?php
+    <!-- Status Card -->
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>📊 Migration Status</h2>
+        <table class="form-table">
+            <tr>
+                <th style="width: 200px;">Status:</th>
+                <td>
+                    <?php if ($needs_migration): ?>
+                    <span style="color: orange; font-weight: bold;">⚠️ NOT INSTALLED</span>
+                    <?php else: ?>
+                    <span style="color: green; font-weight: bold;">✅ INSTALLED</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th>Version:</th>
+                <td><code><?php echo esc_html($version); ?></code></td>
+            </tr>
+            <tr>
+                <th>Install Date:</th>
+                <td><?php echo esc_html($date); ?></td>
+            </tr>
+            <tr>
+                <th>Migration File:</th>
+                <td>
+                    <?php
                         $file_path = get_template_directory() . '/inc/nettruyen-view-migration.php';
                         if (file_exists($file_path)): ?>
-                            <span style="color: green;">✅ Found</span>
-                            <code><?php echo esc_html($file_path); ?></code>
-                        <?php else: ?>
-                            <span style="color: red;">❌ NOT FOUND</span>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            </table>
-        </div>
+                    <span style="color: green;">✅ Found</span>
+                    <code><?php echo esc_html($file_path); ?></code>
+                    <?php else: ?>
+                    <span style="color: red;">❌ NOT FOUND</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-        <!-- Tables Info -->
-        <div class="card" style="max-width: 800px; margin: 20px 0;">
-            <h2>🗄️ Database Tables</h2>
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th>Table Name</th>
-                        <th style="width: 100px;">Status</th>
-                        <th style="width: 100px;">Rows</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($tables as $name => $table):
+    <!-- Tables Info -->
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>🗄️ Database Tables</h2>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+                <tr>
+                    <th>Table Name</th>
+                    <th style="width: 100px;">Status</th>
+                    <th style="width: 100px;">Rows</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($tables as $name => $table):
                         $exists = $wpdb->get_var("SHOW TABLES LIKE '{$table}'") == $table;
                         $rows = $exists ? $wpdb->get_var("SELECT COUNT(*) FROM {$table}") : 0;
                         ?>
-                        <tr>
-                            <td>
-                                <strong><?php echo esc_html($name); ?></strong><br>
-                                <code style="font-size: 11px;"><?php echo esc_html($table); ?></code>
-                            </td>
-                            <td>
-                                <?php if ($exists): ?>
-                                    <span style="color: green; font-weight: bold;">✅ OK</span>
-                                <?php else: ?>
-                                    <span style="color: red; font-weight: bold;">❌ Missing</span>
-                                <?php endif; ?>
-                            </td>
-                            <td><?php echo number_format($rows); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+                <tr>
+                    <td>
+                        <strong><?php echo esc_html($name); ?></strong><br>
+                        <code style="font-size: 11px;"><?php echo esc_html($table); ?></code>
+                    </td>
+                    <td>
+                        <?php if ($exists): ?>
+                        <span style="color: green; font-weight: bold;">✅ OK</span>
+                        <?php else: ?>
+                        <span style="color: red; font-weight: bold;">❌ Missing</span>
+                        <?php endif; ?>
+                    </td>
+                    <td><?php echo number_format($rows); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
-        <!-- Actions -->
-        <div class="card" style="max-width: 800px; margin: 20px 0;">
-            <h2>⚡ Actions</h2>
+    <!-- Actions -->
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>⚡ Actions</h2>
 
-            <form method="post" style="margin-bottom: 15px;">
-                <?php wp_nonce_field('nettruyen_migration_debug'); ?>
-                <button type="submit" name="force_migration" class="button button-primary">
-                    🚀 Force Run Migration
-                </button>
-                <p class="description">
-                    Chạy lại migration (sẽ tạo hoặc update tables)
-                </p>
-            </form>
+        <form method="post" style="margin-bottom: 15px;">
+            <?php wp_nonce_field('nettruyen_migration_debug'); ?>
+            <button type="submit" name="force_migration" class="button button-primary">
+                🚀 Force Run Migration
+            </button>
+            <p class="description">
+                Chạy lại migration (sẽ tạo hoặc update tables)
+            </p>
+        </form>
 
-            <form method="post" onsubmit="return confirm('⚠️ This will DELETE all tables and data! Continue?');">
-                <?php wp_nonce_field('nettruyen_migration_debug'); ?>
-                <button type="submit" name="drop_tables" class="button button-secondary">
-                    🗑️ Drop All Tables
-                </button>
-                <p class="description" style="color: red;">
-                    Xóa toàn bộ tables (chỉ dùng khi cần reset)
-                </p>
-            </form>
-        </div>
+        <form method="post" onsubmit="return confirm('⚠️ This will DELETE all tables and data! Continue?');">
+            <?php wp_nonce_field('nettruyen_migration_debug'); ?>
+            <button type="submit" name="drop_tables" class="button button-secondary">
+                🗑️ Drop All Tables
+            </button>
+            <p class="description" style="color: red;">
+                Xóa toàn bộ tables (chỉ dùng khi cần reset)
+            </p>
+        </form>
+    </div>
 
-        <!-- Debug Info -->
-        <div class="card" style="max-width: 800px; margin: 20px 0;">
-            <h2>🐛 Debug Info</h2>
-            <pre style="background: #f5f5f5; padding: 15px; overflow-x: auto; font-size: 12px;"><?php
+    <!-- Debug Info -->
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>🐛 Debug Info</h2>
+        <pre style="background: #f5f5f5; padding: 15px; overflow-x: auto; font-size: 12px;"><?php
             echo "WordPress Version: " . get_bloginfo('version') . "\n";
             echo "PHP Version: " . PHP_VERSION . "\n";
             echo "MySQL Version: " . $wpdb->db_version() . "\n";
@@ -1200,9 +1217,9 @@ function nettruyen_migration_debug_page()
             echo "- nettruyen_view_migration_version: " . get_option('nettruyen_view_migration_version', 'NULL') . "\n";
             echo "- nettruyen_view_migration_date: " . get_option('nettruyen_view_migration_date', 'NULL') . "\n";
             ?></pre>
-        </div>
     </div>
-    <?php
+</div>
+<?php
 }
 
 
@@ -1236,18 +1253,18 @@ function nettruyen_population_tool_page()
                 echo '<div class="notice notice-success"><p>✅ Population completed! Processed ' . $result['processed'] . ' comics.</p></div>';
             } else {
                 ?>
-                <div class="notice notice-info">
-                    <p>⏳ Processing...
-                        <?php echo $result['message']; ?>
-                    </p>
-                </div>
-                <script>
-                    setTimeout(function () {
-                        document.getElementById('offset_input').value = <?php echo $result['offset']; ?>;
-                        document.getElementById('populate_form').submit();
-                    }, 1000);
-                </script>
-                <?php
+<div class="notice notice-info">
+    <p>⏳ Processing...
+        <?php echo $result['message']; ?>
+    </p>
+</div>
+<script>
+setTimeout(function() {
+    document.getElementById('offset_input').value = <?php echo $result['offset']; ?>;
+    document.getElementById('populate_form').submit();
+}, 1000);
+</script>
+<?php
             }
         } else {
             echo '<div class="notice notice-error"><p>❌ Error: ' . esc_html($result['message']) . '</p></div>';
@@ -1266,86 +1283,86 @@ function nettruyen_population_tool_page()
     $avg_fake_views = $total_in_db > 0 ? ($total_fake_views / $total_in_db) : 0;
 
     ?>
-    <div class="wrap">
-        <h1>📊 NetTruyen View Population Tool</h1>
+<div class="wrap">
+    <h1>📊 NetTruyen View Population Tool</h1>
 
-        <div class="card" style="max-width: 800px; margin: 20px 0;">
-            <h2>Current Status</h2>
-            <table class="form-table">
-                <tr>
-                    <th style="width: 250px;">Total Comics:</th>
-                    <td><strong>
-                            <?php echo number_format($total_comics); ?>
-                        </strong></td>
-                </tr>
-                <tr>
-                    <th>Comics with Fake Views:</th>
-                    <td>
-                        <strong>
-                            <?php echo number_format($total_in_db); ?>
-                        </strong>
-                        <?php if ($total_in_db < $total_comics): ?>
-                            <span style="color: orange;">(
-                                <?php echo number_format($total_comics - $total_in_db); ?> pending)
-                            </span>
-                        <?php else: ?>
-                            <span style="color: green;">✅ All populated</span>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Total Fake Views:</th>
-                    <td><strong>
-                            <?php echo number_format($total_fake_views); ?>
-                        </strong></td>
-                </tr>
-                <tr>
-                    <th>Average Fake Views/Comic:</th>
-                    <td><strong>
-                            <?php echo number_format($avg_fake_views, 0); ?>
-                        </strong></td>
-                </tr>
-            </table>
-        </div>
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>Current Status</h2>
+        <table class="form-table">
+            <tr>
+                <th style="width: 250px;">Total Comics:</th>
+                <td><strong>
+                        <?php echo number_format($total_comics); ?>
+                    </strong></td>
+            </tr>
+            <tr>
+                <th>Comics with Fake Views:</th>
+                <td>
+                    <strong>
+                        <?php echo number_format($total_in_db); ?>
+                    </strong>
+                    <?php if ($total_in_db < $total_comics): ?>
+                    <span style="color: orange;">(
+                        <?php echo number_format($total_comics - $total_in_db); ?> pending)
+                    </span>
+                    <?php else: ?>
+                    <span style="color: green;">✅ All populated</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th>Total Fake Views:</th>
+                <td><strong>
+                        <?php echo number_format($total_fake_views); ?>
+                    </strong></td>
+            </tr>
+            <tr>
+                <th>Average Fake Views/Comic:</th>
+                <td><strong>
+                        <?php echo number_format($avg_fake_views, 0); ?>
+                    </strong></td>
+            </tr>
+        </table>
+    </div>
 
-        <div class="card" style="max-width: 800px; margin: 20px 0;">
-            <h2>Actions</h2>
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>Actions</h2>
 
-            <form method="post" id="populate_form">
-                <?php wp_nonce_field('nettruyen_population'); ?>
-                <input type="hidden" name="offset" id="offset_input" value="0">
+        <form method="post" id="populate_form">
+            <?php wp_nonce_field('nettruyen_population'); ?>
+            <input type="hidden" name="offset" id="offset_input" value="0">
 
-                <p>
-                    <button type="submit" name="start_populate" class="button button-primary button-large">
-                        🚀
-                        <?php echo $total_in_db < $total_comics ? 'Start' : 'Re-run'; ?> Population
-                    </button>
-                </p>
-                <p class="description">
-                    This will calculate and store fake views for all comics.<br>
-                    Processing in batches of 50 to avoid timeout.
-                </p>
-            </form>
+            <p>
+                <button type="submit" name="start_populate" class="button button-primary button-large">
+                    🚀
+                    <?php echo $total_in_db < $total_comics ? 'Start' : 'Re-run'; ?> Population
+                </button>
+            </p>
+            <p class="description">
+                This will calculate and store fake views for all comics.<br>
+                Processing in batches of 50 to avoid timeout.
+            </p>
+        </form>
 
-            <hr style="margin: 30px 0;">
+        <hr style="margin: 30px 0;">
 
-            <form method="post" onsubmit="return confirm('⚠️ This will DELETE all fake views data! Continue?');">
-                <?php wp_nonce_field('nettruyen_population'); ?>
-                <p>
-                    <button type="submit" name="reset_all" class="button button-secondary">
-                        🗑️ Reset All Data
-                    </button>
-                </p>
-                <p class="description" style="color: red;">
-                    Xóa toàn bộ dữ liệu fake views (chỉ dùng khi muốn tính lại từ đầu)
-                </p>
-            </form>
-        </div>
+        <form method="post" onsubmit="return confirm('⚠️ This will DELETE all fake views data! Continue?');">
+            <?php wp_nonce_field('nettruyen_population'); ?>
+            <p>
+                <button type="submit" name="reset_all" class="button button-secondary">
+                    🗑️ Reset All Data
+                </button>
+            </p>
+            <p class="description" style="color: red;">
+                Xóa toàn bộ dữ liệu fake views (chỉ dùng khi muốn tính lại từ đầu)
+            </p>
+        </form>
+    </div>
 
-        <!-- Sample Data -->
-        <div class="card" style="max-width: 800px; margin: 20px 0;">
-            <h2>📈 Sample Data (Top 10 Comics)</h2>
-            <?php
+    <!-- Sample Data -->
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>📈 Sample Data (Top 10 Comics)</h2>
+        <?php
             $samples = $wpdb->get_results("
                 SELECT s.*, p.post_title 
                 FROM {$stats_table} s
@@ -1356,41 +1373,41 @@ function nettruyen_population_tool_page()
 
             if ($samples):
                 ?>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th>Comic</th>
-                            <th style="width: 150px;">Fake Views</th>
-                            <th style="width: 150px;">Updated</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($samples as $row): ?>
-                            <tr>
-                                <td>
-                                    <strong>
-                                        <?php echo esc_html($row->post_title); ?>
-                                    </strong><br>
-                                    <small>ID:
-                                        <?php echo $row->post_id; ?>
-                                    </small>
-                                </td>
-                                <td>
-                                    <?php echo number_format($row->total_fake_views); ?>
-                                </td>
-                                <td>
-                                    <?php echo $row->fake_updated_at; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <p>No data yet. Click "Start Population" above.</p>
-            <?php endif; ?>
-        </div>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+                <tr>
+                    <th>Comic</th>
+                    <th style="width: 150px;">Fake Views</th>
+                    <th style="width: 150px;">Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($samples as $row): ?>
+                <tr>
+                    <td>
+                        <strong>
+                            <?php echo esc_html($row->post_title); ?>
+                        </strong><br>
+                        <small>ID:
+                            <?php echo $row->post_id; ?>
+                        </small>
+                    </td>
+                    <td>
+                        <?php echo number_format($row->total_fake_views); ?>
+                    </td>
+                    <td>
+                        <?php echo $row->fake_updated_at; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php else: ?>
+        <p>No data yet. Click "Start Population" above.</p>
+        <?php endif; ?>
     </div>
-    <?php
+</div>
+<?php
 }
 
 
@@ -1480,11 +1497,11 @@ function nettruyen_display_view_count($post_id = null)
     }
 
     ?>
-    <span class="view-count">
-        <i class="icon-eye"></i>
-        <?php echo number_format($stats['total_display_views']); ?> lượt xem
-    </span>
-    <?php
+<span class="view-count">
+    <i class="icon-eye"></i>
+    <?php echo number_format($stats['total_display_views']); ?> lượt xem
+</span>
+<?php
 }
 
 /**
@@ -1505,25 +1522,25 @@ function nettruyen_display_stats_box($post_id = null)
     }
 
     ?>
-    <div class="nettruyen-stats-box">
-        <div class="stat-item">
-            <strong><?php echo number_format($stats['total_display_views']); ?></strong>
-            <span>Tổng lượt xem</span>
-        </div>
-        <div class="stat-item">
-            <strong><?php echo number_format($stats['daily_views']); ?></strong>
-            <span>Hôm nay</span>
-        </div>
-        <div class="stat-item">
-            <strong><?php echo number_format($stats['weekly_views']); ?></strong>
-            <span>7 ngày qua</span>
-        </div>
-        <div class="stat-item">
-            <strong><?php echo number_format($stats['monthly_views']); ?></strong>
-            <span>30 ngày qua</span>
-        </div>
+<div class="nettruyen-stats-box">
+    <div class="stat-item">
+        <strong><?php echo number_format($stats['total_display_views']); ?></strong>
+        <span>Tổng lượt xem</span>
     </div>
-    <?php
+    <div class="stat-item">
+        <strong><?php echo number_format($stats['daily_views']); ?></strong>
+        <span>Hôm nay</span>
+    </div>
+    <div class="stat-item">
+        <strong><?php echo number_format($stats['weekly_views']); ?></strong>
+        <span>7 ngày qua</span>
+    </div>
+    <div class="stat-item">
+        <strong><?php echo number_format($stats['monthly_views']); ?></strong>
+        <span>30 ngày qua</span>
+    </div>
+</div>
+<?php
 }
 
 /**
@@ -1634,9 +1651,11 @@ function nettruyen_start_session()
 
 
 
-
-add_action('init', 'custom_register_country_taxonomy');
-function custom_register_country_taxonomy()
+/**
+ * Register Country Taxonomy
+ */
+add_action('init', 'nettruyen_register_country_taxonomy');
+function nettruyen_register_country_taxonomy()
 {
     $labels = array(
         'name' => 'Quốc gia',
@@ -1663,17 +1682,115 @@ function custom_register_country_taxonomy()
     register_taxonomy('nettruyen_country', array('nettruyen_comic'), $args);
 }
 
-
-add_action('admin_init', 'auto_migrate_genre_to_country');
-function auto_migrate_genre_to_country()
+/**
+ * Improved Country Detection Logic
+ * Detect country from multiple sources with priority
+ */
+function nettruyen_detect_country($post_id)
 {
-    if (!isset($_GET['run_country_migration']) || $_GET['run_country_migration'] != '1') {
-        return;
+    // 1. Check genres first (highest priority)
+    $genres = wp_get_post_terms($post_id, 'nettruyen_genre', array('fields' => 'slugs'));
+
+    if (!is_wp_error($genres) && !empty($genres)) {
+        // Manhua → China
+        if (in_array('manhua', $genres)) {
+            return 'China';
+        }
+        // Manhwa → Korea
+        if (in_array('manhwa', $genres)) {
+            return 'Korea';
+        }
+        // Manga → Japan
+        if (in_array('manga', $genres)) {
+            return 'Japan';
+        }
     }
-    if (!current_user_can('manage_options')) {
+
+    // 2. Check title (secondary priority)
+    $title = get_the_title($post_id);
+    $other_name = get_post_meta($post_id, '_nettruyen_other_name', true);
+    $combined_title = $title . ' ' . $other_name;
+
+    // Korean detection (có ký tự Hangul)
+    if (preg_match('/[\x{AC00}-\x{D7A3}]/u', $combined_title)) {
+        return 'Korea';
+    }
+
+    // Japanese detection (có Hiragana/Katakana)
+    if (preg_match('/[\x{3040}-\x{309F}\x{30A0}-\x{30FF}]/u', $combined_title)) {
+        return 'Japan';
+    }
+
+    // Chinese detection (có chữ Hán đơn giản/phồn thể)
+    if (preg_match('/[\x{4E00}-\x{9FFF}]/u', $combined_title)) {
+        // Kiểm tra thêm keywords
+        if (preg_match('/(漫画|漫畫|国产)/u', $combined_title)) {
+            return 'China';
+        }
+        // Nếu có chữ Hán nhưng không rõ → default China
+        return 'China';
+    }
+
+    // 3. Check author nationality
+    $authors = get_the_terms($post_id, 'nettruyen_author');
+    if ($authors && !is_wp_error($authors)) {
+        $author_name = $authors[0]->name;
+
+        // Korean authors
+        if (preg_match('/[\x{AC00}-\x{D7A3}]/u', $author_name)) {
+            return 'Korea';
+        }
+
+        // Japanese authors (common suffixes)
+        if (preg_match('/(太郎|一郎|次郎|子|さん|先生)$/u', $author_name)) {
+            return 'Japan';
+        }
+    }
+
+    // 4. Fallback: Check keywords in title
+    $title_lower = strtolower($title);
+
+    if (
+        strpos($title_lower, 'manhwa') !== false ||
+        strpos($title_lower, 'korea') !== false ||
+        strpos($title_lower, 'hàn quốc') !== false
+    ) {
+        return 'Korea';
+    }
+
+    if (
+        strpos($title_lower, 'manga') !== false ||
+        strpos($title_lower, 'japan') !== false ||
+        strpos($title_lower, 'nhật bản') !== false
+    ) {
+        return 'Japan';
+    }
+
+    if (
+        strpos($title_lower, 'manhua') !== false ||
+        strpos($title_lower, 'china') !== false ||
+        strpos($title_lower, 'trung quốc') !== false
+    ) {
+        return 'China';
+    }
+
+    // Default: return null if cannot detect
+    return null;
+}
+
+/**
+ * Auto migrate country for all comics
+ * Runs once when theme is activated
+ */
+function nettruyen_auto_migrate_country()
+{
+    // Check if already migrated
+    $migrated = get_option('nettruyen_country_migrated', false);
+    if ($migrated) {
         return;
     }
 
+    // Create country terms if not exist
     $countries = array(
         'China' => 'Trung Quốc',
         'Korea' => 'Hàn Quốc',
@@ -1687,6 +1804,7 @@ function auto_migrate_genre_to_country()
         }
     }
 
+    // Get all comics
     $args = array(
         'post_type' => 'nettruyen_comic',
         'posts_per_page' => -1,
@@ -1695,32 +1813,189 @@ function auto_migrate_genre_to_country()
     );
 
     $comics = get_posts($args);
-    $count = 0;
+    $stats = array(
+        'total' => count($comics),
+        'china' => 0,
+        'korea' => 0,
+        'japan' => 0,
+        'vietnam' => 0,
+        'unknown' => 0
+    );
 
     foreach ($comics as $post_id) {
-        $genres = wp_get_post_terms($post_id, 'nettruyen_genre', array('fields' => 'slugs'));
-
-        if (is_wp_error($genres) || empty($genres))
+        // Skip if already has country
+        $existing_country = wp_get_post_terms($post_id, 'nettruyen_country');
+        if (!empty($existing_country) && !is_wp_error($existing_country)) {
             continue;
-
-        $target_country = '';
-
-        if (in_array('manhua', $genres)) {
-            $target_country = 'China';
-        } elseif (in_array('manhwa', $genres)) {
-            $target_country = 'Korea';
-        } elseif (in_array('manga', $genres)) {
-            $target_country = 'Japan';
         }
 
-        if (!empty($target_country)) {
-            $term = get_term_by('slug', $target_country, 'nettruyen_country');
+        // Detect country
+        $detected_country = nettruyen_detect_country($post_id);
+
+        if ($detected_country) {
+            $term = get_term_by('slug', $detected_country, 'nettruyen_country');
             if ($term) {
                 wp_set_object_terms($post_id, (int) $term->term_id, 'nettruyen_country');
-                $count++;
+
+                // Update stats
+                $country_lower = strtolower($detected_country);
+                if (isset($stats[$country_lower])) {
+                    $stats[$country_lower]++;
+                }
             }
+        } else {
+            $stats['unknown']++;
         }
     }
 
-    echo '<div class="notice notice-success is-dismissible"><p><strong>Đã xử lý xong!</strong> Tổng cộng ' . $count . ' truyện đã được cập nhật Quốc gia tự động.</p></div>';
+    // Mark as migrated
+    update_option('nettruyen_country_migrated', true);
+    update_option('nettruyen_country_migration_stats', $stats);
+    update_option('nettruyen_country_migration_date', current_time('mysql'));
+
+    return $stats;
+}
+
+// Run migration when theme is activated
+add_action('after_switch_theme', 'nettruyen_auto_migrate_country');
+
+// Admin page to view stats and re-run migration
+add_action('admin_menu', 'nettruyen_country_migration_menu');
+
+function nettruyen_country_migration_menu()
+{
+    add_management_page(
+        'Country Migration',
+        'Country Migration',
+        'manage_options',
+        'nettruyen-country-migration',
+        'nettruyen_country_migration_page'
+    );
+}
+
+function nettruyen_country_migration_page()
+{
+    $migrated = get_option('nettruyen_country_migrated', false);
+    $stats = get_option('nettruyen_country_migration_stats', array());
+    $date = get_option('nettruyen_country_migration_date', 'N/A');
+
+    // Handle re-run
+    if (isset($_POST['rerun_migration']) && check_admin_referer('nettruyen_country_migration')) {
+        delete_option('nettruyen_country_migrated');
+        $stats = nettruyen_auto_migrate_country();
+        echo '<div class="notice notice-success"><p>✅ Migration completed!</p></div>';
+    }
+
+    // Handle force update all
+    if (isset($_POST['force_update']) && check_admin_referer('nettruyen_country_migration')) {
+        global $wpdb;
+        // Remove all country terms
+        $wpdb->query("
+            DELETE FROM {$wpdb->term_relationships} 
+            WHERE term_taxonomy_id IN (
+                SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} 
+                WHERE taxonomy = 'nettruyen_country'
+            )
+        ");
+        delete_option('nettruyen_country_migrated');
+        $stats = nettruyen_auto_migrate_country();
+        echo '<div class="notice notice-success"><p>✅ Force update completed!</p></div>';
+    }
+
+    ?>
+<div class="wrap">
+    <h1>🌏 Country Migration Tool</h1>
+
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>Migration Status</h2>
+        <table class="form-table">
+            <tr>
+                <th style="width: 200px;">Status:</th>
+                <td>
+                    <?php if ($migrated): ?>
+                    <span style="color: green; font-weight: bold;">✅ Completed</span>
+                    <?php else: ?>
+                    <span style="color: orange; font-weight: bold;">⚠️ Not Run</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th>Last Run:</th>
+                <td><?php echo esc_html($date); ?></td>
+            </tr>
+        </table>
+    </div>
+
+    <?php if (!empty($stats)): ?>
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>📊 Migration Statistics</h2>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th style="width: 150px;">Comics</th>
+                    <th style="width: 150px;">Percentage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>🇨🇳 Trung Quốc (China)</strong></td>
+                    <td><?php echo number_format($stats['china'] ?? 0); ?></td>
+                    <td><?php echo round(($stats['china'] ?? 0) / max($stats['total'], 1) * 100, 1); ?>%</td>
+                </tr>
+                <tr>
+                    <td><strong>🇰🇷 Hàn Quốc (Korea)</strong></td>
+                    <td><?php echo number_format($stats['korea'] ?? 0); ?></td>
+                    <td><?php echo round(($stats['korea'] ?? 0) / max($stats['total'], 1) * 100, 1); ?>%</td>
+                </tr>
+                <tr>
+                    <td><strong>🇯🇵 Nhật Bản (Japan)</strong></td>
+                    <td><?php echo number_format($stats['japan'] ?? 0); ?></td>
+                    <td><?php echo round(($stats['japan'] ?? 0) / max($stats['total'], 1) * 100, 1); ?>%</td>
+                </tr>
+                <tr>
+                    <td><strong>🇻🇳 Việt Nam (Vietnam)</strong></td>
+                    <td><?php echo number_format($stats['vietnam'] ?? 0); ?></td>
+                    <td><?php echo round(($stats['vietnam'] ?? 0) / max($stats['total'], 1) * 100, 1); ?>%</td>
+                </tr>
+                <tr style="background: #fff3cd;">
+                    <td><strong>❓ Unknown</strong></td>
+                    <td><?php echo number_format($stats['unknown'] ?? 0); ?></td>
+                    <td><?php echo round(($stats['unknown'] ?? 0) / max($stats['total'], 1) * 100, 1); ?>%</td>
+                </tr>
+                <tr style="background: #e7f3ff; font-weight: bold;">
+                    <td>TOTAL</td>
+                    <td><?php echo number_format($stats['total'] ?? 0); ?></td>
+                    <td>100%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <?php endif; ?>
+
+    <div class="card" style="max-width: 800px; margin: 20px 0;">
+        <h2>⚡ Actions</h2>
+
+        <form method="post" style="margin-bottom: 15px;">
+            <?php wp_nonce_field('nettruyen_country_migration'); ?>
+            <button type="submit" name="rerun_migration" class="button button-primary">
+                🔄 Re-run Migration (Skip existing)
+            </button>
+            <p class="description">
+                Chỉ cập nhật truyện chưa có country
+            </p>
+        </form>
+
+        <form method="post" onsubmit="return confirm('⚠️ This will RESET all country data and re-detect. Continue?');">
+            <?php wp_nonce_field('nettruyen_country_migration'); ?>
+            <button type="submit" name="force_update" class="button button-secondary">
+                🚀 Force Update All
+            </button>
+            <p class="description" style="color: red;">
+                Xóa toàn bộ country cũ và detect lại từ đầu
+            </p>
+        </form>
+    </div>
+</div>
+<?php
 }

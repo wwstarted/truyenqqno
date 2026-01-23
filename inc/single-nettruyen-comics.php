@@ -1,12 +1,13 @@
 <?php
 /**
- * Chapter URL Rewrite Rules
+ * Chapter URL Rewrite Rules - FIXED VERSION
  * Add to functions.php
  * 
  * Pattern: /truyen-tranh/{comic-slug}-chap-{chapter-slug}.html
  * 
  * @package TruyenQQ
- * @version 2.0.0
+ * @version 2.1.0
+ * ✅ FIXED: empty("0") issue - now handles chapter 0 correctly
  */
 
 /**
@@ -16,8 +17,6 @@
  */
 function nettruyen_add_chapter_rewrite_rules()
 {
-
-
     add_rewrite_rule(
         '^truyen-tranh/([^/]+)-chap-([^\.]+)\.html$',
         'index.php?nettruyen_comic=$matches[1]&chapter=$matches[2]',
@@ -42,37 +41,41 @@ add_filter('query_vars', 'nettruyen_add_query_vars');
 /**
  * Template redirect for chapter pages
  * 
- * FIX: Now properly loads comic post from slug before including template
+ * ✅ CRITICAL FIX: Changed from empty() to isset() + strlen()
+ * This ensures chapter slug "0" is properly recognized
  */
 function nettruyen_chapter_template_redirect()
 {
     $chapter_slug = get_query_var('chapter');
     $comic_slug = get_query_var('nettruyen_comic');
 
+    // ✅ FIX: Use isset() and check string length instead of empty()
+    // empty("0") returns TRUE, but we need "0" to be valid
+    $has_chapter = isset($chapter_slug) && strlen($chapter_slug) > 0;
+    $has_comic = isset($comic_slug) && strlen($comic_slug) > 0;
 
-    if (!empty($chapter_slug) && !empty($comic_slug)) {
-
-
+    if ($has_chapter && $has_comic) {
+        // Find comic post by slug
         $comic_post = get_page_by_path($comic_slug, OBJECT, 'nettruyen_comic');
 
         if ($comic_post) {
-
+            // Set global post
             global $post;
             $post = $comic_post;
             setup_postdata($post);
 
-
+            // Load chapter template
             $template = locate_template('single-chapter.php');
 
             if ($template) {
                 include $template;
                 exit;
             } else {
-
+                // Template not found
                 wp_die('Template single-chapter.php not found. Please create this file in your theme.');
             }
         } else {
-
+            // Comic not found - show 404
             global $wp_query;
             $wp_query->set_404();
             status_header(404);
@@ -90,20 +93,20 @@ add_action('template_redirect', 'nettruyen_chapter_template_redirect', 1);
  */
 function nettruyen_activate_rewrite_rules()
 {
-
+    // Check if already flushed
     $flushed = get_option('nettruyen_rewrite_flushed');
 
     if (!$flushed) {
-
+        // Register rules
         nettruyen_add_chapter_rewrite_rules();
 
-
+        // Flush
         flush_rewrite_rules();
 
-
+        // Mark as flushed
         update_option('nettruyen_rewrite_flushed', '1');
 
-
+        // Log for debugging
         error_log('TruyenQQ: Rewrite rules flushed successfully');
     }
 }
@@ -124,7 +127,7 @@ add_action('switch_theme', 'nettruyen_deactivate_rewrite_rules');
  * Helper function to get chapter URL
  * 
  * @param int    $post_id      Comic post ID
- * @param string $chapter_slug Chapter slug (can be: 1, 1-2, 0.5, prologue, etc.)
+ * @param string $chapter_slug Chapter slug (can be: 1, 1-2, 0.5, 0, prologue, etc.)
  * @return string Chapter URL
  */
 function nettruyen_get_chapter_url($post_id, $chapter_slug)
@@ -142,7 +145,7 @@ function nettruyen_get_chapter_url($post_id, $chapter_slug)
  */
 function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
 {
-
+    // Get chapters from JSON manifest
     $chapters_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
     $chapters = [];
 
@@ -153,7 +156,7 @@ function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
         }
     }
 
-
+    // Fallback to serialized data
     if (empty($chapters)) {
         $chapters_data = get_post_meta($post_id, '_nettruyen_chapter_manifest', true);
         if (!empty($chapters_data)) {
@@ -164,9 +167,10 @@ function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
         }
     }
 
-
+    // Find current chapter index
     $current_index = -1;
     foreach ($chapters as $index => $chapter) {
+        // ✅ FIX: Use == instead of === to handle string/int comparison
         if (isset($chapter['slug']) && $chapter['slug'] == $chapter_slug) {
             $current_index = $index;
             break;
@@ -176,12 +180,12 @@ function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
     $prev_url = null;
     $next_url = null;
 
-
+    // Get previous chapter URL
     if ($current_index > 0 && isset($chapters[$current_index - 1]['slug'])) {
         $prev_url = nettruyen_get_chapter_url($post_id, $chapters[$current_index - 1]['slug']);
     }
 
-
+    // Get next chapter URL
     if ($current_index >= 0 && isset($chapters[$current_index + 1]['slug'])) {
         $next_url = nettruyen_get_chapter_url($post_id, $chapters[$current_index + 1]['slug']);
     }
@@ -200,16 +204,20 @@ function nettruyen_get_chapter_navigation($post_id, $chapter_slug)
  */
 function nettruyen_enqueue_chapter_styles()
 {
-
+    // Check if we're on a chapter page
     $chapter_slug = get_query_var('chapter');
     $comic_slug = get_query_var('nettruyen_comic');
 
-    if (!empty($chapter_slug) && !empty($comic_slug)) {
+    // ✅ FIX: Use same checking logic as template redirect
+    $has_chapter = isset($chapter_slug) && strlen($chapter_slug) > 0;
+    $has_comic = isset($comic_slug) && strlen($comic_slug) > 0;
+
+    if ($has_chapter && $has_comic) {
         wp_enqueue_style(
             'single-chapter-css',
             get_template_directory_uri() . '/css/single-chapter.css',
             array('toyota-global'),
-            '1.0.0'
+            '1.0.1'
         );
     }
 }
@@ -227,7 +235,11 @@ function nettruyen_debug_query_vars()
         echo '<strong>Query Vars:</strong>' . "\n";
         global $wp_query;
         print_r($wp_query->query_vars);
-        echo "\n<strong>Rewrite Rules (chapter related):</strong>\n";
+        echo "\n<strong>Chapter Slug:</strong> ";
+        var_export(get_query_var('chapter'));
+        echo "\n<strong>Comic Slug:</strong> ";
+        var_export(get_query_var('nettruyen_comic'));
+        echo "\n\n<strong>Rewrite Rules (chapter related):</strong>\n";
         global $wp_rewrite;
         $rules = get_option('rewrite_rules');
         foreach ($rules as $pattern => $replacement) {
