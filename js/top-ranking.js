@@ -18,7 +18,7 @@ class TopRankingComics extends ComicsListingBase {
       const filterType = this.elements.mainContainer.dataset.filterType;
       if (filterType) {
         this.config.filterType = filterType;
-        console.log("✅ Top Ranking Type:", filterType);
+        console.log("Top Ranking Type:", filterType);
       }
     }
   }
@@ -48,7 +48,7 @@ class TopRankingComics extends ComicsListingBase {
           
           ${rankBadge}
           
-          <!-- ✅ FIXED: Bookmark badge -->
+          <!-- FIXED: Bookmark badge -->
           <span class="bookmark-badge" title="Theo dõi" data-post-id="${comic.id}">
             <i class="fa fa-bookmark-o"></i>
           </span>

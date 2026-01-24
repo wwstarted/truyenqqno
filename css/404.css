@@ -832,7 +832,6 @@ body.dark-mode .floating-circle {
     display: none;
   }
 
-  /* Video ít hiển thị hơn ở landscape */
   .error-404-video-bg {
     opacity: 0.9;
   }

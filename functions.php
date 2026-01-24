@@ -439,6 +439,14 @@ function toyota_enqueue_assets()
             true
         );
 
+        wp_enqueue_script(
+            'truyenqq-auth-dark-mode',
+            get_template_directory_uri() . '/js/auth-dark-mode.js',
+            array(),
+            '1.0.0',
+            true
+        );
+
         wp_localize_script('truyenqq-auth-pages', 'truyenqqAuth', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('truyenqq_auth_nonce'),

@@ -314,7 +314,6 @@ $current_page = max(1, $paged);
                             alt="<?php the_title_attribute(); ?>" loading="lazy">
                     </a>
 
-                    <!-- ✅ FIXED: Sử dụng global bookmark badge -->
                     <?php truyenqq_render_bookmark_badge($post_id); ?>
 
                     <div class="top-notice">
