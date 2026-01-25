@@ -484,7 +484,7 @@ body.dark-mode .search-results {
 }
 
 .search-results.active {
-  max-height: 430px;
+  max-height: 550px;
   overflow-y: auto;
 }
 
@@ -1727,5 +1727,57 @@ body.dark-mode .user-dropdown::before {
   .user-menu,
   .auth-buttons {
     display: none !important;
+  }
+}
+
+/* =====================================================
+   SEARCH RESULTS - UPDATED WITH COMIC STATS
+===================================================== */
+
+.search-results.active {
+  max-height: 550px; /* 5 items × 120px */
+  overflow-y: auto;
+}
+
+.search-result-item {
+  min-height: 110px; /* Tăng từ 80px */
+}
+
+.search-result-info {
+  gap: 6px;
+}
+
+/* ✅ Comic Stats in Search Results */
+.search-result-info .comic-stats {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 12px;
+  color: var(--text-secondary, #666);
+}
+
+body.dark-mode .search-result-info .comic-stats {
+  color: var(--text-secondary-dark, #999);
+}
+
+.search-result-info .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.search-result-info .stat-item i {
+  font-size: 11px;
+  color: var(--accent-color);
+}
+
+@media (max-width: 767px) {
+  .search-result-item {
+    min-height: 95px;
+  }
+
+  .search-result-info .comic-stats {
+    font-size: 11px;
+    gap: 10px;
   }
 }

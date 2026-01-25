@@ -1,3 +1,7 @@
+/* =====================================================
+   SECTION 1: HOMEPAGE-SUGGEST (Truyện Hay)
+===================================================== */
+
 .homepage-suggest {
   padding: 40px 0;
   background-color: var(--bg-primary);
@@ -63,7 +67,7 @@ body.dark-mode .section-title {
   height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 340px;
+  min-height: 380px; /* ✅ TĂNG để chứa stats */
 }
 
 body.dark-mode .homepage-suggest .comic-card {
@@ -213,6 +217,30 @@ body.dark-mode .homepage-suggest .comic-name a {
   color: var(--accent-color);
 }
 
+/* ✅ COMIC STATS - ĐỒNG BỘ VỚI NEW-UPDATE */
+.homepage-suggest .comic-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+}
+
+body.dark-mode .homepage-suggest .comic-stats {
+  color: var(--text-secondary-dark, #999);
+}
+
+.homepage-suggest .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.homepage-suggest .stat-item i {
+  font-size: 12px;
+}
+
 .homepage-suggest .latest-chapter a {
   display: inline-block;
   font-size: 13px;
@@ -298,6 +326,10 @@ body.dark-mode
   background-color: rgba(255, 255, 255, 0.15);
 }
 
+/* =====================================================
+   RESPONSIVE - HOMEPAGE-SUGGEST
+===================================================== */
+
 @media (max-width: 1023px) {
   .homepage-suggest {
     padding: 30px 0;
@@ -312,12 +344,17 @@ body.dark-mode
   }
 
   .homepage-suggest .comic-card {
-    min-height: 320px;
+    min-height: 360px;
   }
 
   .homepage-suggest .comic-name {
     font-size: 14px;
     min-height: 40px;
+  }
+
+  .homepage-suggest .comic-stats {
+    font-size: 12px;
+    gap: 12px;
   }
 
   .homepage-suggest .latest-chapter a {
@@ -355,7 +392,7 @@ body.dark-mode
 
   .homepage-suggest .comic-card {
     border-radius: 6px;
-    min-height: 300px;
+    min-height: 340px;
   }
 
   .homepage-suggest .comic-info {
@@ -366,6 +403,11 @@ body.dark-mode
   .homepage-suggest .comic-name {
     font-size: 13px;
     min-height: 36px;
+  }
+
+  .homepage-suggest .comic-stats {
+    font-size: 11px;
+    gap: 10px;
   }
 
   .homepage-suggest .latest-chapter a {
@@ -419,6 +461,10 @@ body.dark-mode
   }
 }
 
+/* =====================================================
+   SECTION 2: HOMEPAGE-EXCLUSIVE (Độc Quyền Truyện QQ)
+===================================================== */
+
 .homepage-exclusive {
   padding: 40px 0;
   background-color: var(--bg-primary);
@@ -428,10 +474,6 @@ body.dark-mode
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-}
-
-.section-header {
-  margin-bottom: 25px;
 }
 
 .homepage-exclusive .section-title a {
@@ -490,7 +532,7 @@ body.dark-mode .homepage-exclusive .section-title a {
   height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 340px;
+  min-height: 380px; /* ✅ TĂNG để chứa stats */
 }
 
 body.dark-mode .homepage-exclusive .comic-card {
@@ -640,6 +682,30 @@ body.dark-mode .homepage-exclusive .comic-name a {
   color: var(--accent-color);
 }
 
+/* ✅ COMIC STATS - ĐỒNG BỘ VỚI NEW-UPDATE */
+.homepage-exclusive .comic-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+}
+
+body.dark-mode .homepage-exclusive .comic-stats {
+  color: var(--text-secondary-dark, #999);
+}
+
+.homepage-exclusive .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.homepage-exclusive .stat-item i {
+  font-size: 12px;
+}
+
 .homepage-exclusive .latest-chapter a {
   display: inline-block;
   font-size: 13px;
@@ -670,7 +736,6 @@ body.dark-mode .homepage-exclusive .comic-name a {
 .homepage-exclusive .swiper-button-next {
   width: 40px;
   height: 40px;
-
   background: linear-gradient(
     135deg,
     rgba(74, 158, 255, 0.9) 0%,
@@ -692,7 +757,11 @@ body.dark-mode .homepage-exclusive .comic-name a {
 
 body.dark-mode .homepage-exclusive .swiper-button-prev,
 body.dark-mode .homepage-exclusive .swiper-button-next {
-  background-color: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(
+    135deg,
+    rgba(74, 158, 255, 0.9) 0%,
+    rgba(43, 126, 230, 0.9) 100%
+  );
 }
 
 .homepage-exclusive .swiper-button-prev:hover,
@@ -722,6 +791,10 @@ body.dark-mode
   background-color: rgba(255, 255, 255, 0.15);
 }
 
+/* =====================================================
+   RESPONSIVE - HOMEPAGE-EXCLUSIVE
+===================================================== */
+
 @media (max-width: 1023px) {
   .homepage-exclusive {
     padding: 30px 0;
@@ -736,12 +809,17 @@ body.dark-mode
   }
 
   .homepage-exclusive .comic-card {
-    min-height: 320px;
+    min-height: 360px;
   }
 
   .homepage-exclusive .comic-name {
     font-size: 14px;
     min-height: 40px;
+  }
+
+  .homepage-exclusive .comic-stats {
+    font-size: 12px;
+    gap: 12px;
   }
 
   .homepage-exclusive .latest-chapter a {
@@ -779,7 +857,7 @@ body.dark-mode
 
   .homepage-exclusive .comic-card {
     border-radius: 6px;
-    min-height: 300px;
+    min-height: 340px;
   }
 
   .homepage-exclusive .comic-info {
@@ -790,6 +868,11 @@ body.dark-mode
   .homepage-exclusive .comic-name {
     font-size: 13px;
     min-height: 36px;
+  }
+
+  .homepage-exclusive .comic-stats {
+    font-size: 11px;
+    gap: 10px;
   }
 
   .homepage-exclusive .latest-chapter a {
@@ -842,6 +925,10 @@ body.dark-mode
     font-size: 14px;
   }
 }
+
+/* =====================================================
+   SECTION 3: HOMEPAGE-NEW-UPDATE (Truyện Mới Cập Nhật)
+===================================================== */
 
 .homepage-new-update {
   padding: 40px 0;
@@ -941,7 +1028,7 @@ body.dark-mode .homepage-new-update .filter-button button {
   height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 360px;
+  min-height: 380px;
 }
 
 body.dark-mode .homepage-new-update .comic-card {

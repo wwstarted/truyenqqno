@@ -1,13 +1,13 @@
 <?php get_header(); ?>
 
 <?php
-
 /**
  * Section: Truyện Hay (Hot Comics Carousel)
  * Hiển thị 16 truyện hot nhất theo view count
+ * ✅ UPDATED: Added comic-stats (follow + view count)
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
@@ -78,6 +78,7 @@ if (!$hot_comics->have_posts()) {
                         $post_id = get_the_ID();
                         $index++;
 
+                        // Thumbnail
                         $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                         if (empty($thumbnail)) {
                             $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -86,6 +87,7 @@ if (!$hot_comics->have_posts()) {
                             $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                         }
 
+                        // Chapter info
                         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                         $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
@@ -96,8 +98,31 @@ if (!$hot_comics->have_posts()) {
                             $latest_chapter = 'Chương ' . $latest['name'];
                         }
 
+                        // Time ago
                         $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                         $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
+
+                        // ✅ NEW: Get follow count
+                        $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
+                        if (empty($follow_count)) {
+                            $follow_count = 0;
+                        }
+
+                        // ✅ NEW: Get view count from database
+                        $view_count = 0;
+                        $view_stats = $wpdb->get_row(
+                            $wpdb->prepare(
+                                "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
+                                $post_id
+                            )
+                        );
+                        if ($view_stats) {
+                            $view_count = $view_stats->total_display_views;
+                        }
+
+                        // Format numbers
+                        $follow_count_formatted = number_format($follow_count);
+                        $view_count_formatted = number_format($view_count);
 
                         $is_hot = ($index <= 10);
                         ?>
@@ -111,7 +136,7 @@ if (!$hot_comics->have_posts()) {
                                         loading="lazy">
                                 </a>
 
-                                <!-- Bookmark Button (UI Only) -->
+                                <!-- Bookmark Button -->
                                 <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
                                     <i class="fa fa-bookmark-o"></i>
                                 </span>
@@ -134,6 +159,20 @@ if (!$hot_comics->have_posts()) {
                                         <?php the_title(); ?>
                                     </a>
                                 </h3>
+
+                                <!-- ✅ NEW: Stats -->
+                                <div class="comic-stats">
+                                    <span class="stat-item">
+                                        <i class="fa fa-bookmark"></i>
+                                        <?php echo esc_html($follow_count_formatted); ?>
+                                    </span>
+                                    <span class="stat-item">
+                                        <i class="fa fa-eye"></i>
+                                        <?php echo esc_html($view_count_formatted); ?>
+                                    </span>
+                                </div>
+
+                                <!-- Latest Chapter -->
                                 <div class="latest-chapter">
                                     <a href="<?php the_permalink(); ?>"
                                         title="Đọc <?php echo esc_attr($latest_chapter); ?>">
@@ -166,9 +205,10 @@ if (!$hot_comics->have_posts()) {
 /**
  * Section: Độc Quyền Truyện QQ
  * Hiển thị 16 truyện ngẫu nhiên (sẽ update logic sau)
+ * ✅ UPDATED: Added comic-stats (follow + view count)
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 $args = array(
@@ -209,6 +249,7 @@ if (!$exclusive_comics->have_posts()) {
                         $post_id = get_the_ID();
                         $index++;
 
+                        // Thumbnail
                         $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                         if (empty($thumbnail)) {
                             $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -217,6 +258,7 @@ if (!$exclusive_comics->have_posts()) {
                             $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                         }
 
+                        // Chapter info
                         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                         $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
@@ -227,8 +269,31 @@ if (!$exclusive_comics->have_posts()) {
                             $latest_chapter = 'Chương ' . $latest['name'];
                         }
 
+                        // Time ago
                         $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                         $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
+
+                        // ✅ NEW: Get follow count
+                        $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
+                        if (empty($follow_count)) {
+                            $follow_count = 0;
+                        }
+
+                        // ✅ NEW: Get view count from database
+                        $view_count = 0;
+                        $view_stats = $wpdb->get_row(
+                            $wpdb->prepare(
+                                "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
+                                $post_id
+                            )
+                        );
+                        if ($view_stats) {
+                            $view_count = $view_stats->total_display_views;
+                        }
+
+                        // Format numbers
+                        $follow_count_formatted = number_format($follow_count);
+                        $view_count_formatted = number_format($view_count);
 
                         $is_hot = ($index <= 10);
                         ?>
@@ -242,7 +307,7 @@ if (!$exclusive_comics->have_posts()) {
                                         loading="lazy">
                                 </a>
 
-                                <!-- Bookmark Button (UI Only) -->
+                                <!-- Bookmark Button -->
                                 <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
                                     <i class="fa fa-bookmark-o"></i>
                                 </span>
@@ -265,6 +330,20 @@ if (!$exclusive_comics->have_posts()) {
                                         <?php the_title(); ?>
                                     </a>
                                 </h3>
+
+                                <!-- ✅ NEW: Stats -->
+                                <div class="comic-stats">
+                                    <span class="stat-item">
+                                        <i class="fa fa-bookmark"></i>
+                                        <?php echo esc_html($follow_count_formatted); ?>
+                                    </span>
+                                    <span class="stat-item">
+                                        <i class="fa fa-eye"></i>
+                                        <?php echo esc_html($view_count_formatted); ?>
+                                    </span>
+                                </div>
+
+                                <!-- Latest Chapter -->
                                 <div class="latest-chapter">
                                     <a href="<?php the_permalink(); ?>"
                                         title="Đọc <?php echo esc_attr($latest_chapter); ?>">
@@ -480,7 +559,6 @@ $hot_comic_ids = $wpdb->get_col(
         </div>
     </div>
 </section>
-
 
 <section class="blog-detail-section">
     <div class="blog-detail-container">

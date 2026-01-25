@@ -13,26 +13,19 @@
   const elements = {
     darkModeToggle: document.getElementById("darkModeToggle"),
     body: document.body,
-
     searchInput: document.getElementById("searchInput"),
     searchResults: document.getElementById("searchResults"),
-
     mobileSearchToggle: document.getElementById("mobileSearchToggle"),
     mobileSearchExpand: document.getElementById("mobileSearchExpand"),
     mobileSearchInput: document.getElementById("mobileSearchInput"),
     mobileSearchResults: document.getElementById("mobileSearchResults"),
-
     mobileMenuToggle: document.getElementById("mobileMenuToggle"),
     mainMenu: document.getElementById("mainMenu"),
-
     genresList: document.getElementById("genresList"),
-
     userAvatar: document.getElementById("userAvatar"),
     userProfile: document.querySelector(".user-profile"),
     notificationBell: document.querySelector(".notification-bell"),
     iconNotification: document.querySelector(".icon-notification"),
-
-    // Avatar elements
     userAvatarImg: document.getElementById("userAvatarImg"),
     userDropdownAvatar: document.getElementById("userDropdownAvatar"),
   };
@@ -42,11 +35,9 @@
   // ========================================
   function initDarkMode() {
     const savedMode = localStorage.getItem(CONFIG.localStorageKey);
-
     if (savedMode === "dark") {
       elements.body.classList.add("dark-mode");
     }
-
     if (elements.darkModeToggle) {
       elements.darkModeToggle.addEventListener("click", toggleDarkMode);
     }
@@ -54,10 +45,8 @@
 
   function toggleDarkMode() {
     elements.body.classList.toggle("dark-mode");
-
     const isDark = elements.body.classList.contains("dark-mode");
     localStorage.setItem(CONFIG.localStorageKey, isDark ? "dark" : "light");
-
     elements.darkModeToggle.style.transform = "rotate(360deg)";
     setTimeout(() => {
       elements.darkModeToggle.style.transform = "";
@@ -220,6 +209,10 @@
         const altTitle = item.alternative_title || "";
         const chapter = item.latest_chapter || "Đang cập nhật";
 
+        // ✅ Format numbers with proper handling
+        const followCount = (item.follow_count || 0).toLocaleString("vi-VN");
+        const viewCount = (item.view_count || 0).toLocaleString("vi-VN");
+
         return `
           <a href="${item.link}" class="search-result-item">
             <div class="search-result-avatar">
@@ -229,11 +222,17 @@
             </div>
             <div class="search-result-info">
               <div class="search-result-title">${item.title}</div>
-              ${
-                altTitle
-                  ? `<div class="search-result-alt-title">${altTitle}</div>`
-                  : ""
-              }
+              ${altTitle ? `<div class="search-result-alt-title">${altTitle}</div>` : ""}
+              <div class="comic-stats">
+                <span class="stat-item">
+                  <i class="fa fa-bookmark"></i>
+                  ${followCount}
+                </span>
+                <span class="stat-item">
+                  <i class="fa fa-eye"></i>
+                  ${viewCount}
+                </span>
+              </div>
               <div class="search-result-chapter">${chapter}</div>
             </div>
           </a>
@@ -445,13 +444,8 @@
   }
 
   // ========================================
-  // ✅ AVATAR UPDATE FUNCTIONALITY
+  // AVATAR UPDATE FUNCTIONALITY
   // ========================================
-
-  /**
-   * Update header avatar images
-   * @param {string} avatarUrl - New avatar URL
-   */
   function updateHeaderAvatar(avatarUrl) {
     console.log("TruyenQQ Header: Updating avatar to:", avatarUrl);
 
@@ -474,9 +468,6 @@
     console.log("TruyenQQ Header: Avatar updated successfully");
   }
 
-  /**
-   * Fetch latest user info and update avatar
-   */
   async function refreshUserAvatar() {
     try {
       const response = await fetch(CONFIG.userInfoAPI, {
@@ -500,9 +491,6 @@
     }
   }
 
-  /**
-   * Initialize global event system for cross-script communication
-   */
   function initGlobalEvents() {
     if (!window.TruyenQQ_Events) {
       window.TruyenQQ_Events = {
@@ -523,7 +511,6 @@
       };
     }
 
-    // Listen for avatar update events
     window.TruyenQQ_Events.on("avatar:updated", function (data) {
       console.log("TruyenQQ Header: Received avatar update event", data);
       if (data && data.url) {
@@ -545,12 +532,11 @@
     initSearch();
     initMobileMenu();
     initUserMenu();
-    initGlobalEvents(); // ✅ Initialize event system
+    initGlobalEvents();
     loadGenres();
 
     window.addEventListener("resize", handleResize);
 
-    // Expose functions globally for external access
     window.TruyenQQ_Header = {
       updateAvatar: updateHeaderAvatar,
       refreshAvatar: refreshUserAvatar,

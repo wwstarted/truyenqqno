@@ -954,6 +954,8 @@ function nettruyen_register_search_endpoint()
 
 function nettruyen_search_comics($request)
 {
+    global $wpdb;
+
     $keyword = $request->get_param('q');
 
     if (empty($keyword)) {
@@ -969,6 +971,9 @@ function nettruyen_search_comics($request)
 
     $query = new WP_Query($args);
     $results = array();
+
+    // ✅ NEW: Get stats table
+    $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
     if ($query->have_posts()) {
         while ($query->have_posts()) {
@@ -993,6 +998,24 @@ function nettruyen_search_comics($request)
 
             $alternative_title = get_post_meta($post_id, '_nettruyen_alternative_title', true);
 
+            // ✅ NEW: Get follow count
+            $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
+            if (empty($follow_count)) {
+                $follow_count = 0;
+            }
+
+            // ✅ NEW: Get view count from database
+            $view_count = 0;
+            $view_stats = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
+                    $post_id
+                )
+            );
+            if ($view_stats) {
+                $view_count = $view_stats->total_display_views;
+            }
+
             $results[] = array(
                 'id' => $post_id,
                 'title' => get_the_title(),
@@ -1000,7 +1023,9 @@ function nettruyen_search_comics($request)
                 'thumbnail' => $thumbnail ? $thumbnail : '',
                 'latest_chapter' => $latest_chapter,
                 'slug' => get_post_field('post_name', $post_id),
-                'link' => get_permalink($post_id)
+                'link' => get_permalink($post_id),
+                'follow_count' => intval($follow_count),  // ✅ NEW
+                'view_count' => intval($view_count)       // ✅ NEW
             );
         }
     }
