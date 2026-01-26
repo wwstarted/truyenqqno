@@ -19,7 +19,6 @@
 
       this.bindEvents();
 
-      // Wait for DOM ready before loading
       $(document).ready(() => {
         this.loadInitialTab();
         this.handleBrowserNavigation();
@@ -77,7 +76,7 @@
       const tab = hash === "doi-mat-khau" ? "change-password" : "user-info";
 
       console.log("Loading initial tab:", tab);
-      this.switchTab(tab, true); // Force load on init
+      this.switchTab(tab, true);
     },
 
     handleBrowserNavigation: function () {
@@ -100,7 +99,6 @@
     },
 
     switchTab: function (tab, forceLoad = false) {
-      // Prevent duplicate loading
       if (this.currentTab === tab && !forceLoad && this.userData) {
         console.log("Tab already loaded, skipping...");
         return;
@@ -146,7 +144,7 @@
         headers: {
           "X-WP-Nonce": userSettingsData.nonce,
         },
-        timeout: 10000, // 10s timeout
+        timeout: 10000,
         success: function (response) {
           console.log("User info loaded:", response);
           self.userData = response;
@@ -521,7 +519,6 @@
             $("#avatar-input").val(response.id);
             $(".btn-avatar").text("Chọn hình").prop("disabled", false);
 
-            // Show success message in form
             self.showMessage(
               $("#user-info-form .form-message"),
               "success",
@@ -598,10 +595,9 @@
               response.message || "Cập nhật thành công!",
             );
 
-            // FORCE RELOAD USER DATA after 1 second
             setTimeout(() => {
-              self.userData = null; // Clear cache
-              self.loadUserInfo(); // Reload fresh data
+              self.userData = null;
+              self.loadUserInfo();
             }, 1000);
           } else {
             self.showMessage(
@@ -666,13 +662,11 @@
         success: (response) => {
           self.setButtonLoading($btn, false);
           if (response.success) {
-            // Switch to OTP step
             $("#password-step-1").hide();
             $("#password-step-2").show();
             $("#email-display").text(response.email);
 
-            // Start OTP timer
-            self.startOTPTimer(1800); // 30 minutes
+            self.startOTPTimer(1800);
 
             self.showMessage(
               $("#password-step-2 .form-message"),
@@ -737,7 +731,6 @@
               response.message || "Đổi mật khẩu thành công!",
             );
 
-            // Reset form after 2 seconds
             setTimeout(() => {
               self.loadChangePassword();
             }, 2000);

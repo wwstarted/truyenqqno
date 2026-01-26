@@ -3,7 +3,8 @@
  * Template Name: Truyện Ngẫu Nhiên
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
+ * ✅ FIXED: Random button now works with timestamp-based seed
  */
 
 get_header();
@@ -14,8 +15,9 @@ $posts_per_page = 42;
 $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
 
-
-$seed = date('Ymd');
+// ✅ NEW: Use timestamp + random param for true randomness
+$random_param = isset($_GET['r']) ? intval($_GET['r']) : time();
+$seed = date('Ymd') . $random_param;
 
 $args = array(
     'post_type' => 'nettruyen_comic',
@@ -50,6 +52,10 @@ $comics_query = new WP_Query($args);
 
 $total_pages = $comics_query->max_num_pages;
 $current_page = max(1, $paged);
+
+// ✅ NEW: Get stats table
+global $wpdb;
+$stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 ?>
 
 <div id="main_homepage" data-ajax-enabled="true" data-filter-type="ngau-nhien">
@@ -121,21 +127,12 @@ $current_page = max(1, $paged);
         </table>
     </div>
 
-    <!-- Random Button -->
-    <div style="text-align: center; margin: 20px 0;">
-        <button onclick="window.location.reload()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                       color: white; 
-                       border: none; 
-                       padding: 12px 30px; 
-                       border-radius: 25px; 
-                       cursor: pointer; 
-                       font-size: 16px; 
-                       font-weight: 600; 
-                       box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-                       transition: all 0.3s ease;">
+    <!-- ✅ FIXED: Random Button with new blue theme -->
+    <!-- <div style="text-align: center; margin: 20px 0;">
+        <button id="btn-random-reload" class="btn-random-reload">
             <i class="fa fa-refresh"></i> Random Lại
         </button>
-    </div>
+    </div> -->
 
     <div class="list_grid_out">
         <ul class="list_grid grid">
@@ -166,10 +163,10 @@ $current_page = max(1, $paged);
                     $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                     $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
+                    // ✅ Get follow count
                     $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true) ?: 0;
 
-                    global $wpdb;
-                    $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
+                    // ✅ Get view count
                     $view_stats = $wpdb->get_row(
                         $wpdb->prepare(
                             "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",

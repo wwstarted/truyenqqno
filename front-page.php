@@ -4,7 +4,6 @@
 /**
  * Section: Truyện Hay (Hot Comics Carousel)
  * Hiển thị 16 truyện hot nhất theo view count
- * ✅ UPDATED: Added comic-stats (follow + view count)
  * 
  * @package TruyenQQ
  * @version 1.1.0
@@ -78,7 +77,7 @@ if (!$hot_comics->have_posts()) {
                         $post_id = get_the_ID();
                         $index++;
 
-                        // Thumbnail
+
                         $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                         if (empty($thumbnail)) {
                             $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -87,7 +86,7 @@ if (!$hot_comics->have_posts()) {
                             $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                         }
 
-                        // Chapter info
+
                         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                         $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
@@ -98,17 +97,15 @@ if (!$hot_comics->have_posts()) {
                             $latest_chapter = 'Chương ' . $latest['name'];
                         }
 
-                        // Time ago
+
                         $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                         $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                        // ✅ NEW: Get follow count
                         $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                         if (empty($follow_count)) {
                             $follow_count = 0;
                         }
 
-                        // ✅ NEW: Get view count from database
                         $view_count = 0;
                         $view_stats = $wpdb->get_row(
                             $wpdb->prepare(
@@ -120,7 +117,7 @@ if (!$hot_comics->have_posts()) {
                             $view_count = $view_stats->total_display_views;
                         }
 
-                        // Format numbers
+
                         $follow_count_formatted = number_format($follow_count);
                         $view_count_formatted = number_format($view_count);
 
@@ -249,7 +246,7 @@ if (!$exclusive_comics->have_posts()) {
                         $post_id = get_the_ID();
                         $index++;
 
-                        // Thumbnail
+
                         $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                         if (empty($thumbnail)) {
                             $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -258,7 +255,7 @@ if (!$exclusive_comics->have_posts()) {
                             $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                         }
 
-                        // Chapter info
+
                         $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                         $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
@@ -269,17 +266,17 @@ if (!$exclusive_comics->have_posts()) {
                             $latest_chapter = 'Chương ' . $latest['name'];
                         }
 
-                        // Time ago
+
                         $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                         $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                        // ✅ NEW: Get follow count
+
                         $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                         if (empty($follow_count)) {
                             $follow_count = 0;
                         }
 
-                        // ✅ NEW: Get view count from database
+
                         $view_count = 0;
                         $view_stats = $wpdb->get_row(
                             $wpdb->prepare(
@@ -291,7 +288,7 @@ if (!$exclusive_comics->have_posts()) {
                             $view_count = $view_stats->total_display_views;
                         }
 
-                        // Format numbers
+
                         $follow_count_formatted = number_format($follow_count);
                         $view_count_formatted = number_format($view_count);
 

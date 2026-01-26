@@ -3,10 +3,9 @@
  * Template Name: Lịch Sử Đọc Truyện
  * 
  * @package TruyenQQ
- * @version 1.0.1
-
+ * @version 1.0.2
+ * ✅ UPDATED: Added comic-stats to Độc Quyền section
  */
-
 
 if (!is_user_logged_in()) {
     wp_redirect(home_url('/dang-nhap?redirect_to=' . urlencode($_SERVER['REQUEST_URI'])));
@@ -16,8 +15,8 @@ if (!is_user_logged_in()) {
 get_header();
 
 /**
- * Section: Độc Quyền Truyện QQ (Reuse from home)
- * Hiển thị 16 truyện ngẫu nhiên
+ * Section: Độc Quyền Truyện QQ
+ * ✅ UPDATED: Added follow count + view count stats
  */
 $args = array(
     'post_type' => 'nettruyen_comic',
@@ -28,6 +27,10 @@ $args = array(
 );
 
 $exclusive_comics = new WP_Query($args);
+
+
+global $wpdb;
+$stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 ?>
 
 <?php if ($exclusive_comics->have_posts()): ?>
@@ -54,6 +57,7 @@ $exclusive_comics = new WP_Query($args);
                             $post_id = get_the_ID();
                             $index++;
 
+
                             $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                             if (empty($thumbnail)) {
                                 $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -61,6 +65,7 @@ $exclusive_comics = new WP_Query($args);
                             if (empty($thumbnail)) {
                                 $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                             }
+
 
                             $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                             $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
@@ -72,8 +77,31 @@ $exclusive_comics = new WP_Query($args);
                                 $latest_chapter = 'Chương ' . $latest['name'];
                             }
 
+
                             $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                             $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
+
+
+                            $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
+                            if (empty($follow_count)) {
+                                $follow_count = 0;
+                            }
+
+
+                            $view_count = 0;
+                            $view_stats = $wpdb->get_row(
+                                $wpdb->prepare(
+                                    "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
+                                    $post_id
+                                )
+                            );
+                            if ($view_stats) {
+                                $view_count = $view_stats->total_display_views;
+                            }
+
+
+                            $follow_count_formatted = number_format($follow_count);
+                            $view_count_formatted = number_format($view_count);
 
                             $is_hot = ($index <= 10);
                             ?>
@@ -87,7 +115,7 @@ $exclusive_comics = new WP_Query($args);
                                         loading="lazy">
                                 </a>
 
-                                <!-- Bookmark Button (UI Only) -->
+                                <!-- Bookmark Button -->
                                 <?php truyenqq_render_bookmark_badge($post_id); ?>
 
                                 <!-- Top Notice: Time + Hot Badge -->
@@ -108,6 +136,20 @@ $exclusive_comics = new WP_Query($args);
                                         <?php the_title(); ?>
                                     </a>
                                 </h3>
+
+                                <!-- ✅ NEW: Stats -->
+                                <div class="comic-stats">
+                                    <span class="stat-item">
+                                        <i class="fa fa-bookmark"></i>
+                                        <?php echo esc_html($follow_count_formatted); ?>
+                                    </span>
+                                    <span class="stat-item">
+                                        <i class="fa fa-eye"></i>
+                                        <?php echo esc_html($view_count_formatted); ?>
+                                    </span>
+                                </div>
+
+                                <!-- Latest Chapter -->
                                 <div class="latest-chapter">
                                     <a href="<?php the_permalink(); ?>"
                                         title="Đọc <?php echo esc_attr($latest_chapter); ?>">

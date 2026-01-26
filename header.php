@@ -34,10 +34,10 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
 
 
 
-// $avatar_url = get_avatar_url($current_user->ID, array('size' => 100));
-// if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar') !== false) {
-//     $avatar_url = 'https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
-// }
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>

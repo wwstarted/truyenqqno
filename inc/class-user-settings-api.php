@@ -1,10 +1,9 @@
 <?php
 /**
  * User Settings REST API (FIXED + OTP for Password Change)
- * FIXED: Permission callback, data loading, avatar upload
  * 
  * @package TruyenQQ
- * @version 1.0.3 - FIXED: Auth check, data sync, avatar upload endpoint
+ * @version 1.0.3 
  */
 
 if (!defined('ABSPATH')) {
@@ -23,42 +22,42 @@ class TruyenQQ_User_Settings_API
      */
     public static function register_routes()
     {
-        // Get user info - FIXED PERMISSION
+
         register_rest_route('nettruyen/v1', '/user/info', array(
             'methods' => 'GET',
             'callback' => array(__CLASS__, 'get_user_info'),
             'permission_callback' => array(__CLASS__, 'check_user_logged_in')
         ));
 
-        // Update user info
+
         register_rest_route('nettruyen/v1', '/user/update-info', array(
             'methods' => 'POST',
             'callback' => array(__CLASS__, 'update_user_info'),
             'permission_callback' => array(__CLASS__, 'check_user_logged_in')
         ));
 
-        // ✅ NEW: Upload avatar/media
+
         register_rest_route('nettruyen/v1', '/media', array(
             'methods' => 'POST',
             'callback' => array(__CLASS__, 'upload_media'),
             'permission_callback' => array(__CLASS__, 'check_user_logged_in')
         ));
 
-        // Send OTP for password change
+
         register_rest_route('nettruyen/v1', '/user/send-password-otp', array(
             'methods' => 'POST',
             'callback' => array(__CLASS__, 'send_password_otp'),
             'permission_callback' => array(__CLASS__, 'check_user_logged_in')
         ));
 
-        // Verify OTP and change password
+
         register_rest_route('nettruyen/v1', '/user/verify-password-otp', array(
             'methods' => 'POST',
             'callback' => array(__CLASS__, 'verify_password_otp'),
             'permission_callback' => array(__CLASS__, 'check_user_logged_in')
         ));
 
-        // Resend OTP
+
         register_rest_route('nettruyen/v1', '/user/resend-password-otp', array(
             'methods' => 'POST',
             'callback' => array(__CLASS__, 'resend_password_otp'),
@@ -68,17 +67,17 @@ class TruyenQQ_User_Settings_API
 
     /**
      * Permission callback - Check if user is logged in
-     * ✅ FIXED: Proper authentication check
+
      */
     public static function check_user_logged_in($request)
     {
-        // Check if user is logged in
+
         if (!is_user_logged_in()) {
             error_log('TruyenQQ User Settings API: User not logged in');
             return false;
         }
 
-        // Additional nonce verification for POST requests
+
         if ($request->get_method() === 'POST') {
             $nonce = $request->get_header('X-WP-Nonce');
             if (!wp_verify_nonce($nonce, 'wp_rest')) {
@@ -92,7 +91,6 @@ class TruyenQQ_User_Settings_API
 
     /**
      * Get current user info
-     * ✅ FIXED: Return proper data structure with all fields
      * 
      * @return WP_REST_Response
      */
@@ -103,7 +101,7 @@ class TruyenQQ_User_Settings_API
 
         error_log('TruyenQQ: Loading user info for ID: ' . $user_id);
 
-        // Get avatar - Priority: Custom upload > OAuth > Gravatar
+
         $avatar_id = get_user_meta($user_id, 'avatar', true);
         $avatar_url = '';
 
@@ -112,7 +110,7 @@ class TruyenQQ_User_Settings_API
             error_log('TruyenQQ: Avatar from upload ID ' . $avatar_id . ': ' . $avatar_url);
         }
 
-        // Fallback to OAuth avatar
+
         if (!$avatar_url) {
             $oauth_avatar = get_user_meta($user_id, 'oauth_avatar', true);
             if ($oauth_avatar) {
@@ -121,13 +119,13 @@ class TruyenQQ_User_Settings_API
             }
         }
 
-        // Final fallback to Gravatar
+
         if (!$avatar_url) {
             $avatar_url = get_avatar_url($user_id, array('size' => 150));
             error_log('TruyenQQ: Using Gravatar: ' . $avatar_url);
         }
 
-        // Get user meta with proper defaults - ALWAYS RETURN STRINGS
+
         $first_name = get_user_meta($user_id, 'first_name', true);
         $last_name = get_user_meta($user_id, 'last_name', true);
         $birth_date = get_user_meta($user_id, 'birth_date', true);
@@ -138,7 +136,7 @@ class TruyenQQ_User_Settings_API
         $level = get_user_meta($user_id, 'level', true);
         $level_progress = get_user_meta($user_id, 'level_progress', true);
 
-        // Build user data array
+
         $user_data = array(
             'id' => $user_id,
             'username' => $current_user->user_login,
@@ -147,7 +145,7 @@ class TruyenQQ_User_Settings_API
             'avatar' => $avatar_url,
             'avatar_id' => $avatar_id ?: '',
 
-            // Custom fields - Convert to string, empty string if not set
+
             'first_name' => $first_name !== false ? (string) $first_name : '',
             'last_name' => $last_name !== false ? (string) $last_name : '',
             'birth_date' => $birth_date !== false ? (string) $birth_date : '',
@@ -155,7 +153,7 @@ class TruyenQQ_User_Settings_API
             'gender' => $gender !== false ? (string) $gender : '0',
             'rank' => $rank !== false ? (string) $rank : '0',
 
-            // System fields - Convert to int
+
             'points' => $points !== false ? intval($points) : 0,
             'level' => $level !== false ? intval($level) : 1,
             'level_progress' => $level_progress !== false ? intval($level_progress) : 0,
@@ -171,7 +169,6 @@ class TruyenQQ_User_Settings_API
 
     /**
      * Upload media/avatar
-     * ✅ NEW: Handle file upload for user avatar
      * 
      * @param WP_REST_Request $request
      * @return WP_REST_Response
@@ -182,7 +179,7 @@ class TruyenQQ_User_Settings_API
 
         error_log('TruyenQQ: Avatar upload started for user ID: ' . $user_id);
 
-        // Check if file was uploaded
+
         if (empty($_FILES['file'])) {
             error_log('TruyenQQ: No file uploaded');
             return new WP_REST_Response(array(
@@ -193,7 +190,7 @@ class TruyenQQ_User_Settings_API
 
         $file = $_FILES['file'];
 
-        // Validate file type
+
         $allowed_types = array('image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp');
         if (!in_array($file['type'], $allowed_types)) {
             error_log('TruyenQQ: Invalid file type: ' . $file['type']);
@@ -203,8 +200,8 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Validate file size (max 5MB)
-        $max_size = 5 * 1024 * 1024; // 5MB
+
+        $max_size = 5 * 1024 * 1024;
         if ($file['size'] > $max_size) {
             error_log('TruyenQQ: File too large: ' . $file['size']);
             return new WP_REST_Response(array(
@@ -213,7 +210,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Check for upload errors
+
         if ($file['error'] !== UPLOAD_ERR_OK) {
             error_log('TruyenQQ: Upload error: ' . $file['error']);
             return new WP_REST_Response(array(
@@ -222,7 +219,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Load WordPress file handling functions
+
         if (!function_exists('wp_handle_upload')) {
             require_once(ABSPATH . 'wp-admin/includes/file.php');
         }
@@ -230,7 +227,7 @@ class TruyenQQ_User_Settings_API
             require_once(ABSPATH . 'wp-admin/includes/image.php');
         }
 
-        // Handle file upload
+
         $upload_overrides = array(
             'test_form' => false,
             'test_size' => true,
@@ -247,7 +244,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Create attachment
+
         $file_path = $uploaded_file['file'];
         $file_url = $uploaded_file['url'];
         $file_type = $uploaded_file['type'];
@@ -270,11 +267,11 @@ class TruyenQQ_User_Settings_API
             ), 500);
         }
 
-        // Generate attachment metadata
+
         $attachment_data = wp_generate_attachment_metadata($attachment_id, $file_path);
         wp_update_attachment_metadata($attachment_id, $attachment_data);
 
-        // Update user avatar meta
+
         update_user_meta($user_id, 'avatar', $attachment_id);
 
         error_log('TruyenQQ: Avatar uploaded successfully. Attachment ID: ' . $attachment_id);
@@ -289,7 +286,6 @@ class TruyenQQ_User_Settings_API
 
     /**
      * Update user info
-     * ✅ FIXED: Proper validation and error handling
      * 
      * @param WP_REST_Request $request
      * @return WP_REST_Response
@@ -298,13 +294,13 @@ class TruyenQQ_User_Settings_API
     {
         $user_id = get_current_user_id();
 
-        // Get JSON body
+
         $params = $request->get_json_params();
 
         error_log('TruyenQQ: Updating user info for ID: ' . $user_id);
         error_log('TruyenQQ: Update params: ' . json_encode($params));
 
-        // Validate and sanitize data
+
         $last_name = isset($params['last_name']) ? sanitize_text_field($params['last_name']) : '';
         $first_name = isset($params['first_name']) ? sanitize_text_field($params['first_name']) : '';
         $birth_date = isset($params['birth_date']) ? sanitize_text_field($params['birth_date']) : '';
@@ -313,7 +309,7 @@ class TruyenQQ_User_Settings_API
         $rank = isset($params['rank']) ? sanitize_text_field($params['rank']) : '0';
         $avatar = isset($params['avatar']) ? intval($params['avatar']) : 0;
 
-        // Validate birth date format (dd/mm/yyyy)
+
         if (!empty($birth_date) && !self::validate_date($birth_date)) {
             error_log('TruyenQQ: Invalid birth date format: ' . $birth_date);
             return new WP_REST_Response(array(
@@ -322,7 +318,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Validate phone (basic validation)
+
         if (!empty($phone) && !preg_match('/^[0-9+\-\s()]+$/', $phone)) {
             error_log('TruyenQQ: Invalid phone format: ' . $phone);
             return new WP_REST_Response(array(
@@ -331,7 +327,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Update user meta
+
         update_user_meta($user_id, 'first_name', $first_name);
         update_user_meta($user_id, 'last_name', $last_name);
         update_user_meta($user_id, 'birth_date', $birth_date);
@@ -339,9 +335,9 @@ class TruyenQQ_User_Settings_API
         update_user_meta($user_id, 'gender', $gender);
         update_user_meta($user_id, 'rank', $rank);
 
-        // Update avatar if provided
+
         if ($avatar > 0) {
-            // Verify attachment exists
+
             if (wp_attachment_is_image($avatar)) {
                 update_user_meta($user_id, 'avatar', $avatar);
                 error_log('TruyenQQ: Avatar updated to ID: ' . $avatar);
@@ -350,7 +346,7 @@ class TruyenQQ_User_Settings_API
             }
         }
 
-        // Update display name if first/last name provided
+
         if (!empty($first_name) || !empty($last_name)) {
             $display_name = trim($last_name . ' ' . $first_name);
             wp_update_user(array(
@@ -379,7 +375,7 @@ class TruyenQQ_User_Settings_API
         $user_id = get_current_user_id();
         $current_user = get_userdata($user_id);
 
-        // Check if OAuth user
+
         $oauth_provider = get_user_meta($user_id, 'oauth_provider', true);
         if ($oauth_provider) {
             return new WP_REST_Response(array(
@@ -388,7 +384,7 @@ class TruyenQQ_User_Settings_API
             ), 403);
         }
 
-        // Check rate limit (max 3 times per day)
+
         if (!self::check_password_change_limit($user_id)) {
             return new WP_REST_Response(array(
                 'success' => false,
@@ -396,13 +392,13 @@ class TruyenQQ_User_Settings_API
             ), 429);
         }
 
-        // Get JSON body
+
         $params = $request->get_json_params();
 
         $current_password = isset($params['current_password']) ? $params['current_password'] : '';
         $new_password = isset($params['new_password']) ? $params['new_password'] : '';
 
-        // Validate input
+
         if (empty($current_password) || empty($new_password)) {
             return new WP_REST_Response(array(
                 'success' => false,
@@ -410,7 +406,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Validate new password length
+
         if (strlen($new_password) < 6) {
             return new WP_REST_Response(array(
                 'success' => false,
@@ -418,7 +414,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Verify current password
+
         if (!wp_check_password($current_password, $current_user->user_pass, $user_id)) {
             return new WP_REST_Response(array(
                 'success' => false,
@@ -426,7 +422,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Check if new password is same as current
+
         if (wp_check_password($new_password, $current_user->user_pass, $user_id)) {
             return new WP_REST_Response(array(
                 'success' => false,
@@ -434,13 +430,13 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Store passwords temporarily (will be used after OTP verification)
+
         set_transient('password_change_' . $user_id, array(
             'new_password' => $new_password,
             'timestamp' => time()
-        ), 1800); // 30 minutes
+        ), 1800);
 
-        // Send OTP
+
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $otp_result = TruyenQQ_OTP_Manager::send_otp($current_user->user_email, 'change_password');
 
@@ -469,7 +465,7 @@ class TruyenQQ_User_Settings_API
         $user_id = get_current_user_id();
         $current_user = get_userdata($user_id);
 
-        // Get JSON body
+
         $params = $request->get_json_params();
         $otp_code = isset($params['otp_code']) ? sanitize_text_field($params['otp_code']) : '';
 
@@ -480,7 +476,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Verify OTP
+
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $verify_result = TruyenQQ_OTP_Manager::verify_otp($current_user->user_email, $otp_code, 'change_password');
 
@@ -491,7 +487,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Get stored password
+
         $password_data = get_transient('password_change_' . $user_id);
 
         if (!$password_data || !isset($password_data['new_password'])) {
@@ -501,16 +497,16 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Update password
+
         wp_set_password($password_data['new_password'], $user_id);
 
-        // Delete transient
+
         delete_transient('password_change_' . $user_id);
 
-        // Log password change
+
         self::log_password_change($user_id);
 
-        // Increment daily counter
+
         self::increment_password_change_count($user_id);
 
         return new WP_REST_Response(array(
@@ -530,7 +526,7 @@ class TruyenQQ_User_Settings_API
         $user_id = get_current_user_id();
         $current_user = get_userdata($user_id);
 
-        // Check if there's an active password change session
+
         $password_data = get_transient('password_change_' . $user_id);
 
         if (!$password_data) {
@@ -540,7 +536,7 @@ class TruyenQQ_User_Settings_API
             ), 400);
         }
 
-        // Send OTP
+
         require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
         $otp_result = TruyenQQ_OTP_Manager::send_otp($current_user->user_email, 'change_password');
 
@@ -624,7 +620,7 @@ class TruyenQQ_User_Settings_API
 
         $login_history_table = $wpdb->prefix . 'nettruyen_login_history';
 
-        // Check if table exists
+
         if ($wpdb->get_var("SHOW TABLES LIKE '$login_history_table'") != $login_history_table) {
             return;
         }
@@ -674,5 +670,5 @@ class TruyenQQ_User_Settings_API
     }
 }
 
-// Register REST API routes
+
 add_action('rest_api_init', array('TruyenQQ_User_Settings_API', 'register_routes'));

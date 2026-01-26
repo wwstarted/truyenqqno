@@ -8,7 +8,7 @@
  */
 
 
-// Include User Settings API
+
 require_once get_template_directory() . '/inc/class-user-settings-api.php';
 
 /**
@@ -16,12 +16,12 @@ require_once get_template_directory() . '/inc/class-user-settings-api.php';
  */
 function truyenqq_enqueue_user_settings_assets()
 {
-    // Only load on user settings page
+
     if (!is_page_template('template-user-settings.php')) {
         return;
     }
 
-    // Enqueue CSS
+
     wp_enqueue_style(
         'truyenqq-user-settings',
         get_template_directory_uri() . '/css/user-settings.css',
@@ -29,7 +29,7 @@ function truyenqq_enqueue_user_settings_assets()
         '1.0.0'
     );
 
-    // Enqueue JavaScript
+
     wp_enqueue_script(
         'truyenqq-user-settings',
         get_template_directory_uri() . '/js/user-settings.js',
@@ -38,7 +38,7 @@ function truyenqq_enqueue_user_settings_assets()
         true
     );
 
-    // Note: userSettingsData is already localized in the template file
+
 }
 add_action('wp_enqueue_scripts', 'truyenqq_enqueue_user_settings_assets');
 
@@ -47,7 +47,7 @@ add_action('wp_enqueue_scripts', 'truyenqq_enqueue_user_settings_assets');
  */
 function truyenqq_create_user_settings_page()
 {
-    // Check if page already exists
+
     $page_check = get_page_by_path('quan-ly-tai-khoan');
 
     if (!$page_check) {
@@ -74,14 +74,14 @@ add_action('after_switch_theme', 'truyenqq_create_user_settings_page');
  */
 function truyenqq_init_user_settings_meta($user_id)
 {
-    // Set default values for new users
+
     update_user_meta($user_id, 'gender', '0');
     update_user_meta($user_id, 'rank', '0');
     update_user_meta($user_id, 'points', 0);
     update_user_meta($user_id, 'level', 1);
     update_user_meta($user_id, 'level_progress', 0);
 }
-// Hook this to your registration functions
+
 
 
 /**

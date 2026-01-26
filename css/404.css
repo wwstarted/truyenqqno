@@ -7,7 +7,7 @@
  */
 
 /* =====================================================
-   404 PAGE CONTAINER - 100VH FULL SCREEN WITH VIDEO
+   404 PAGE CONTAINER 
 ===================================================== */
 .error-404-page {
   min-height: 100vh;
@@ -26,7 +26,6 @@ body.dark-mode .error-404-page {
   background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
 }
 
-/* Video Background */
 .error-404-video-bg {
   position: absolute;
   top: 50%;
@@ -45,7 +44,6 @@ body.dark-mode .error-404-video-bg {
   opacity: 0.9;
 }
 
-/* Video Overlay - Phủ đồng đều, nhạt hơn */
 .error-404-video-overlay {
   position: absolute;
   inset: 0;
@@ -58,7 +56,6 @@ body.dark-mode .error-404-video-overlay {
   background: rgba(15, 15, 15, 0.4);
 }
 
-/* Container - Làm mờ để video nổi bật */
 .error-404-container {
   max-width: 800px;
   width: 100%;
@@ -260,7 +257,6 @@ body.dark-mode .search-input-404::placeholder {
   transform: translateX(3px);
 }
 
-/* Search Results Dropdown */
 .search-results-404 {
   position: absolute;
   top: calc(100% + 10px);
@@ -685,7 +681,6 @@ body.dark-mode .floating-circle {
     height: 80px;
   }
 
-  /* Video vẫn full screen trên mobile */
   .error-404-video-bg {
     opacity: 0.9;
   }
@@ -770,7 +765,6 @@ body.dark-mode .floating-circle {
     display: inline;
   }
 
-  /* Container mờ hơn để video rõ hơn trên mobile */
   .error-404-container {
     background: rgba(255, 255, 255, 0.5);
   }

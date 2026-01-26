@@ -1,36 +1,25 @@
 /* =====================================================
-   ✨ HEADER CSS - DARK/LIGHT TOGGLE + BLUE THEME ✨
-   Updated: Support Dark/Light Mode Toggle
-   Version: 2.0.0
-===================================================== */
-
-/* =====================================================
    CSS VARIABLES - LIGHT MODE (DEFAULT)
 ===================================================== */
 :root {
-  /* Background Colors - Light Mode */
   --bg-primary: #ffffff;
   --bg-secondary: #f5f5f5;
   --bg-header: #ffffff;
   --bg-header-bottom: #f8f9fa;
 
-  /* Text Colors - Light Mode */
   --text-primary: #333333;
   --text-light: #666666;
   --text-muted: #999999;
   --text-header-nav: #333333;
 
-  /* Border & Shadow - Light Mode */
   --border-color: #e0e0e0;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --header-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 
-  /* Blue Theme Colors */
   --accent-color: #4a9eff;
   --hover-color: #2b7ee6;
   --accent-light: #6fb1ff;
 
-  /* Blue Theme Shadows */
   --blue-shadow-light: rgba(74, 158, 255, 0.3);
   --blue-shadow-medium: rgba(74, 158, 255, 0.4);
   --blue-shadow-strong: rgba(74, 158, 255, 0.5);
@@ -40,24 +29,20 @@
    CSS VARIABLES - DARK MODE
 ===================================================== */
 body.dark-mode {
-  /* Background Colors - Dark Mode */
   --bg-primary: #0f0f0f;
   --bg-secondary: #1a1a1a;
   --bg-header: #1a1a1a;
   --bg-header-bottom: #1a1a1a;
 
-  /* Text Colors - Dark Mode */
   --text-primary: #e0e0e0;
   --text-light: #ffffff;
   --text-muted: #999999;
   --text-header-nav: #e0e0e0;
 
-  /* Border & Shadow - Dark Mode */
   --border-color: #333333;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   --header-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 
-  /* Blue Theme Shadows - Dark Mode (Stronger) */
   --blue-shadow-light: rgba(74, 158, 255, 0.4);
   --blue-shadow-medium: rgba(74, 158, 255, 0.5);
   --blue-shadow-strong: rgba(74, 158, 255, 0.6);
@@ -475,7 +460,6 @@ body.dark-mode .search-input:focus {
   transition: max-height 0.3s ease;
   z-index: 1003;
   color: var(--text-primary);
-  /* border: 1px solid var(--border-color); */
 }
 
 body.dark-mode .search-results {
@@ -1158,7 +1142,7 @@ body.dark-mode .user-menu-links a {
   display: none;
   width: 40px;
   height: 40px;
-  /* color: var(--text-light); */
+
   font-size: 20px;
   align-items: center;
   justify-content: center;
@@ -1318,7 +1302,6 @@ body.dark-mode .mobile-menu-toggle {
     min-width: 40px;
     width: 40px;
     height: 40px;
-    /* color: #ffffff; */
   }
 
   .nav-menu.active {
@@ -1339,9 +1322,9 @@ body.dark-mode .mobile-menu-toggle {
     display: flex;
     justify-content: space-between;
     overflow: visible;
-    /* background-color: #000000; */
+
     padding: 15px 20px;
-    /* color: #ffffff; */
+
     align-items: center;
     border-bottom: 1px solid var(--border-color);
   }
@@ -1350,7 +1333,7 @@ body.dark-mode .mobile-menu-toggle {
     display: block;
     padding: 0;
     text-align: left;
-    /* color: #ffffff; */
+
     font-weight: bold;
   }
 
@@ -1735,19 +1718,18 @@ body.dark-mode .user-dropdown::before {
 ===================================================== */
 
 .search-results.active {
-  max-height: 550px; /* 5 items × 120px */
+  max-height: 550px;
   overflow-y: auto;
 }
 
 .search-result-item {
-  min-height: 110px; /* Tăng từ 80px */
+  min-height: 110px;
 }
 
 .search-result-info {
   gap: 6px;
 }
 
-/* ✅ Comic Stats in Search Results */
 .search-result-info .comic-stats {
   display: flex;
   align-items: center;

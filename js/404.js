@@ -33,20 +33,16 @@
       return;
     }
 
-    // Input event
     elements.searchInput.addEventListener("input", handleSearchInput);
 
-    // Button click
     elements.searchBtn.addEventListener("click", handleSearchClick);
 
-    // Enter key
     elements.searchInput.addEventListener("keypress", function (e) {
       if (e.key === "Enter") {
         handleSearchClick();
       }
     });
 
-    // Close results when clicking outside
     document.addEventListener("click", function (e) {
       if (!e.target.closest(".error-404-search") && elements.searchResults) {
         elements.searchResults.classList.remove("active");
@@ -82,7 +78,6 @@
       return;
     }
 
-    // Redirect to search results page
     window.location.href = `${TRUYENQQ_CONFIG.homeUrl}/tim-kiem?q=${encodeURIComponent(query)}`;
   }
 

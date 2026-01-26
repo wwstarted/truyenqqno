@@ -67,7 +67,7 @@ body.dark-mode .section-title {
   height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 380px; /* ✅ TĂNG để chứa stats */
+  min-height: 380px;
 }
 
 body.dark-mode .homepage-suggest .comic-card {
@@ -217,7 +217,6 @@ body.dark-mode .homepage-suggest .comic-name a {
   color: var(--accent-color);
 }
 
-/* ✅ COMIC STATS - ĐỒNG BỘ VỚI NEW-UPDATE */
 .homepage-suggest .comic-stats {
   display: flex;
   align-items: center;
@@ -532,7 +531,7 @@ body.dark-mode .homepage-exclusive .section-title a {
   height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 380px; /* ✅ TĂNG để chứa stats */
+  min-height: 380px;
 }
 
 body.dark-mode .homepage-exclusive .comic-card {
@@ -682,7 +681,6 @@ body.dark-mode .homepage-exclusive .comic-name a {
   color: var(--accent-color);
 }
 
-/* ✅ COMIC STATS - ĐỒNG BỘ VỚI NEW-UPDATE */
 .homepage-exclusive .comic-stats {
   display: flex;
   align-items: center;

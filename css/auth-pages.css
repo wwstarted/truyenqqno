@@ -103,7 +103,6 @@ body.dark-mode .auth-video-bg {
   opacity: 0.9;
 }
 
-/* Video Overlay - Lighter for better video visibility */
 .auth-video-overlay {
   position: absolute;
   inset: 0;
@@ -388,7 +387,6 @@ body.dark-mode .auth-container-404 {
   color: var(--text-muted);
 }
 
-/* Password Input */
 .password-input {
   position: relative;
 }

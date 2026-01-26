@@ -242,6 +242,14 @@ function toyota_enqueue_assets()
             'restUrl' => rest_url('nettruyen/v1/comics/ngau-nhien'),
             'nonce' => wp_create_nonce('wp_rest'),
         ));
+
+        wp_enqueue_script(
+            'ngau-nhien-js',
+            get_template_directory_uri() . '/js/ngau-nhien.js',
+            array('jquery'),
+            '1.0.0',
+            true
+        );
     }
 
     if (is_page_template('page-theo-doi.php')) {
@@ -484,34 +492,25 @@ function toyota_load_schema()
 {
     $schema_path = get_template_directory() . '/schemas/';
 
-    // Common schema (WebSite + Organization) - load trên mọi trang
+
     if (file_exists($schema_path . 'schema-common.php')) {
         include($schema_path . 'schema-common.php');
     }
 
-    // Schema cho chapter (single comic + có query var 'chapter')
+
     if (is_singular('nettruyen_comic') && get_query_var('chapter')) {
         if (file_exists($schema_path . 'schema-chap.php')) {
             include($schema_path . 'schema-chap.php');
         }
-    }
-
-    // Schema cho single comic (không có chapter)
-    elseif (is_singular('nettruyen_comic') && !get_query_var('chapter')) {
+    } elseif (is_singular('nettruyen_comic') && !get_query_var('chapter')) {
         if (file_exists($schema_path . 'schema-single.php')) {
             include($schema_path . 'schema-single.php');
         }
-    }
-
-    // Schema cho genre taxonomy
-    elseif (is_tax('nettruyen_genre')) {
+    } elseif (is_tax('nettruyen_genre')) {
         if (file_exists($schema_path . 'schema-genre.php')) {
             include($schema_path . 'schema-genre.php');
         }
-    }
-
-    // Schema cho homepage
-    elseif (is_front_page() || is_home()) {
+    } elseif (is_front_page() || is_home()) {
         if (file_exists($schema_path . 'schema-home.php')) {
             include($schema_path . 'schema-home.php');
         }
@@ -523,52 +522,52 @@ add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $u
     return home_url('/dang-nhap');
 }, 10, 3);
 
-// ========================================
-// REQUIRE FILES - PROPER ORDER
-// ========================================
 
-// Auth System
+
+
+
+
 require_once get_template_directory() . '/inc/auth-db-migration.php';
 require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
 require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
-require_once get_template_directory() . '/inc/ajax-handlers-with-recaptcha.php'; // ✅ FIXED VERSION
+require_once get_template_directory() . '/inc/ajax-handlers-with-recaptcha.php';
 
-// Comics & Search
+
 require_once get_template_directory() . '/inc/class-nettruyen-comics-rest-api.php';
 require_once get_template_directory() . '/inc/class-advanced-search-api.php';
 require_once get_template_directory() . '/inc/single-nettruyen-comics.php';
 require_once get_template_directory() . '/inc/class-top-comics-api.php';
 
-// Reading History
+
 require_once get_template_directory() . '/inc/create-reading-history-table.php';
 require_once get_template_directory() . '/inc/reading-history-api.php';
 
-// Bookmarks
+
 require_once get_template_directory() . '/inc/create-bookmarks-table.php';
 require_once get_template_directory() . '/inc/bookmarks-api.php';
 
-// OAuth & User Settings
+
 require_once get_template_directory() . '/inc/social-login.php';
 require_once get_template_directory() . '/inc/admin-oauth-settings.php';
 
-// ✅ USER SETTINGS API - MUST BE LOADED LAST
+
 require_once get_template_directory() . '/inc/class-user-settings-api.php';
 
-// ========================================
-// MEDIA UPLOAD PERMISSION FOR LOGGED-IN USERS
-// ========================================
+
+
+
 
 /**
  * Allow logged-in users to upload images for avatar
  * Security: Checks login status and nonce verification
  */
 add_filter('rest_pre_dispatch', function ($result, $server, $request) {
-    // Only intercept media upload requests
+
     if ($request->get_route() !== '/wp/v2/media' || $request->get_method() !== 'POST') {
         return $result;
     }
 
-    // Must be logged in
+
     if (!is_user_logged_in()) {
         return new WP_Error(
             'rest_cannot_create',
@@ -577,7 +576,7 @@ add_filter('rest_pre_dispatch', function ($result, $server, $request) {
         );
     }
 
-    // Verify nonce for security
+
     $nonce = $request->get_header('X-WP-Nonce');
     if (!wp_verify_nonce($nonce, 'wp_rest')) {
         return new WP_Error(
@@ -587,7 +586,7 @@ add_filter('rest_pre_dispatch', function ($result, $server, $request) {
         );
     }
 
-    // Allow the upload
+
     return $result;
 }, 10, 3);
 
@@ -595,16 +594,16 @@ add_filter('rest_pre_dispatch', function ($result, $server, $request) {
  * Limit file upload size for avatars (5MB max)
  */
 add_filter('upload_size_limit', function ($size) {
-    // Only for user settings page
+
     if (is_page_template('template-user-settings.php')) {
-        return 5 * 1024 * 1024; // 5MB
+        return 5 * 1024 * 1024;
     }
     return $size;
 });
 
-// ========================================
-// USER SETTINGS PAGE AUTO-CREATION
-// ========================================
+
+
+
 
 function truyenqq_create_user_settings_page()
 {
@@ -972,7 +971,7 @@ function nettruyen_search_comics($request)
     $query = new WP_Query($args);
     $results = array();
 
-    // ✅ NEW: Get stats table
+
     $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
     if ($query->have_posts()) {
@@ -998,13 +997,13 @@ function nettruyen_search_comics($request)
 
             $alternative_title = get_post_meta($post_id, '_nettruyen_alternative_title', true);
 
-            // ✅ NEW: Get follow count
+
             $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
             if (empty($follow_count)) {
                 $follow_count = 0;
             }
 
-            // ✅ NEW: Get view count from database
+
             $view_count = 0;
             $view_stats = $wpdb->get_row(
                 $wpdb->prepare(
@@ -1024,8 +1023,8 @@ function nettruyen_search_comics($request)
                 'latest_chapter' => $latest_chapter,
                 'slug' => get_post_field('post_name', $post_id),
                 'link' => get_permalink($post_id),
-                'follow_count' => intval($follow_count),  // ✅ NEW
-                'view_count' => intval($view_count)       // ✅ NEW
+                'follow_count' => intval($follow_count),
+                'view_count' => intval($view_count)
             );
         }
     }
@@ -1721,66 +1720,66 @@ function nettruyen_register_country_taxonomy()
  */
 function nettruyen_detect_country($post_id)
 {
-    // 1. Check genres first (highest priority)
+
     $genres = wp_get_post_terms($post_id, 'nettruyen_genre', array('fields' => 'slugs'));
 
     if (!is_wp_error($genres) && !empty($genres)) {
-        // Manhua → China
+
         if (in_array('manhua', $genres)) {
             return 'China';
         }
-        // Manhwa → Korea
+
         if (in_array('manhwa', $genres)) {
             return 'Korea';
         }
-        // Manga → Japan
+
         if (in_array('manga', $genres)) {
             return 'Japan';
         }
     }
 
-    // 2. Check title (secondary priority)
+
     $title = get_the_title($post_id);
     $other_name = get_post_meta($post_id, '_nettruyen_other_name', true);
     $combined_title = $title . ' ' . $other_name;
 
-    // Korean detection (có ký tự Hangul)
+
     if (preg_match('/[\x{AC00}-\x{D7A3}]/u', $combined_title)) {
         return 'Korea';
     }
 
-    // Japanese detection (có Hiragana/Katakana)
+
     if (preg_match('/[\x{3040}-\x{309F}\x{30A0}-\x{30FF}]/u', $combined_title)) {
         return 'Japan';
     }
 
-    // Chinese detection (có chữ Hán đơn giản/phồn thể)
+
     if (preg_match('/[\x{4E00}-\x{9FFF}]/u', $combined_title)) {
-        // Kiểm tra thêm keywords
+
         if (preg_match('/(漫画|漫畫|国产)/u', $combined_title)) {
             return 'China';
         }
-        // Nếu có chữ Hán nhưng không rõ → default China
+
         return 'China';
     }
 
-    // 3. Check author nationality
+
     $authors = get_the_terms($post_id, 'nettruyen_author');
     if ($authors && !is_wp_error($authors)) {
         $author_name = $authors[0]->name;
 
-        // Korean authors
+
         if (preg_match('/[\x{AC00}-\x{D7A3}]/u', $author_name)) {
             return 'Korea';
         }
 
-        // Japanese authors (common suffixes)
+
         if (preg_match('/(太郎|一郎|次郎|子|さん|先生)$/u', $author_name)) {
             return 'Japan';
         }
     }
 
-    // 4. Fallback: Check keywords in title
+
     $title_lower = strtolower($title);
 
     if (
@@ -1807,7 +1806,7 @@ function nettruyen_detect_country($post_id)
         return 'China';
     }
 
-    // Default: return null if cannot detect
+
     return null;
 }
 
@@ -1817,13 +1816,13 @@ function nettruyen_detect_country($post_id)
  */
 function nettruyen_auto_migrate_country()
 {
-    // Check if already migrated
+
     $migrated = get_option('nettruyen_country_migrated', false);
     if ($migrated) {
         return;
     }
 
-    // Create country terms if not exist
+
     $countries = array(
         'China' => 'Trung Quốc',
         'Korea' => 'Hàn Quốc',
@@ -1837,7 +1836,7 @@ function nettruyen_auto_migrate_country()
         }
     }
 
-    // Get all comics
+
     $args = array(
         'post_type' => 'nettruyen_comic',
         'posts_per_page' => -1,
@@ -1856,13 +1855,13 @@ function nettruyen_auto_migrate_country()
     );
 
     foreach ($comics as $post_id) {
-        // Skip if already has country
+
         $existing_country = wp_get_post_terms($post_id, 'nettruyen_country');
         if (!empty($existing_country) && !is_wp_error($existing_country)) {
             continue;
         }
 
-        // Detect country
+
         $detected_country = nettruyen_detect_country($post_id);
 
         if ($detected_country) {
@@ -1870,7 +1869,7 @@ function nettruyen_auto_migrate_country()
             if ($term) {
                 wp_set_object_terms($post_id, (int) $term->term_id, 'nettruyen_country');
 
-                // Update stats
+
                 $country_lower = strtolower($detected_country);
                 if (isset($stats[$country_lower])) {
                     $stats[$country_lower]++;
@@ -1881,7 +1880,7 @@ function nettruyen_auto_migrate_country()
         }
     }
 
-    // Mark as migrated
+
     update_option('nettruyen_country_migrated', true);
     update_option('nettruyen_country_migration_stats', $stats);
     update_option('nettruyen_country_migration_date', current_time('mysql'));
@@ -1889,10 +1888,10 @@ function nettruyen_auto_migrate_country()
     return $stats;
 }
 
-// Run migration when theme is activated
+
 add_action('after_switch_theme', 'nettruyen_auto_migrate_country');
 
-// Admin page to view stats and re-run migration
+
 add_action('admin_menu', 'nettruyen_country_migration_menu');
 
 function nettruyen_country_migration_menu()
@@ -1912,17 +1911,17 @@ function nettruyen_country_migration_page()
     $stats = get_option('nettruyen_country_migration_stats', array());
     $date = get_option('nettruyen_country_migration_date', 'N/A');
 
-    // Handle re-run
+
     if (isset($_POST['rerun_migration']) && check_admin_referer('nettruyen_country_migration')) {
         delete_option('nettruyen_country_migrated');
         $stats = nettruyen_auto_migrate_country();
         echo '<div class="notice notice-success"><p>✅ Migration completed!</p></div>';
     }
 
-    // Handle force update all
+
     if (isset($_POST['force_update']) && check_admin_referer('nettruyen_country_migration')) {
         global $wpdb;
-        // Remove all country terms
+
         $wpdb->query("
             DELETE FROM {$wpdb->term_relationships} 
             WHERE term_taxonomy_id IN (

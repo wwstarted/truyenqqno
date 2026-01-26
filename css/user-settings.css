@@ -1,6 +1,5 @@
 /**
- * User Settings Pages CSS - BLUE THEME VERSION
- * Quản lý tài khoản & Đổi mật khẩu - Responsive
+
  * 
  * @package TruyenQQ
  * @version 2.0.0 - Blue Theme + Layout Optimization
@@ -194,7 +193,6 @@ body.dark-mode #settings-content-area {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Loading Spinner */
 .loading-spinner {
   display: flex;
   flex-direction: column;
@@ -280,7 +278,6 @@ body.dark-mode .loading-spinner p {
   transform: translateY(0);
 }
 
-/* Avatar Warning */
 .user-right.warning-text {
   color: var(--color-blue-primary);
   font-size: 13px;
@@ -456,7 +453,6 @@ body.dark-mode .field .control input.input:disabled {
   border-color: #333;
 }
 
-/* Radio Buttons - Blue Theme */
 .user-field {
   display: flex;
   align-items: center;
@@ -500,7 +496,6 @@ body.dark-mode .user-field input[type="radio"]:checked + label {
   color: var(--color-blue-light);
 }
 
-/* List Radio (Rank System) */
 .list-radio {
   margin-bottom: 12px;
 }
@@ -580,7 +575,6 @@ body.dark-mode .lunar-button.red {
   transform: none;
 }
 
-/* Lunar Button Decorations */
 .lunar-button .holiday-flower,
 .lunar-button .holiday-coin {
   position: absolute;
@@ -733,7 +727,6 @@ body.dark-mode .form-message.error {
   }
 }
 
-/* OAuth Warning Box - Blue Theme */
 .oauth-warning {
   background: #e3f2fd;
   border: 2px solid var(--color-blue-primary);
@@ -840,7 +833,6 @@ body.dark-mode .otp-resend a {
     padding: 30px 20px;
   }
 
-  /* Sidebar full width on tablet */
   .user-settings-page .column.is-narrow,
   .user-settings-page .column.columns {
     flex: 0 0 100%;
@@ -848,7 +840,6 @@ body.dark-mode .otp-resend a {
     width: 100%;
   }
 
-  /* Horizontal navigation - Full width */
   .nav-user {
     display: flex;
     overflow-x: auto;
@@ -884,7 +875,6 @@ body.dark-mode .otp-resend a {
     padding-left: 20px;
   }
 
-  /* Content area full width */
   #settings-content-area {
     padding: 28px;
     min-height: 480px;
@@ -892,7 +882,6 @@ body.dark-mode .otp-resend a {
     box-sizing: border-box;
   }
 
-  /* Forms full width */
   .user-info-content,
   .change-password-content {
     width: 100%;
@@ -953,7 +942,6 @@ body.dark-mode .otp-resend a {
     padding: 11px 32px;
   }
 
-  /* OAuth warning full width */
   .oauth-warning {
     width: 100%;
     box-sizing: border-box;
@@ -972,7 +960,6 @@ body.dark-mode .otp-resend a {
     gap: 18px;
   }
 
-  /* Stack navigation vertically */
   .nav-user {
     flex-direction: column;
     overflow-x: visible;
