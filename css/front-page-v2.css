@@ -1602,39 +1602,64 @@ body.dark-mode .homepage-new-update .view-more-btn {
 /* =====================================================
    ✅ END OF PATCH
 ===================================================== */
-
-/* ==================== fix swipper prev next btn ====================== */
 /* =====================================================
-   FIX: SWIPER NAVIGATION BUTTONS - ĐỒNG BỘ ICON SIZE
+   ENHANCED DESIGN - MODERN NAVIGATION BUTTONS
 ===================================================== */
 
-/* Reset Swiper default styles */
-.homepage-suggest .swiper-button-prev::after,
-.homepage-suggest .swiper-button-next::after,
-.homepage-exclusive .swiper-button-prev::after,
-.homepage-exclusive .swiper-button-next::after {
-  content: "" !important; /* Xóa icon mặc định của Swiper */
-}
-
-/* Đảm bảo icon FontAwesome hiển thị đúng */
-.homepage-suggest .swiper-button-prev i,
-.homepage-suggest .swiper-button-next i,
-.homepage-exclusive .swiper-button-prev i,
-.homepage-exclusive .swiper-button-next i {
-  font-size: 20px !important; /* Cùng size */
-  font-weight: 400 !important;
-  line-height: 1 !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Đảm bảo button không bị override */
 .homepage-suggest .swiper-button-prev,
 .homepage-suggest .swiper-button-next,
 .homepage-exclusive .swiper-button-prev,
 .homepage-exclusive .swiper-button-next {
-  width: 40px !important;
-  height: 40px !important;
-  font-size: 0 !important; /* Xóa text default */
+  width: 45px !important;
+  height: 45px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 2px solid rgba(74, 158, 255, 0.3) !important;
+}
+
+body.dark-mode .homepage-suggest .swiper-button-prev,
+body.dark-mode .homepage-suggest .swiper-button-next,
+body.dark-mode .homepage-exclusive .swiper-button-prev,
+body.dark-mode .homepage-exclusive .swiper-button-next {
+  background: rgba(26, 26, 26, 0.95) !important;
+  border-color: rgba(74, 158, 255, 0.5) !important;
+}
+
+.homepage-suggest .swiper-button-prev::after,
+.homepage-suggest .swiper-button-next::after,
+.homepage-exclusive .swiper-button-prev::after,
+.homepage-exclusive .swiper-button-next::after {
+  content: "" !important;
+}
+
+.homepage-suggest .swiper-button-prev i,
+.homepage-suggest .swiper-button-next i,
+.homepage-exclusive .swiper-button-prev i,
+.homepage-exclusive .swiper-button-next i {
+  font-size: 22px !important;
+  color: var(--accent-color) !important;
+  font-weight: 700 !important;
+}
+
+.homepage-suggest .swiper-button-prev:hover,
+.homepage-suggest .swiper-button-next:hover,
+.homepage-exclusive .swiper-button-prev:hover,
+.homepage-exclusive .swiper-button-next:hover {
+  background: linear-gradient(
+    135deg,
+    var(--accent-color) 0%,
+    var(--hover-color) 100%
+  ) !important;
+  transform: scale(1.15) !important;
+  box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4) !important;
+  border-color: transparent !important;
+}
+
+.homepage-suggest .swiper-button-prev:hover i,
+.homepage-suggest .swiper-button-next:hover i,
+.homepage-exclusive .swiper-button-prev:hover i,
+.homepage-exclusive .swiper-button-next:hover i {
+  color: white !important;
 }
