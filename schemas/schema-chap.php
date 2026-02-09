@@ -171,28 +171,28 @@ $description = "Đọc truyện tranh {$comic_title} Chương {$chapter_name} ti
 </script>
 
 <?php if (!empty($chapter_images)): ?>
-    <!-- ImageGallery Schema -->
-    <script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "ImageGallery",
-        "name": "<?php echo esc_js($comic_title . ' - Chương ' . $chapter_name); ?>",
-        "description": "Tất cả ảnh của chương <?php echo esc_js($chapter_name); ?>",
-        "url": "<?php echo esc_url($current_url); ?>",
-        "image": <?php echo json_encode($chapter_images, JSON_UNESCAPED_SLASHES); ?>,
-        "associatedMedia": [
-            <?php foreach ($chapter_images as $index => $image_url): ?> {
-                    "@type": "ImageObject",
-                    "contentUrl": "<?php echo esc_url($image_url); ?>",
-                    "name": "<?php echo esc_js($comic_title . ' Chương ' . $chapter_name . ' - Trang ' . ($index + 1)); ?>",
-                    "position": <?php echo $index + 1; ?>
-                }
-                <?php echo ($index < count($chapter_images) - 1) ? ',' : ''; ?>
+<!-- ImageGallery Schema -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "ImageGallery",
+    "name": "<?php echo esc_js($comic_title . ' - Chương ' . $chapter_name); ?>",
+    "description": "Tất cả ảnh của chương <?php echo esc_js($chapter_name); ?>",
+    "url": "<?php echo esc_url($current_url); ?>",
+    "image": <?php echo json_encode($chapter_images, JSON_UNESCAPED_SLASHES); ?>,
+    "associatedMedia": [
+        <?php foreach ($chapter_images as $index => $image_url): ?> {
+            "@type": "ImageObject",
+            "contentUrl": "<?php echo esc_url($image_url); ?>",
+            "name": "<?php echo esc_js($comic_title . ' Chương ' . $chapter_name . ' - Trang ' . ($index + 1)); ?>",
+            "position": <?php echo $index + 1; ?>
+        }
+        <?php echo ($index < count($chapter_images) - 1) ? ',' : ''; ?>
 
-            <?php endforeach; ?>
-        ]
-    }
-    </script>
+        <?php endforeach; ?>
+    ]
+}
+</script>
 <?php endif; ?>
 
 <!-- Chapter Navigation Schema (For better understanding) -->
@@ -210,16 +210,16 @@ $description = "Đọc truyện tranh {$comic_title} Chương {$chapter_name} ti
         "name": "<?php echo esc_js($comic_title); ?>"
     }
     <?php if ($prev_url): ?>,
-        "previousItem": {
-            "@type": "Thing",
-            "url": "<?php echo esc_url($prev_url); ?>"
-        }
+    "previousItem": {
+        "@type": "Thing",
+        "url": "<?php echo esc_url($prev_url); ?>"
+    }
     <?php endif; ?>
     <?php if ($next_url): ?>,
-        "nextItem": {
-            "@type": "Thing",
-            "url": "<?php echo esc_url($next_url); ?>"
-        }
+    "nextItem": {
+        "@type": "Thing",
+        "url": "<?php echo esc_url($next_url); ?>"
+    }
     <?php endif; ?>
 }
 </script>
