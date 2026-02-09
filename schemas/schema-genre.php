@@ -107,16 +107,16 @@ if ($paged > 1) {
 ?>
 
 <?php if (!empty($comic_items)): ?>
-    <script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "ItemList",
-        "name": "<?php echo esc_js($schema_name); ?>",
-        "description": "<?php echo esc_js($schema_description); ?>",
-        "numberOfItems": <?php echo count($comic_items); ?>,
-        "itemListElement": <?php echo json_encode($comic_items, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
-    }
-    </script>
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "ItemList",
+    "name": "<?php echo esc_js($schema_name); ?>",
+    "description": "<?php echo esc_js($schema_description); ?>",
+    "numberOfItems": <?php echo count($comic_items); ?>,
+    "itemListElement": <?php echo json_encode($comic_items, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
+}
+</script>
 <?php endif; ?>
 
 <?php
@@ -138,15 +138,15 @@ if ($paged > 1) {
 </script>
 
 <?php if (!empty($genre_description)): ?>
-    <!-- Genre/Category schema -->
-    <script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "Thing",
-        "@id": "<?php echo esc_url(get_term_link($current_genre)); ?>",
-        "name": "<?php echo esc_js($genre_name); ?>",
-        "description": "<?php echo esc_js(wp_strip_all_tags($genre_description)); ?>",
-        "url": "<?php echo esc_url(get_term_link($current_genre)); ?>"
-    }
-    </script>
+<!-- Genre/Category schema -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Thing",
+    "@id": "<?php echo esc_url(get_term_link($current_genre)); ?>",
+    "name": "<?php echo esc_js($genre_name); ?>",
+    "description": "<?php echo esc_js(wp_strip_all_tags($genre_description)); ?>",
+    "url": "<?php echo esc_url(get_term_link($current_genre)); ?>"
+}
+</script>
 <?php endif; ?>
