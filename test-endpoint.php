@@ -55,7 +55,6 @@ if (!$hot_comics->have_posts())
                         $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
                         $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
 
-                        // ✅ NEW: Stats
                         $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true) ?: 0;
                         $view_stats = $wpdb->get_row($wpdb->prepare("SELECT total_display_views FROM {$stats_table} WHERE post_id = %d", $post_id));
                         $view_count = $view_stats ? $view_stats->total_display_views : 0;
@@ -116,10 +115,7 @@ if (!$hot_comics->have_posts())
 </section>
 
 <?php
-/**
- * Section: Độc Quyền Truyện QQ
- * ✅ UPDATED: Added comic-stats
- */
+
 $exclusive_comics = new WP_Query(array('post_type' => 'nettruyen_comic', 'post_status' => 'publish', 'posts_per_page' => 16, 'orderby' => 'rand'));
 if (!$exclusive_comics->have_posts())
     return;

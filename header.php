@@ -140,7 +140,8 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                                 </div>
                                 <div class="notification-dropdown" id="notificationDropdown">
                                     <div class="notification-header">
-                                        <h4>Thông báo</h4>
+                                        <!-- <h4>Thông báo</h4> -->
+                                        <div class="notification-title">Thông báo</div>
                                     </div>
                                     <ul class="notification-list" id="notificationList">
                                         <li class="no-notification">Không có thông báo nào!</li>
@@ -257,8 +258,6 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                 </nav>
             </div>
         </div>
-
-
 
     </header>
     <?php wp_footer(); ?>

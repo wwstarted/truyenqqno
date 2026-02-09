@@ -12,6 +12,12 @@
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.notification-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 body.dark-mode {
   --bg-primary: #0f0f0f;
   --bg-secondary: #1a1a1a;
