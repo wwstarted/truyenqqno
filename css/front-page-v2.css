@@ -1602,3 +1602,39 @@ body.dark-mode .homepage-new-update .view-more-btn {
 /* =====================================================
    ✅ END OF PATCH
 ===================================================== */
+
+/* ==================== fix swipper prev next btn ====================== */
+/* =====================================================
+   FIX: SWIPER NAVIGATION BUTTONS - ĐỒNG BỘ ICON SIZE
+===================================================== */
+
+/* Reset Swiper default styles */
+.homepage-suggest .swiper-button-prev::after,
+.homepage-suggest .swiper-button-next::after,
+.homepage-exclusive .swiper-button-prev::after,
+.homepage-exclusive .swiper-button-next::after {
+  content: "" !important; /* Xóa icon mặc định của Swiper */
+}
+
+/* Đảm bảo icon FontAwesome hiển thị đúng */
+.homepage-suggest .swiper-button-prev i,
+.homepage-suggest .swiper-button-next i,
+.homepage-exclusive .swiper-button-prev i,
+.homepage-exclusive .swiper-button-next i {
+  font-size: 20px !important; /* Cùng size */
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Đảm bảo button không bị override */
+.homepage-suggest .swiper-button-prev,
+.homepage-suggest .swiper-button-next,
+.homepage-exclusive .swiper-button-prev,
+.homepage-exclusive .swiper-button-next {
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 0 !important; /* Xóa text default */
+}
