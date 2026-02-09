@@ -56,6 +56,14 @@ if (!$hot_comics->have_posts()) {
 }
 ?>
 
+<!-- ✅ Thêm H1 ẩn cho SEO -->
+<h1 class="seo-h1" style="position:absolute;left:-9999px;top:-9999px;">
+    TruyenQQ - Đọc Truyện Tranh Online Miễn Phí - Manga Manhwa Manhua
+</h1>
+
+<!-- ✅ Thêm main tag và aria-label -->
+<main id="main-content" role="main" aria-label="Nội dung chính"></main>
+
 <section class="homepage-suggest">
     <div class="container">
         <!-- Section Header -->
@@ -129,8 +137,9 @@ if (!$hot_comics->have_posts()) {
                             <!-- Thumbnail -->
                             <div class="comic-avatar">
                                 <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                                    <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>"
-                                        loading="lazy">
+                                    <img src="<?php echo esc_url($thumbnail); ?>"
+                                        alt="<?php echo esc_attr(get_the_title() . ' - Đọc truyện tranh online miễn phí tại TruyenQQ'); ?>"
+                                        width="190" height="247" loading="lazy" decoding="async">
                                 </a>
 
                                 <!-- Bookmark Button -->
@@ -225,14 +234,24 @@ if (!$exclusive_comics->have_posts()) {
 
 <section class="homepage-exclusive">
     <div class="container">
+        <h1 style="position:absolute;left:-9999px;">TruyenQQ - Đọc Truyện Tranh Online Miễn Phí</h1>
+
         <!-- Section Header -->
-        <div class="section-header">
+        <!-- <div class="section-header">
             <h2 class="section-title">
                 <a href="/truyen-dich-qq.html" title="Độc Quyền Truyện QQ">
                     <i class="fa fa-book"></i>
                     <span>Độc Quyền Truyện QQ</span>
                 </a>
             </h2>
+        </div> -->
+
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fa fa-book"></i>
+                <span>Độc Quyền Truyện QQ</span>
+            </h2>
+            <a href="/truyen-dich-qq.html" class="section-link" aria-label="Xem tất cả truyện độc quyền"></a>
         </div>
 
         <!-- Swiper Carousel -->
@@ -300,8 +319,9 @@ if (!$exclusive_comics->have_posts()) {
                             <!-- Thumbnail -->
                             <div class="comic-avatar">
                                 <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                                    <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>"
-                                        loading="lazy">
+                                    <img src="<?php echo esc_url($thumbnail); ?>"
+                                        alt="<?php echo esc_attr(get_the_title() . ' - Đọc truyện tranh online miễn phí tại TruyenQQ'); ?>"
+                                        width="190" height="247" loading="lazy" decoding="async">
                                 </a>
 
                                 <!-- Bookmark Button -->
@@ -492,8 +512,10 @@ $hot_comic_ids = $wpdb->get_col(
                     <!-- Thumbnail -->
                     <div class="comic-avatar">
                         <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                            <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>"
-                                loading="lazy">
+
+                            <img src="<?php echo esc_url($thumbnail); ?>"
+                                alt="<?php echo esc_attr(get_the_title() . ' - Đọc truyện tranh online miễn phí tại TruyenQQ'); ?>"
+                                width="190" height="247" loading="lazy" decoding="async">
                         </a>
 
                         <!-- Bookmark Button -->

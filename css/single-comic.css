@@ -1005,19 +1005,40 @@ body.dark-mode .no-comments {
     font-size: 20px;
   }
 
-  .list-info .row {
-    flex-direction: column;
-    gap: 5px;
+  /* FIX CHO LIST-INFO - QUAN TRỌNG */
+  .book_detail .book_other .list-info .row {
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    align-items: center;
+    margin: 0;
   }
 
-  .list-info .col-xs-3,
-  .list-info .col-xs-9 {
-    width: 100%;
+  .book_detail .book_other .list-info .col-xs-3 {
+    width: 35%;
+    padding: 0 5px 0 0;
+  }
+
+  .book_detail .book_other .list-info .col-xs-9 {
+    width: 65%;
     padding: 0;
+    text-align: left;
   }
 
-  .list-info .name {
+  .book_detail .book_other .list-info .name {
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-align: left;
+    font-size: 13px;
+  }
+
+  .book_detail .book_other .list-info .col-xs-9 p,
+  .book_detail .book_other .list-info .other-name {
+    text-align: left;
+    margin: 0;
+    font-size: 14px;
   }
 
   .list01 {

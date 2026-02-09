@@ -2,18 +2,19 @@
 /**
  * Template Name: Single Comic Info Page
  * Template for displaying comic detail information
+ * ✅ SEO OPTIMIZED - FIXED CSS ISSUES
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.1.1 - CSS Fixed
  */
 
 get_header();
 
-
+// Get post data
 $post_id = get_the_ID();
 $comic_slug = get_post_field('post_name', $post_id);
 
-
+// Get thumbnail
 $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
 if (empty($thumbnail)) {
     $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -22,6 +23,7 @@ if (empty($thumbnail)) {
     $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
 }
 
+// Get status
 $status = get_post_meta($post_id, '_nettruyen_status', true);
 $status_text = '';
 switch ($status) {
@@ -42,7 +44,7 @@ $other_names = get_post_meta($post_id, '_nettruyen_other_name', true);
 $description = get_post_meta($post_id, '_nettruyen_short_description', true);
 $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true) ?: 0;
 
-
+// Get view stats
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 $view_count = 0;
@@ -56,17 +58,17 @@ if ($view_stats) {
     $view_count = $view_stats->total_display_views;
 }
 
-
+// Get author
 $authors = get_the_terms($post_id, 'nettruyen_author');
 $author_name = 'Đang Cập Nhật';
 if ($authors && !is_wp_error($authors)) {
     $author_name = $authors[0]->name;
 }
 
-
+// Get genres
 $genres = get_the_terms($post_id, 'nettruyen_genre');
 
-
+// Get chapters
 $chapters_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
 $chapters = [];
 
@@ -77,7 +79,7 @@ if (!empty($chapters_json)) {
     }
 }
 
-
+// Fallback to old format
 if (empty($chapters)) {
     $chapters_data = get_post_meta($post_id, '_nettruyen_chapter_manifest', true);
     if (!empty($chapters_data)) {
@@ -88,44 +90,85 @@ if (empty($chapters)) {
     }
 }
 
-
+// Reverse chapters (latest first)
 if (!empty($chapters)) {
     $chapters = array_reverse($chapters);
 }
 
-
+// Build chapter URLs
 $first_chapter_url = '';
 $latest_chapter_url = '';
 
 if (!empty($chapters) && is_array($chapters)) {
-
+    // Latest chapter
     $latest_chapter = $chapters[0];
     if (isset($latest_chapter['slug'])) {
         $latest_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$latest_chapter['slug']}.html");
     }
 
-
+    // First chapter
     $first_chapter = end($chapters);
     if (isset($first_chapter['slug'])) {
         $first_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$first_chapter['slug']}.html");
     }
 }
 
-
+// Format numbers
 $follow_count_formatted = number_format($follow_count);
 $view_count_formatted = number_format($view_count);
+
+// ✅ SEO: Prepare meta description
+$meta_description = wp_strip_all_tags($description);
+if (empty($meta_description)) {
+    $meta_description = "Đọc truyện " . get_the_title() . " - " . $author_name . " full mới nhất, cập nhật nhanh nhất tại TruyenQQ. Miễn phí, không quảng cáo.";
+}
+$meta_description = wp_trim_words($meta_description, 30, '...');
+
+// ✅ SEO: Get comic title for meta
+$comic_title = get_the_title();
 ?>
+
+<!-- ✅ SEO: Meta Tags -->
+<link rel="canonical" href="<?php the_permalink(); ?>">
+<meta name="description" content="<?php echo esc_attr($meta_description); ?>">
+
+<!-- Open Graph -->
+<meta property="og:type" content="book">
+<meta property="og:title" content="<?php echo esc_attr($comic_title . ' - ' . $author_name); ?>">
+<meta property="og:description" content="<?php echo esc_attr($meta_description); ?>">
+<meta property="og:url" content="<?php the_permalink(); ?>">
+<meta property="og:image" content="<?php echo esc_url($thumbnail); ?>">
+<meta property="og:image:width" content="190">
+<meta property="og:image:height" content="247">
+<meta property="og:site_name" content="TruyenQQ">
+<meta property="og:locale" content="vi_VN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<?php echo esc_attr($comic_title); ?>">
+<meta name="twitter:description" content="<?php echo esc_attr($meta_description); ?>">
+<meta name="twitter:image" content="<?php echo esc_url($thumbnail); ?>">
+
+<!-- Additional Meta -->
+<meta property="book:author" content="<?php echo esc_attr($author_name); ?>">
+<meta property="book:release_date" content="<?php echo get_the_date('c'); ?>">
+<?php
+if ($genres && !is_wp_error($genres)):
+    foreach ($genres as $genre): ?>
+<meta property="book:tag" content="<?php echo esc_attr($genre->name); ?>">
+<?php endforeach;
+endif; ?>
 
 <div id="main_homepage">
     <!-- Breadcrumb -->
-    <ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
-        <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a itemprop="item" href="<?php echo home_url(); ?>">
                 <span itemprop="name"><i class="fa fa-home"></i> Trang Chủ</span>
             </a>
             <meta itemprop="position" content="1">
         </li>
-        <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a itemprop="item" href="<?php the_permalink(); ?>">
                 <span itemprop="name"><?php the_title(); ?></span>
             </a>
@@ -138,7 +181,9 @@ $view_count_formatted = number_format($view_count);
         <div class="book_info">
             <!-- Thumbnail -->
             <div class="book_avatar">
-                <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>" loading="lazy">
+                <img src="<?php echo esc_url($thumbnail); ?>"
+                    alt="<?php echo esc_attr('Đọc truyện ' . $comic_title . ' - ' . $author_name . ' - TruyenQQ'); ?>"
+                    width="190" height="247" loading="eager" decoding="async">
             </div>
 
             <!-- Comic Details -->
@@ -152,7 +197,7 @@ $view_count_formatted = number_format($view_count);
                             <p class="name col-xs-3">
                                 <i class="fa fa-plus"></i> Tên khác
                             </p>
-                            <h2 class="other-name col-xs-9"><?php echo esc_html($other_names); ?></h2>
+                            <p class="other-name col-xs-9"><?php echo esc_html($other_names); ?></p>
                         </li>
                         <?php endif; ?>
 
@@ -213,7 +258,8 @@ $view_count_formatted = number_format($view_count);
                 <ul class="story-detail-menu">
                     <?php if ($first_chapter_url): ?>
                     <li class="li01">
-                        <a href="<?php echo esc_url($first_chapter_url); ?>" class="button is-danger is-rounded">
+                        <a href="<?php echo esc_url($first_chapter_url); ?>" class="button is-danger is-rounded"
+                            aria-label="Đọc từ đầu">
                             <i class="fa fa-book"></i> Đọc từ đầu
                         </a>
                     </li>
@@ -221,21 +267,22 @@ $view_count_formatted = number_format($view_count);
 
                     <li class="li02">
                         <a href="javascript:void(0);" class="button is-danger is-rounded btn-subscribe"
-                            data-id="<?php echo $post_id; ?>">
+                            data-id="<?php echo $post_id; ?>" aria-label="Theo dõi">
                             <i class="fa fa-heart"></i> Theo dõi
                         </a>
                     </li>
 
                     <li class="li03">
                         <a href="javascript:void(0);" class="button is-danger is-rounded btn-like"
-                            data-id="<?php echo $post_id; ?>">
+                            data-id="<?php echo $post_id; ?>" aria-label="Thích">
                             <i class="fa fa-thumbs-up"></i> Thích
                         </a>
                     </li>
 
                     <?php if ($latest_chapter_url): ?>
                     <li class="li04">
-                        <a href="<?php echo esc_url($latest_chapter_url); ?>" class="button is-info is-rounded">
+                        <a href="<?php echo esc_url($latest_chapter_url); ?>" class="button is-info is-rounded"
+                            aria-label="Đọc tiếp">
                             <i class="fa fa-location-arrow"></i> Đọc tiếp
                         </a>
                     </li>
@@ -261,7 +308,6 @@ $view_count_formatted = number_format($view_count);
                 <?php if (!empty($chapters) && is_array($chapters)): ?>
                 <?php foreach ($chapters as $chapter): ?>
                 <?php
-
                         if (!is_array($chapter))
                             continue;
 
