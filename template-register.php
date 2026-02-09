@@ -17,7 +17,7 @@ get_header('auth');
 <div class="auth-page-404">
     <!-- Video Background -->
     <video class="auth-video-bg" autoplay muted loop playsinline>
-        <source src="<?php echo get_template_directory_uri(); ?>/images/login.mp4" type="video/mp4">
+        <source src="<?php echo get_template_directory_uri(); ?>/images/register.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 

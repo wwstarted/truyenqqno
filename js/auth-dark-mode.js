@@ -24,7 +24,7 @@
 
     setupToggleButton();
 
-    console.log("✅ Auth Dark Mode initialized");
+    console.log("Auth Dark Mode initialized");
   }
 
   function loadTheme() {
@@ -59,7 +59,7 @@
     const toggleBtn = document.getElementById("theme-toggle-btn");
 
     if (!toggleBtn) {
-      console.warn("⚠️ Theme toggle button not found");
+      console.warn("Theme toggle button not found");
       return;
     }
 

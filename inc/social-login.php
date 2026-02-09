@@ -1,6 +1,6 @@
 <?php
 /**
- * Social Authentication Backend - FIXED VERSION
+ * Social Authentication Backend 
  * Google & Facebook OAuth Integration
  * 
  * @package TruyenQQ
@@ -44,10 +44,6 @@ function truyenqq_enqueue_social_login_scripts()
     ));
 }
 
-/* ========================================================================
-   NOTE: OAuth Settings Page được quản lý trong admin-oauth-settings.php
-   Đã xóa duplicate code để tránh trùng lặp
-   ======================================================================== */
 
 /**
  * Register OAuth Callback Endpoints

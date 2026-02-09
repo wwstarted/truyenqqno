@@ -1,7 +1,5 @@
 /**
- * The Loai (Genre) Listing with AJAX (FIXED)
- * ✅ Xóa logic bookmark cục bộ
- * ✅ Dùng global TruyenqqBookmarks
+ * The Loai (Genre) Listing with AJAX ()
  *
  * @package TruyenQQ
  * @version 1.0.1
@@ -54,7 +52,7 @@
     initSelectListeners();
     initPaginationListeners();
 
-    console.log("✅ Genre Listing initialized (with global bookmarks)", state);
+    console.log("Genre Listing initialized (with global bookmarks)", state);
   }
 
   function getGenreSlugFromURL() {

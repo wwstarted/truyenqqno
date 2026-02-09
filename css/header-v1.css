@@ -468,7 +468,7 @@ body.dark-mode .search-results {
 }
 
 .search-results.active {
-  max-height: 550px;
+  max-height: 560px;
   overflow-y: auto;
 }
 
@@ -1713,12 +1713,8 @@ body.dark-mode .user-dropdown::before {
   }
 }
 
-/* =====================================================
-   SEARCH RESULTS - UPDATED WITH COMIC STATS
-===================================================== */
-
 .search-results.active {
-  max-height: 550px;
+  max-height: 560px;
   overflow-y: auto;
 }
 

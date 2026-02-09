@@ -557,19 +557,19 @@ $hot_comic_ids = $wpdb->get_col(
     </div>
 </section>
 
-<section class="blog-detail-section">
+<!-- <section class="blog-detail-section">
     <div class="blog-detail-container">
-        <!-- ✅ ĐỔI TÊN -->
+
         <div class="blog-detail-header">
-            <!-- ✅ ĐỔI TÊN -->
+
             <h2 class="blog-detail-section-title">
-                <!-- ✅ ĐỔI TÊN -->
+
                 <i class="fa fa-file-text"></i>
                 <span>Bài Viết Nổi Bật</span>
             </h2>
         </div>
 
-        <!-- Blog Detail Content -->
+
         <div class="blog-detail-wrapper" id="blogDetailWrapper">
             <div class="blog-detail-content" id="blogDetailContent">
                 <h1 class="blog-detail-title">
@@ -688,7 +688,7 @@ $hot_comic_ids = $wpdb->get_col(
                 </div>
             </div>
 
-            <!-- Expand/Collapse Buttons -->
+
             <div class="blog-detail-actions">
                 <button class="btn-expand" id="btnReadMore">
                     <i class="fa fa-angle-down"></i>
@@ -701,12 +701,11 @@ $hot_comic_ids = $wpdb->get_col(
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 <?php
 /**
- * Section: Featured Articles (Blog Carousel)
- * Hiển thị 9 bài viết blog từ CPT trong carousel
+
  * 
  * @package TruyenQQ
  * @version 1.0.0
@@ -816,25 +815,23 @@ $featured_articles = array(
 );
 ?>
 
-<section class="featured-articles-section">
-    <div class="featured-articles-container">
-        <!-- ✅ ĐỔI TÊN -->
+<!-- <section class="featured-articles-section"> -->
+<!-- <div class="featured-articles-container">
         <div class="featured-articles-header">
-            <!-- ✅ ĐỔI TÊN -->
             <h2 class="featured-articles-section-title">
                 <i class="fa fa-newspaper-o"></i>
                 <span>Bài Viết Mới Nhất</span>
             </h2>
         </div>
 
-        <!-- Articles Carousel -->
+
         <div class="articles-carousel">
             <div class="swiper articles-swiper">
                 <div class="swiper-wrapper">
                     <?php foreach ($featured_articles as $article): ?>
                     <div class="swiper-slide">
                         <article class="article-card">
-                            <!-- Thumbnail -->
+
                             <div class="article-thumbnail">
                                 <a href="<?php echo esc_url($article['url']); ?>"
                                     title="<?php echo esc_attr($article['title']); ?>">
@@ -849,9 +846,9 @@ $featured_articles = array(
                                 <?php endif; ?>
                             </div>
 
-                            <!-- Article Content -->
+
                             <div class="article-content">
-                                <!-- Meta -->
+
                                 <div class="article-meta">
                                     <span class="article-category">
                                         <?php echo esc_html($article['category']); ?>
@@ -862,7 +859,7 @@ $featured_articles = array(
                                     </span>
                                 </div>
 
-                                <!-- Title -->
+
                                 <h3 class="article-title">
                                     <a href="<?php echo esc_url($article['url']); ?>"
                                         title="<?php echo esc_attr($article['title']); ?>">
@@ -870,12 +867,11 @@ $featured_articles = array(
                                     </a>
                                 </h3>
 
-                                <!-- Excerpt -->
+
                                 <p class="article-excerpt">
                                     <?php echo esc_html($article['excerpt']); ?>
                                 </p>
 
-                                <!-- Footer -->
                                 <div class="article-footer">
                                     <a href="<?php echo esc_url($article['url']); ?>" class="read-more-link">
                                         Đọc thêm
@@ -893,7 +889,7 @@ $featured_articles = array(
                 </div>
             </div>
 
-            <!-- Navigation -->
+
             <div class="swiper-nav">
                 <button class="swiper-button-prev">
                     <i class="fa fa-angle-left"></i>
@@ -904,15 +900,15 @@ $featured_articles = array(
             </div>
         </div>
 
-        <!-- Pagination Dots -->
+
         <div class="swiper-pagination"></div>
 
-        <!-- View All Button -->
+
         <div class="view-all-articles">
             <a href="<?php echo esc_url(home_url('/blog')); ?>" class="view-all-btn">
                 Xem tất cả bài viết
                 <i class="fa fa-arrow-right"></i>
             </a>
         </div>
-    </div>
-    </sect <?php get_footer(); ?>
+    </div> -->
+<!-- </sect <?php get_footer(); ?> -->

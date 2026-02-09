@@ -47,13 +47,13 @@ body.dark-mode .error-404-video-bg {
 .error-404-video-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(245, 245, 245, 0.1);
+  background: rgba(245, 245, 245, 0);
   z-index: 1;
   pointer-events: none;
 }
 
 body.dark-mode .error-404-video-overlay {
-  background: rgba(15, 15, 15, 0.4);
+  background: rgba(15, 15, 15, 0);
 }
 
 .error-404-container {

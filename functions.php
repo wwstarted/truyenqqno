@@ -7,6 +7,7 @@
  * @version 1.0.1 - FIXED
  */
 
+
 function toyota_enqueue_assets()
 {
     wp_enqueue_script('jquery');
@@ -524,9 +525,6 @@ add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $u
 
 
 
-
-
-
 require_once get_template_directory() . '/inc/auth-db-migration.php';
 require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
 require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';
@@ -553,14 +551,12 @@ require_once get_template_directory() . '/inc/admin-oauth-settings.php';
 
 require_once get_template_directory() . '/inc/class-user-settings-api.php';
 
-
-
-
-
 /**
  * Allow logged-in users to upload images for avatar
  * Security: Checks login status and nonce verification
  */
+
+
 add_filter('rest_pre_dispatch', function ($result, $server, $request) {
 
     if ($request->get_route() !== '/wp/v2/media' || $request->get_method() !== 'POST') {
@@ -600,10 +596,6 @@ add_filter('upload_size_limit', function ($size) {
     }
     return $size;
 });
-
-
-
-
 
 function truyenqq_create_user_settings_page()
 {
@@ -660,12 +652,21 @@ function truyenqq_add_settings_to_admin_bar($wp_admin_bar)
 add_action('admin_bar_menu', 'truyenqq_add_settings_to_admin_bar', 100);
 
 
+
 /**
  * Helper function: Render bookmark badge with proper state
  * 
  * @param int $post_id Post ID
  * @param bool|null $is_bookmarked Override bookmark state (null = auto-check)
  */
+
+
+function truyenqq_enqueue_asset()
+{
+
+
+}
+add_action('wp_enqueue_scripts', 'truyenqq_enqueue_asset');
 
 
 function truyenqq_render_bookmark_badge($post_id, $is_bookmarked = null)
@@ -824,7 +825,6 @@ function toyota_register_search_endpoint()
 add_action('rest_api_init', 'toyota_register_search_endpoint');
 
 
-
 function toyota_search_callback($request)
 {
     $query = sanitize_text_field($request->get_param('q'));
@@ -951,6 +951,8 @@ function nettruyen_register_search_endpoint()
     ));
 }
 
+
+
 function nettruyen_search_comics($request)
 {
     global $wpdb;
@@ -1069,10 +1071,10 @@ function nettruyen_migration_notices()
     if (get_transient('nettruyen_migration_success')) {
         ?>
 <div class="notice notice-success is-dismissible">
-    <p><strong>✅ NetTruyen View System:</strong> Database tables created successfully!</p>
+    <p><strong>NetTruyen View System:</strong> Database tables created successfully!</p>
     <p>
         <a href="<?php echo admin_url('tools.php?page=nettruyen-migration-debug'); ?>" class="button button-primary">
-            🔍 View Migration Status
+            View Migration Status
         </a>
     </p>
 </div>
@@ -1083,7 +1085,7 @@ function nettruyen_migration_notices()
     if (get_transient('nettruyen_migration_error')) {
         ?>
 <div class="notice notice-error is-dismissible">
-    <p><strong>❌ NetTruyen View System:</strong> Failed to create database tables!</p>
+    <p><strong>NetTruyen View System:</strong> Failed to create database tables!</p>
     <p>Check error log at: <code>wp-content/debug.log</code></p>
     <p>
         <a href="<?php echo admin_url('tools.php?page=nettruyen-migration-debug'); ?>" class="button button-secondary">
@@ -1146,9 +1148,9 @@ function nettruyen_migration_debug_page()
                 <th style="width: 200px;">Status:</th>
                 <td>
                     <?php if ($needs_migration): ?>
-                    <span style="color: orange; font-weight: bold;">⚠️ NOT INSTALLED</span>
+                    <span style="color: orange; font-weight: bold;">NOT INSTALLED</span>
                     <?php else: ?>
-                    <span style="color: green; font-weight: bold;">✅ INSTALLED</span>
+                    <span style="color: green; font-weight: bold;">INSTALLED</span>
                     <?php endif; ?>
                 </td>
             </tr>
@@ -1166,10 +1168,10 @@ function nettruyen_migration_debug_page()
                     <?php
                         $file_path = get_template_directory() . '/inc/nettruyen-view-migration.php';
                         if (file_exists($file_path)): ?>
-                    <span style="color: green;">✅ Found</span>
+                    <span style="color: green;">Found</span>
                     <code><?php echo esc_html($file_path); ?></code>
                     <?php else: ?>
-                    <span style="color: red;">❌ NOT FOUND</span>
+                    <span style="color: red;">NOT FOUND</span>
                     <?php endif; ?>
                 </td>
             </tr>
@@ -1199,7 +1201,7 @@ function nettruyen_migration_debug_page()
                     </td>
                     <td>
                         <?php if ($exists): ?>
-                        <span style="color: green; font-weight: bold;">✅ OK</span>
+                        <span style="color: green; font-weight: bold;">OK</span>
                         <?php else: ?>
                         <span style="color: red; font-weight: bold;">❌ Missing</span>
                         <?php endif; ?>
@@ -1225,7 +1227,7 @@ function nettruyen_migration_debug_page()
             </p>
         </form>
 
-        <form method="post" onsubmit="return confirm('⚠️ This will DELETE all tables and data! Continue?');">
+        <form method="post" onsubmit="return confirm('This will DELETE all tables and data! Continue?');">
             <?php wp_nonce_field('nettruyen_migration_debug'); ?>
             <button type="submit" name="drop_tables" class="button button-secondary">
                 🗑️ Drop All Tables
@@ -1299,7 +1301,7 @@ setTimeout(function() {
 <?php
             }
         } else {
-            echo '<div class="notice notice-error"><p>❌ Error: ' . esc_html($result['message']) . '</p></div>';
+            echo '<div class="notice notice-error"><p>Error: ' . esc_html($result['message']) . '</p></div>';
         }
     }
 

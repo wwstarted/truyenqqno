@@ -89,10 +89,6 @@
     }, 3000);
   }
 
-  /* =====================================================
-     BACK TO TOP BUTTON
-  ===================================================== */
-
   function initBackToTop() {
     const backToTopBtn = document.getElementById("backToTop");
 
@@ -231,7 +227,7 @@
       animateStats();
     }
 
-    console.log("✅ Footer initialized successfully");
+    console.log("Footer initialized successfully");
   }
 
   init();

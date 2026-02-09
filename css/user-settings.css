@@ -59,25 +59,19 @@ body.dark-mode {
    SIDEBAR - 35% WIDTH (DESKTOP)
 ======================================== */
 .user-settings-page .column.is-narrow {
-  flex: 0 0 35%;
-  max-width: 35%;
+  flex: 0 0 30%;
+  max-width: 30%;
   position: relative;
   z-index: 1;
 }
 
-/* ========================================
-   CONTENT AREA - 65% WIDTH (DESKTOP)
-======================================== */
 .user-settings-page .column.columns {
-  flex: 0 0 65%;
-  max-width: 65%;
+  flex: 0 0 70%;
+  max-width: 70%;
   position: relative;
   z-index: 1;
 }
 
-/* ========================================
-   SIDEBAR NAVIGATION - BLUE THEME
-======================================== */
 .nav-user {
   list-style: none;
   padding: 0;
@@ -363,7 +357,7 @@ body.dark-mode .skillbox {
   font-size: 19px;
   font-weight: 700;
   color: #333;
-  border-bottom: 3px solid var(--color-blue-primary);
+  border-bottom: 4px solid var(--color-blue-primary);
   padding-bottom: 10px;
   display: inline-block;
   position: relative;

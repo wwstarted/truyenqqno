@@ -4,7 +4,6 @@
  * 
  * @package TruyenQQ
  * @version 1.0.1
- * ✅ FIXED: Random button now works with timestamp-based seed
  */
 
 get_header();
@@ -15,7 +14,6 @@ $posts_per_page = 42;
 $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
 
-// ✅ NEW: Use timestamp + random param for true randomness
 $random_param = isset($_GET['r']) ? intval($_GET['r']) : time();
 $seed = date('Ymd') . $random_param;
 
@@ -127,7 +125,7 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
         </table>
     </div>
 
-    <!-- ✅ FIXED: Random Button with new blue theme -->
+
     <!-- <div style="text-align: center; margin: 20px 0;">
         <button id="btn-random-reload" class="btn-random-reload">
             <i class="fa fa-refresh"></i> Random Lại
