@@ -5,17 +5,14 @@
  * 
  * @package TruyenQQ
  * @version 1.2.0 - SEO OPTIMIZED
- * ✅ ADDED: Meta tags (description, OG, Twitter, canonical, rel prev/next)
- * ✅ ADDED: Custom title tag
- * ✅ ADDED: Semantic HTML (main, article)
- * ✅ ADDED: Preload first image
- * ✅ FIXED: empty() check for chapter_slug "0"
+
+
  */
 
 $chapter_slug = get_query_var('chapter');
 $comic_slug = get_query_var('nettruyen_comic');
 
-// ✅ FIX: Use isset() and strlen() instead of empty()
+ 
 $has_chapter = isset($chapter_slug) && strlen($chapter_slug) > 0;
 $has_comic = isset($comic_slug) && strlen($comic_slug) > 0;
 
@@ -72,26 +69,26 @@ if (class_exists('NetTruyen_View_Tracker')) {
     NetTruyen_View_Tracker::track_chapter_view($post_id, $chapter_slug);
 }
 
-// ============================================
-// ✅ SEO: Prepare meta data
-// ============================================
+ 
+ 
+ 
 $current_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$chapter_slug}.html");
 $comic_url = get_permalink($post_id);
 
-// Meta Description
+ 
 $meta_description = "Đọc truyện tranh {$comic_title} - Chương {$chapter_name} tiếng Việt. Mới nhất, nhanh nhất, không quảng cáo tại TruyenQQ.";
 
-// Page Title
+ 
 $page_title = "{$comic_title} - Chương {$chapter_name} | TruyenQQ";
 
-// Get author for meta
+ 
 $author_terms = get_the_terms($post_id, 'nettruyen_author');
 $author_name = 'Đang Cập Nhật';
 if ($author_terms && !is_wp_error($author_terms)) {
     $author_name = $author_terms[0]->name;
 }
 
-// First image for OG
+ 
 $og_image = !empty($chapter_images) ? $chapter_images[0] : $thumbnail;
 if (empty($og_image)) {
     $og_image = get_template_directory_uri() . '/images/default-og.jpg';

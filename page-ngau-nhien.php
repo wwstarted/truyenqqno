@@ -51,7 +51,7 @@ $comics_query = new WP_Query($args);
 $total_pages = $comics_query->max_num_pages;
 $current_page = max(1, $paged);
 
-// ✅ NEW: Get stats table
+
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 ?>
@@ -158,16 +158,16 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                         $latest_chapter = 'Chapter ' . $latest['name'];
                     }
 
-                    // Lấy thời gian cập nhật
+
                     $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
 
-                    // Hiển thị time ago bằng tiếng Việt
+
                     $time_ago = truyenqq_time_ago_vietnamese($updated_at);
 
-                    // ✅ Get follow count
+
                     $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true) ?: 0;
 
-                    // ✅ Get view count
+
                     $view_stats = $wpdb->get_row(
                         $wpdb->prepare(
                             "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
@@ -177,52 +177,52 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                     $view_count = $view_stats ? $view_stats->total_display_views : 0;
                     ?>
 
-            <li>
-                <div class="book_avatar">
-                    <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                        <img class="center" src="<?php echo esc_url($thumbnail); ?>"
-                            alt="<?php the_title_attribute(); ?>" loading="lazy">
-                    </a>
-
-                    <?php truyenqq_render_bookmark_badge($post_id); ?>
-
-                    <div class="top-notice">
-                        <span class="time-ago">
-                            <?php echo esc_html($time_ago); ?>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="book_info">
-                    <div class="book_name">
-                        <h3>
-                            <a title="<?php the_title_attribute(); ?>" href="<?php the_permalink(); ?>">
-                                <?php the_title(); ?>
+                    <li>
+                        <div class="book_avatar">
+                            <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+                                <img class="center" src="<?php echo esc_url($thumbnail); ?>"
+                                    alt="<?php the_title_attribute(); ?>" loading="lazy">
                             </a>
-                        </h3>
-                    </div>
-                    <div class="clear"></div>
 
-                    <div class="text_detail">
-                        <span><i class="fa fa-bookmark"></i>
-                            <?php echo number_format($follow_count); ?>
-                        </span>
-                        <span><i class="fa fa-eye"></i>
-                            <?php echo number_format($view_count); ?>
-                        </span>
-                    </div>
+                            <?php truyenqq_render_bookmark_badge($post_id); ?>
 
-                    <div class="last_chapter">
-                        <a href="<?php the_permalink(); ?>" title="<?php echo esc_attr($latest_chapter); ?>">
-                            <?php echo esc_html($latest_chapter); ?>
-                        </a>
-                    </div>
-                </div>
+                            <div class="top-notice">
+                                <span class="time-ago">
+                                    <?php echo esc_html($time_ago); ?>
+                                </span>
+                            </div>
+                        </div>
 
-                <div class="clear"></div>
-            </li>
+                        <div class="book_info">
+                            <div class="book_name">
+                                <h3>
+                                    <a title="<?php the_title_attribute(); ?>" href="<?php the_permalink(); ?>">
+                                        <?php the_title(); ?>
+                                    </a>
+                                </h3>
+                            </div>
+                            <div class="clear"></div>
 
-            <?php
+                            <div class="text_detail">
+                                <span><i class="fa fa-bookmark"></i>
+                                    <?php echo number_format($follow_count); ?>
+                                </span>
+                                <span><i class="fa fa-eye"></i>
+                                    <?php echo number_format($view_count); ?>
+                                </span>
+                            </div>
+
+                            <div class="last_chapter">
+                                <a href="<?php the_permalink(); ?>" title="<?php echo esc_attr($latest_chapter); ?>">
+                                    <?php echo esc_html($latest_chapter); ?>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="clear"></div>
+                    </li>
+
+                    <?php
                 endwhile;
                 wp_reset_postdata();
             else:
@@ -235,64 +235,64 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
     <div class="clear"></div>
 
     <?php if ($total_pages > 1): ?>
-    <div class="page_redirect">
-        <?php if ($current_page > 1): ?>
-        <a href="<?php echo get_pagenum_link($current_page - 1); ?>">
-            <p><span aria-hidden="true">‹</span></p>
-        </a>
-        <?php endif; ?>
+        <div class="page_redirect">
+            <?php if ($current_page > 1): ?>
+                <a href="<?php echo get_pagenum_link($current_page - 1); ?>">
+                    <p><span aria-hidden="true">‹</span></p>
+                </a>
+            <?php endif; ?>
 
-        <?php
+            <?php
             $range = 2;
             $start = max(1, $current_page - $range);
             $end = min($total_pages, $current_page + $range);
 
             if ($start > 1):
                 ?>
-        <a href="<?php echo get_pagenum_link(1); ?>">
-            <p>1</p>
-        </a>
-        <?php if ($start > 2): ?>
-        <span class="dots">...</span>
-        <?php endif; ?>
-        <?php endif; ?>
+                <a href="<?php echo get_pagenum_link(1); ?>">
+                    <p>1</p>
+                </a>
+                <?php if ($start > 2): ?>
+                    <span class="dots">...</span>
+                <?php endif; ?>
+            <?php endif; ?>
 
-        <?php for ($i = $start; $i <= $end; $i++): ?>
-        <?php if ($i == $current_page): ?>
-        <a href="javascript:void(0)">
-            <p class="active">
-                <?php echo $i; ?>
-            </p>
-        </a>
-        <?php else: ?>
-        <a href="<?php echo get_pagenum_link($i); ?>">
-            <p>
-                <?php echo $i; ?>
-            </p>
-        </a>
-        <?php endif; ?>
-        <?php endfor; ?>
+            <?php for ($i = $start; $i <= $end; $i++): ?>
+                <?php if ($i == $current_page): ?>
+                    <a href="javascript:void(0)">
+                        <p class="active">
+                            <?php echo $i; ?>
+                        </p>
+                    </a>
+                <?php else: ?>
+                    <a href="<?php echo get_pagenum_link($i); ?>">
+                        <p>
+                            <?php echo $i; ?>
+                        </p>
+                    </a>
+                <?php endif; ?>
+            <?php endfor; ?>
 
-        <?php if ($end < $total_pages): ?>
-        <?php if ($end < $total_pages - 1): ?>
-        <span class="dots">...</span>
-        <?php endif; ?>
-        <a href="<?php echo get_pagenum_link($total_pages); ?>">
-            <p>
-                <?php echo $total_pages; ?>
-            </p>
-        </a>
-        <?php endif; ?>
+            <?php if ($end < $total_pages): ?>
+                <?php if ($end < $total_pages - 1): ?>
+                    <span class="dots">...</span>
+                <?php endif; ?>
+                <a href="<?php echo get_pagenum_link($total_pages); ?>">
+                    <p>
+                        <?php echo $total_pages; ?>
+                    </p>
+                </a>
+            <?php endif; ?>
 
-        <?php if ($current_page < $total_pages): ?>
-        <a href="<?php echo get_pagenum_link($current_page + 1); ?>">
-            <p><span aria-hidden="true">›</span></p>
-        </a>
-        <a href="<?php echo get_pagenum_link($total_pages); ?>">
-            <p><span aria-hidden="true">»</span></p>
-        </a>
-        <?php endif; ?>
-    </div>
+            <?php if ($current_page < $total_pages): ?>
+                <a href="<?php echo get_pagenum_link($current_page + 1); ?>">
+                    <p><span aria-hidden="true">›</span></p>
+                </a>
+                <a href="<?php echo get_pagenum_link($total_pages); ?>">
+                    <p><span aria-hidden="true">»</span></p>
+                </a>
+            <?php endif; ?>
+        </div>
     <?php endif; ?>
 
 </div>

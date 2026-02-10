@@ -34,23 +34,23 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 ?>
 
 <?php if ($exclusive_comics->have_posts()): ?>
-<section class="homepage-exclusive">
-    <div class="container">
-        <!-- Section Header -->
-        <div class="section-header">
-            <h2 class="section-title">
-                <a href="/truyen-dich-qq.html" title="Độc Quyền Truyện QQ">
-                    <i class="fa fa-book"></i>
-                    <span>Độc Quyền Truyện QQ</span>
-                </a>
-            </h2>
-        </div>
+    <section class="homepage-exclusive">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="section-header">
+                <h2 class="section-title">
+                    <a href="/truyen-dich-qq.html" title="Độc Quyền Truyện QQ">
+                        <i class="fa fa-book"></i>
+                        <span>Độc Quyền Truyện QQ</span>
+                    </a>
+                </h2>
+            </div>
 
-        <!-- Swiper Carousel -->
-        <div class="exclusive-carousel">
-            <div class="swiper exclusive-swiper">
-                <div class="swiper-wrapper">
-                    <?php
+            <!-- Swiper Carousel -->
+            <div class="exclusive-carousel">
+                <div class="swiper exclusive-swiper">
+                    <div class="swiper-wrapper">
+                        <?php
                         $index = 0;
                         while ($exclusive_comics->have_posts()):
                             $exclusive_comics->the_post();
@@ -78,10 +78,10 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                             }
 
 
-                            // Lấy thời gian cập nhật
+
                             $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
 
-                            // Hiển thị time ago bằng tiếng Việt
+
                             $time_ago = truyenqq_time_ago_vietnamese($updated_at);
 
                             $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
@@ -108,75 +108,75 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                             $is_hot = ($index <= 10);
                             ?>
 
-                    <div class="swiper-slide">
-                        <div class="comic-card">
-                            <!-- Thumbnail -->
-                            <div class="comic-avatar">
-                                <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                                    <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>"
-                                        loading="lazy">
-                                </a>
+                            <div class="swiper-slide">
+                                <div class="comic-card">
+                                    <!-- Thumbnail -->
+                                    <div class="comic-avatar">
+                                        <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+                                            <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>"
+                                                loading="lazy">
+                                        </a>
 
-                                <!-- Bookmark Button -->
-                                <?php truyenqq_render_bookmark_badge($post_id); ?>
+                                        <!-- Bookmark Button -->
+                                        <?php truyenqq_render_bookmark_badge($post_id); ?>
 
-                                <!-- Top Notice: Time + Hot Badge -->
-                                <div class="top-notice">
-                                    <span class="time-ago">
-                                        <?php echo esc_html($time_ago); ?>
-                                    </span>
-                                    <?php if ($is_hot): ?>
-                                    <span class="hot-badge">Hot</span>
-                                    <?php endif; ?>
+                                        <!-- Top Notice: Time + Hot Badge -->
+                                        <div class="top-notice">
+                                            <span class="time-ago">
+                                                <?php echo esc_html($time_ago); ?>
+                                            </span>
+                                            <?php if ($is_hot): ?>
+                                                <span class="hot-badge">Hot</span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+
+                                    <!-- Comic Info -->
+                                    <div class="comic-info">
+                                        <h3 class="comic-name">
+                                            <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+                                                <?php the_title(); ?>
+                                            </a>
+                                        </h3>
+                                        <div class="comic-stats">
+                                            <span class="stat-item">
+                                                <i class="fa fa-bookmark"></i>
+                                                <?php echo esc_html($follow_count_formatted); ?>
+                                            </span>
+                                            <span class="stat-item">
+                                                <i class="fa fa-eye"></i>
+                                                <?php echo esc_html($view_count_formatted); ?>
+                                            </span>
+                                        </div>
+
+                                        <!-- Latest Chapter -->
+                                        <div class="latest-chapter">
+                                            <a href="<?php the_permalink(); ?>"
+                                                title="Đọc <?php echo esc_attr($latest_chapter); ?>">
+                                                <?php echo esc_html($latest_chapter); ?>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Comic Info -->
-                            <div class="comic-info">
-                                <h3 class="comic-name">
-                                    <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                                        <?php the_title(); ?>
-                                    </a>
-                                </h3>
-                                <div class="comic-stats">
-                                    <span class="stat-item">
-                                        <i class="fa fa-bookmark"></i>
-                                        <?php echo esc_html($follow_count_formatted); ?>
-                                    </span>
-                                    <span class="stat-item">
-                                        <i class="fa fa-eye"></i>
-                                        <?php echo esc_html($view_count_formatted); ?>
-                                    </span>
-                                </div>
-
-                                <!-- Latest Chapter -->
-                                <div class="latest-chapter">
-                                    <a href="<?php the_permalink(); ?>"
-                                        title="Đọc <?php echo esc_attr($latest_chapter); ?>">
-                                        <?php echo esc_html($latest_chapter); ?>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <?php endwhile;
+                        <?php endwhile;
                         wp_reset_postdata(); ?>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="swiper-nav">
+                    <button class="swiper-button-prev">
+                        <i class="fa fa-angle-left"></i>
+                    </button>
+                    <button class="swiper-button-next">
+                        <i class="fa fa-angle-right"></i>
+                    </button>
                 </div>
             </div>
-
-            <!-- Navigation Buttons -->
-            <div class="swiper-nav">
-                <button class="swiper-button-prev">
-                    <i class="fa fa-angle-left"></i>
-                </button>
-                <button class="swiper-button-next">
-                    <i class="fa fa-angle-right"></i>
-                </button>
-            </div>
         </div>
-    </div>
-</section>
+    </section>
 <?php endif; ?>
 
 <!-- Reading History Section -->

@@ -28,7 +28,7 @@ $args = array(
 
 $exclusive_comics = new WP_Query($args);
 
-// ✅ NEW: Khởi tạo $wpdb và stats table
+
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 ?>
@@ -57,7 +57,7 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                             $post_id = get_the_ID();
                             $index++;
 
-                            // Thumbnail
+
                             $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
                             if (empty($thumbnail)) {
                                 $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -66,7 +66,7 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                                 $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
                             }
 
-                            // Chapter info
+
                             $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                             $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
 
@@ -77,20 +77,20 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                                 $latest_chapter = 'Chương ' . $latest['name'];
                             }
 
-                            // Time ago
-                            // Lấy thời gian cập nhật
+
+
                             $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
 
-                            // Hiển thị time ago bằng tiếng Việt
+
                             $time_ago = truyenqq_time_ago_vietnamese($updated_at);
 
-                            // ✅ NEW: Get follow count
+
                             $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                             if (empty($follow_count)) {
                                 $follow_count = 0;
                             }
 
-                            // ✅ NEW: Get view count from database
+
                             $view_count = 0;
                             $view_stats = $wpdb->get_row(
                                 $wpdb->prepare(
@@ -102,7 +102,7 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                                 $view_count = $view_stats->total_display_views;
                             }
 
-                            // Format numbers
+
                             $follow_count_formatted = number_format($follow_count);
                             $view_count_formatted = number_format($view_count);
 

@@ -181,10 +181,10 @@ $current_page = max(1, $paged);
                         $latest_chapter = 'Chapter ' . $latest['name'];
                     }
 
-                    // Lấy thời gian cập nhật
+
                     $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
 
-                    // Hiển thị time ago bằng tiếng Việt
+
                     $time_ago = truyenqq_time_ago_vietnamese($updated_at);
 
                     $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);

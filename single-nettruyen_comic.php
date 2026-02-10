@@ -10,11 +10,11 @@
 
 get_header();
 
-// Get post data
+
 $post_id = get_the_ID();
 $comic_slug = get_post_field('post_name', $post_id);
 
-// Get thumbnail
+
 $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
 if (empty($thumbnail)) {
     $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -23,7 +23,7 @@ if (empty($thumbnail)) {
     $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
 }
 
-// Get status
+
 $status = get_post_meta($post_id, '_nettruyen_status', true);
 $status_text = '';
 switch ($status) {
@@ -44,7 +44,7 @@ $other_names = get_post_meta($post_id, '_nettruyen_other_name', true);
 $description = get_post_meta($post_id, '_nettruyen_short_description', true);
 $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true) ?: 0;
 
-// Get view stats
+
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 $view_count = 0;
@@ -58,17 +58,17 @@ if ($view_stats) {
     $view_count = $view_stats->total_display_views;
 }
 
-// Get author
+
 $authors = get_the_terms($post_id, 'nettruyen_author');
 $author_name = 'Đang Cập Nhật';
 if ($authors && !is_wp_error($authors)) {
     $author_name = $authors[0]->name;
 }
 
-// Get genres
+
 $genres = get_the_terms($post_id, 'nettruyen_genre');
 
-// Get chapters
+
 $chapters_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
 $chapters = [];
 
@@ -79,7 +79,7 @@ if (!empty($chapters_json)) {
     }
 }
 
-// Fallback to old format
+
 if (empty($chapters)) {
     $chapters_data = get_post_meta($post_id, '_nettruyen_chapter_manifest', true);
     if (!empty($chapters_data)) {
@@ -90,41 +90,41 @@ if (empty($chapters)) {
     }
 }
 
-// Reverse chapters (latest first)
+
 if (!empty($chapters)) {
     $chapters = array_reverse($chapters);
 }
 
-// Build chapter URLs
+
 $first_chapter_url = '';
 $latest_chapter_url = '';
 
 if (!empty($chapters) && is_array($chapters)) {
-    // Latest chapter
+
     $latest_chapter = $chapters[0];
     if (isset($latest_chapter['slug'])) {
         $latest_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$latest_chapter['slug']}.html");
     }
 
-    // First chapter
+
     $first_chapter = end($chapters);
     if (isset($first_chapter['slug'])) {
         $first_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$first_chapter['slug']}.html");
     }
 }
 
-// Format numbers
+
 $follow_count_formatted = number_format($follow_count);
 $view_count_formatted = number_format($view_count);
 
-// ✅ SEO: Prepare meta description
+
 $meta_description = wp_strip_all_tags($description);
 if (empty($meta_description)) {
     $meta_description = "Đọc truyện " . get_the_title() . " - " . $author_name . " full mới nhất, cập nhật nhanh nhất tại TruyenQQ. Miễn phí, không quảng cáo.";
 }
 $meta_description = wp_trim_words($meta_description, 30, '...');
 
-// ✅ SEO: Get comic title for meta
+
 $comic_title = get_the_title();
 ?>
 

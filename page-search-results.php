@@ -9,18 +9,18 @@
 
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
 
-// Get search keyword from URL
+ 
 $keyword = isset($_GET['keyword']) ? sanitize_text_field($_GET['keyword']) : '';
 
-// Filter parameters
+ 
 $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $country = isset($_GET['country']) ? sanitize_text_field($_GET['country']) : '';
-$sort = isset($_GET['sort']) ? absint($_GET['sort']) : 0; // 0 = Most Relevant (default for search)
+$sort = isset($_GET['sort']) ? absint($_GET['sort']) : 0;  
 
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 $posts_per_page = 42;
 
-// Build WP_Query args
+ 
 $args = array(
     'post_type' => 'nettruyen_comic',
     'post_status' => 'publish',
@@ -28,30 +28,30 @@ $args = array(
     'paged' => $paged,
 );
 
-// Add search keyword if exists
+ 
 if (!empty($keyword)) {
     $args['s'] = $keyword;
 }
 
-// ✅ FIXED: Sort configuration - Removed Follow Count options (3, 4)
+ 
 $sort_options = array(
-    0 => array('orderby' => 'relevance', 'order' => 'DESC'), // Most Relevant
-    1 => array('orderby' => 'meta_value_num', 'order' => 'DESC', 'meta_key' => '_nettruyen_view_count'), // Views DESC
-    2 => array('orderby' => 'meta_value_num', 'order' => 'ASC', 'meta_key' => '_nettruyen_view_count'), // Views ASC
-    3 => array('orderby' => 'date', 'order' => 'DESC'), // Newest
-    4 => array('orderby' => 'date', 'order' => 'ASC'), // Oldest
+    0 => array('orderby' => 'relevance', 'order' => 'DESC'),  
+    1 => array('orderby' => 'meta_value_num', 'order' => 'DESC', 'meta_key' => '_nettruyen_view_count'),  
+    2 => array('orderby' => 'meta_value_num', 'order' => 'ASC', 'meta_key' => '_nettruyen_view_count'),  
+    3 => array('orderby' => 'date', 'order' => 'DESC'),  
+    4 => array('orderby' => 'date', 'order' => 'ASC'),  
 );
 
 $sort_config = isset($sort_options[$sort]) ? $sort_options[$sort] : $sort_options[0];
 
-// Apply sort
+ 
 if (isset($sort_config['meta_key'])) {
     $args['meta_key'] = $sort_config['meta_key'];
 }
 $args['orderby'] = $sort_config['orderby'];
 $args['order'] = $sort_config['order'];
 
-// Status filter
+ 
 if ($status !== '') {
     $args['meta_query'][] = array(
         'key' => '_nettruyen_status',
@@ -60,7 +60,7 @@ if ($status !== '') {
     );
 }
 
-// Country filter
+ 
 if ($country !== '') {
     $args['tax_query'][] = array(
         'taxonomy' => 'nettruyen_country',
@@ -69,10 +69,10 @@ if ($country !== '') {
     );
 }
 
-// Execute query
+ 
 $comics_query = new WP_Query($args);
 
-// Get hot comics for badge
+ 
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 $hot_comic_ids = $wpdb->get_col(
@@ -87,7 +87,7 @@ $total_pages = $comics_query->max_num_pages;
 $current_page = max(1, $paged);
 $total_results = $comics_query->found_posts;
 
-// SEO Meta
+ 
 $page_title = 'Kết quả tìm kiếm';
 if (!empty($keyword)) {
     $page_title = 'Tìm kiếm: ' . $keyword;

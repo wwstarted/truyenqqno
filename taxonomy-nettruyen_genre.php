@@ -90,15 +90,15 @@ $all_genres = get_terms(array(
 $total_pages = $comics_query->max_num_pages;
 $current_page = max(1, $paged);
 
-// ============================================
-// ✅ SEO: Prepare meta data
-// ============================================
+ 
+ 
+ 
 $genre_url = get_term_link($current_genre);
 
-// Build title parts
+ 
 $title_parts = array('Truyện ' . $genre_name);
 
-// Add filters to title
+ 
 if ($status) {
     $status_labels = array(
         'ongoing' => 'Đang tiến hành',
@@ -118,14 +118,14 @@ if ($country) {
     $title_parts[] = $country_labels[$country] ?? $country;
 }
 
-// Add page number if not first page
+ 
 if ($paged > 1) {
     $title_parts[] = 'Trang ' . $paged;
 }
 
 $page_title = implode(' - ', $title_parts) . ' | TruyenQQ';
 
-// Build meta description
+ 
 $meta_description = 'Đọc truyện tranh thể loại ' . $genre_name;
 
 if ($status) {
@@ -138,7 +138,7 @@ if ($country) {
 
 $meta_description .= ' mới nhất, cập nhật liên tục tại TruyenQQ.';
 
-// Add genre description if available
+ 
 if (!empty($genre_description)) {
     $short_desc = wp_trim_words(wp_strip_all_tags($genre_description), 20, '...');
     $meta_description .= ' ' . $short_desc;
@@ -148,7 +148,7 @@ if ($paged > 1) {
     $meta_description .= ' - Trang ' . $paged;
 }
 
-// OG Image (use first comic thumbnail if available)
+ 
 $og_image = get_template_directory_uri() . '/images/default-og.jpg';
 if ($comics_query->have_posts()) {
     $comics_query->the_post();
@@ -160,13 +160,13 @@ if ($comics_query->have_posts()) {
     wp_reset_postdata();
 }
 
-// Build canonical URL (without filter params for cleaner SEO)
+ 
 $canonical_url = get_term_link($current_genre);
 if ($paged > 1) {
     $canonical_url = trailingslashit($canonical_url) . 'page/' . $paged . '/';
 }
 
-// Prev/Next URLs for pagination
+ 
 $prev_url = '';
 $next_url = '';
 
@@ -432,10 +432,10 @@ if ($paged < $total_pages) {
                                 $latest_chapter = 'Chapter ' . $latest['name'];
                             }
 
-                            // Lấy thời gian cập nhật
+                             
 $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
 
-// Hiển thị time ago bằng tiếng Việt
+ 
 $time_ago = truyenqq_time_ago_vietnamese($updated_at);
 
                             $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
