@@ -42,7 +42,7 @@
     initFilterListeners();
     initPaginationListeners();
 
-    console.log("✅ Truyện Mới Cập Nhật initialized (with global bookmarks)");
+    console.log("Truyện Mới Cập Nhật initialized (with global bookmarks)");
   }
 
   function initFilterListeners() {

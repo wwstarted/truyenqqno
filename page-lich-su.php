@@ -138,8 +138,6 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                                         <?php the_title(); ?>
                                     </a>
                                 </h3>
-
-                                <!-- ✅ NEW: Stats -->
                                 <div class="comic-stats">
                                     <span class="stat-item">
                                         <i class="fa fa-bookmark"></i>

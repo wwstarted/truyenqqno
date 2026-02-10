@@ -7,7 +7,6 @@
  * @version 1.0.1 - FIXED
  */
 
-
 function toyota_enqueue_assets()
 {
     wp_enqueue_script('jquery');
@@ -2116,8 +2115,9 @@ function nettruyen_register_search_results_endpoint()
 }
 
 /**
- * API Callback: Return search results with filters
+ * ✅ FIXED: API Callback - ĐỒNG BỘ với template
  */
+
 function nettruyen_search_results_callback($request)
 {
     global $wpdb;
@@ -2130,7 +2130,7 @@ function nettruyen_search_results_callback($request)
 
     $posts_per_page = 42;
 
-    // Build query args
+    // Build base args
     $args = array(
         'post_type' => 'nettruyen_comic',
         'post_status' => 'publish',
@@ -2138,29 +2138,59 @@ function nettruyen_search_results_callback($request)
         'paged' => $page,
     );
 
-    // Add search keyword
     if (!empty($keyword)) {
         $args['s'] = $keyword;
     }
 
-    // Sort options
-    $sort_options = array(
-        0 => array('orderby' => 'relevance', 'order' => 'DESC'),
-        1 => array('orderby' => 'meta_value_num', 'order' => 'DESC', 'meta_key' => '_nettruyen_view_count'),
-        2 => array('orderby' => 'meta_value_num', 'order' => 'ASC', 'meta_key' => '_nettruyen_view_count'),
-        3 => array('orderby' => 'meta_value_num', 'order' => 'DESC', 'meta_key' => '_nettruyen_follow_count'),
-        4 => array('orderby' => 'meta_value_num', 'order' => 'ASC', 'meta_key' => '_nettruyen_follow_count'),
-        5 => array('orderby' => 'date', 'order' => 'DESC'),
-        6 => array('orderby' => 'date', 'order' => 'ASC'),
-    );
 
-    $sort_config = isset($sort_options[$sort]) ? $sort_options[$sort] : $sort_options[0];
+    $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-    if (isset($sort_config['meta_key'])) {
-        $args['meta_key'] = $sort_config['meta_key'];
+    switch ($sort) {
+        case 1: // Lượt xem cao nhất
+            $args['orderby'] = 'meta_value_num';
+            $args['order'] = 'DESC';
+
+            // ✅ JOIN với view_stats table
+            add_filter('posts_join', function ($join) use ($wpdb, $stats_table) {
+                global $wpdb;
+                $join .= " LEFT JOIN {$stats_table} AS vs ON {$wpdb->posts}.ID = vs.post_id ";
+                return $join;
+            }, 10, 1);
+
+            add_filter('posts_orderby', function ($orderby) use ($wpdb) {
+                return "vs.total_display_views DESC";
+            }, 10, 1);
+            break;
+
+        case 2: // Lượt xem thấp nhất
+            $args['orderby'] = 'meta_value_num';
+            $args['order'] = 'ASC';
+
+            add_filter('posts_join', function ($join) use ($wpdb, $stats_table) {
+                global $wpdb;
+                $join .= " LEFT JOIN {$stats_table} AS vs ON {$wpdb->posts}.ID = vs.post_id ";
+                return $join;
+            }, 10, 1);
+
+            add_filter('posts_orderby', function ($orderby) use ($wpdb) {
+                return "vs.total_display_views ASC";
+            }, 10, 1);
+            break;
+
+        case 3: // Mới nhất
+            $args['orderby'] = 'date';
+            $args['order'] = 'DESC';
+            break;
+
+        case 4: // Cũ nhất
+            $args['orderby'] = 'date';
+            $args['order'] = 'ASC';
+            break;
+
+        default: // Liên quan nhất
+            $args['orderby'] = 'relevance';
+            $args['order'] = 'DESC';
     }
-    $args['orderby'] = $sort_config['orderby'];
-    $args['order'] = $sort_config['order'];
 
     // Status filter
     if (!empty($status)) {
@@ -2182,23 +2212,26 @@ function nettruyen_search_results_callback($request)
 
     // Execute query
     $query = new WP_Query($args);
+
+    // ✅ IMPORTANT: Remove filters sau khi query xong
+    remove_all_filters('posts_join');
+    remove_all_filters('posts_orderby');
+
     $comics = array();
 
-    // Get view stats table
-    $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
-    $hot_comic_ids = $wpdb->get_col(
-        "SELECT post_id FROM {$stats_table} 
+    // ... phần render comics giữ nguyên ...
+    $hot_comic_ids = $wpdb->get_col("
+        SELECT post_id FROM {$stats_table} 
         WHERE total_display_views > 0 
         ORDER BY total_display_views DESC 
-        LIMIT 20"
-    );
+        LIMIT 20
+    ");
 
     if ($query->have_posts()) {
         while ($query->have_posts()) {
             $query->the_post();
             $post_id = get_the_ID();
 
-            // Get comic data
             $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
             if (empty($thumbnail)) {
                 $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
@@ -2221,14 +2254,12 @@ function nettruyen_search_results_callback($request)
             $time_ago = truyenqq_time_ago_vietnamese($updated_at);
 
             $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
-            $view_count = 0;
 
-            $view_stats = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
-                    $post_id
-                )
-            );
+            $view_count = 0;
+            $view_stats = $wpdb->get_row($wpdb->prepare(
+                "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
+                $post_id
+            ));
             if ($view_stats) {
                 $view_count = $view_stats->total_display_views;
             }
