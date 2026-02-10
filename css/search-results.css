@@ -1,9 +1,9 @@
 /**
- * Search Results Page Styles
+ * Search Results Page Styles - FINAL VERSION
  * Based on The Loai (Genre) page structure
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.2 - FIXED SELECT STYLING
  */
 
 /* =====================================================
@@ -55,11 +55,11 @@ body.dark-mode .search-meta {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px var(--blue-shadow-light);
+  box-shadow: 0 2px 8px rgba(0, 188, 212, 0.2);
 }
 
 body.dark-mode .filter-toggle-btn {
-  box-shadow: 0 2px 12px var(--blue-shadow-medium);
+  box-shadow: 0 2px 12px rgba(0, 188, 212, 0.3);
 }
 
 .filter-toggle-btn:hover {
@@ -69,7 +69,7 @@ body.dark-mode .filter-toggle-btn {
     var(--accent-color) 100%
   );
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px var(--blue-shadow-medium);
+  box-shadow: 0 4px 16px rgba(0, 188, 212, 0.3);
 }
 
 .filter-toggle-btn:active {
@@ -92,16 +92,88 @@ body.dark-mode .filter-toggle-btn {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
+  visibility: hidden;
   margin-bottom: 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  transition:
+    max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
   transform-origin: top;
 }
 
 .filter-box.show {
-  max-height: 800px; /* Enough height */
+  max-height: 1000px;
   opacity: 1;
+  visibility: visible;
   margin-bottom: 30px;
   overflow: visible;
+}
+
+/* =====================================================
+   ✅ FIXED: SELECT DROPDOWN STYLING (Giống trang thể loại)
+===================================================== */
+.story-list-bl01 .select {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 300px;
+}
+
+.story-list-bl01 select {
+  width: 100%;
+  padding: 8px 35px 8px 12px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+body.dark-mode .story-list-bl01 select {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.story-list-bl01 select:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.1);
+}
+
+.story-list-bl01 select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.15);
+}
+
+/* Custom dropdown arrow */
+.story-list-bl01 .select::after {
+  content: "▼";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: var(--text-secondary);
+  pointer-events: none;
+  transition: transform 0.3s ease;
+}
+
+body.dark-mode .story-list-bl01 .select::after {
+  color: var(--text-secondary-dark, #999);
+}
+
+.story-list-bl01 select:focus + .select::after {
+  transform: translateY(-50%) rotate(180deg);
 }
 
 /* =====================================================
@@ -200,7 +272,7 @@ body.dark-mode #main_homepage.loading::after {
    SEARCH HIGHLIGHT (for matched text)
 ===================================================== */
 .book_name a mark {
-  background-color: rgba(74, 158, 255, 0.2);
+  background-color: rgba(0, 188, 212, 0.2);
   color: var(--accent-color);
   padding: 2px 4px;
   border-radius: 3px;
@@ -208,16 +280,24 @@ body.dark-mode #main_homepage.loading::after {
 }
 
 body.dark-mode .book_name a mark {
-  background-color: rgba(74, 158, 255, 0.3);
+  background-color: rgba(0, 188, 212, 0.3);
 }
 
 /* =====================================================
-   RESPONSIVE - TABLET
+   RESPONSIVE - TABLET (≤1024px)
 ===================================================== */
 @media (max-width: 1024px) {
   .filter-toggle-btn {
     padding: 10px 20px;
     font-size: 14px;
+  }
+
+  .filter-box.show {
+    margin-bottom: 25px;
+  }
+
+  .story-list-bl01 .select {
+    max-width: 100%;
   }
 
   .no-results-content i {
@@ -230,9 +310,13 @@ body.dark-mode .book_name a mark {
 }
 
 /* =====================================================
-   RESPONSIVE - MOBILE
+   RESPONSIVE - MOBILE (≤767px)
 ===================================================== */
 @media (max-width: 767px) {
+  .homepage_tags .text_list_update {
+    font-size: 20px;
+  }
+
   .search-meta {
     font-size: 14px;
     margin-top: 8px;
@@ -251,6 +335,21 @@ body.dark-mode .book_name a mark {
 
   .filter-box.show {
     margin-bottom: 20px;
+  }
+
+  /* ✅ Select full width on mobile */
+  .story-list-bl01 .select {
+    max-width: 100%;
+  }
+
+  .story-list-bl01 select {
+    font-size: 13px;
+    padding: 7px 32px 7px 10px;
+  }
+
+  .story-list-bl01 .select::after {
+    right: 10px;
+    font-size: 9px;
   }
 
   .no-results {
@@ -291,30 +390,9 @@ body.dark-mode .book_name a mark {
     font-size: 12px;
     padding: 9px 14px;
   }
-}
 
-/* =====================================================
-   ANIMATION ENHANCEMENTS
-===================================================== */
-.filter-box {
-  animation-duration: 0.4s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.filter-box.show {
-  animation-name: slideDown;
-}
-
-@keyframes slideDown {
-  from {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    max-height: 800px;
-    opacity: 1;
-    transform: translateY(0);
+  .story-list-bl01 select {
+    font-size: 12px;
   }
 }
 
@@ -326,11 +404,39 @@ body.dark-mode .book_name a mark {
   outline-offset: 2px;
 }
 
+.filter-toggle-btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.story-list-bl01 select:focus {
+  outline: none;
+}
+
+/* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   .filter-box,
   .filter-toggle-btn .toggle-icon,
+  .story-list-bl01 .select::after,
   #main_homepage.loading::after {
     animation: none;
     transition: none;
+  }
+
+  .filter-box.show {
+    max-height: none;
+  }
+}
+
+/* =====================================================
+   PRINT STYLES
+===================================================== */
+@media print {
+  .filter-toggle-wrapper,
+  .filter-toggle-btn {
+    display: none;
+  }
+
+  .filter-box {
+    display: none !important;
   }
 }

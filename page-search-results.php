@@ -4,7 +4,7 @@
  * Description: Search results page with filtering
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.2 - FIXED SORT OPTIONS
  */
 
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
@@ -33,15 +33,13 @@ if (!empty($keyword)) {
     $args['s'] = $keyword;
 }
 
-// Sort configuration
+// ✅ FIXED: Sort configuration - Removed Follow Count options (3, 4)
 $sort_options = array(
     0 => array('orderby' => 'relevance', 'order' => 'DESC'), // Most Relevant
     1 => array('orderby' => 'meta_value_num', 'order' => 'DESC', 'meta_key' => '_nettruyen_view_count'), // Views DESC
     2 => array('orderby' => 'meta_value_num', 'order' => 'ASC', 'meta_key' => '_nettruyen_view_count'), // Views ASC
-    3 => array('orderby' => 'meta_value_num', 'order' => 'DESC', 'meta_key' => '_nettruyen_follow_count'), // Follow DESC
-    4 => array('orderby' => 'meta_value_num', 'order' => 'ASC', 'meta_key' => '_nettruyen_follow_count'), // Follow ASC
-    5 => array('orderby' => 'date', 'order' => 'DESC'), // Newest
-    6 => array('orderby' => 'date', 'order' => 'ASC'), // Oldest
+    3 => array('orderby' => 'date', 'order' => 'DESC'), // Newest
+    4 => array('orderby' => 'date', 'order' => 'ASC'), // Oldest
 );
 
 $sort_config = isset($sort_options[$sort]) ? $sort_options[$sort] : $sort_options[0];
@@ -111,9 +109,7 @@ if (!empty($keyword)) {
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        <?php echo esc_html($page_title); ?>
-    </title>
+    <title><?php echo esc_html($page_title); ?></title>
     <meta name="description" content="<?php echo esc_attr($meta_description); ?>">
 
     <link rel="canonical" href="<?php echo esc_url(home_url('/ket-qua-tim-kiem/')); ?>">
@@ -141,9 +137,7 @@ if (!empty($keyword)) {
                     <p class="text_list_update">
                         <i class="fa fa-search" aria-hidden="true"></i>
                         <?php if (!empty($keyword)): ?>
-                        Kết quả tìm kiếm: <span class="search-keyword">
-                            <?php echo esc_html($keyword); ?>
-                        </span>
+                        Kết quả tìm kiếm: <span class="search-keyword"><?php echo esc_html($keyword); ?></span>
                         <?php else: ?>
                         Kết quả tìm kiếm
                         <?php endif; ?>
@@ -151,9 +145,7 @@ if (!empty($keyword)) {
                 </h1>
                 <div class="search-meta">
                     <?php if ($total_results > 0): ?>
-                    Tìm thấy <strong>
-                        <?php echo number_format($total_results); ?>
-                    </strong> kết quả
+                    Tìm thấy <strong><?php echo number_format($total_results); ?></strong> kết quả
                     <?php else: ?>
                     Không tìm thấy kết quả nào
                     <?php endif; ?>
@@ -162,7 +154,7 @@ if (!empty($keyword)) {
 
             <!-- Toggle Filter Button -->
             <div class="filter-toggle-wrapper">
-                <button class="filter-toggle-btn" id="filterToggleBtn">
+                <button class="filter-toggle-btn" id="filterToggleBtn" aria-expanded="false" aria-controls="filterBox">
                     <i class="fa fa-filter"></i>
                     <span>Lọc kết quả</span>
                     <i class="fa fa-chevron-down toggle-icon"></i>
@@ -170,8 +162,8 @@ if (!empty($keyword)) {
             </div>
 
             <section class="search-results-section">
-                <!-- Filter Box (Hidden by default) -->
-                <div class="story-list-bl01 box filter-box" id="filterBox" style="display: none;">
+                <!-- Filter Box -->
+                <div class="story-list-bl01 box filter-box" id="filterBox">
                     <table>
                         <tbody>
                             <!-- Status Filter -->
@@ -181,25 +173,29 @@ if (!empty($keyword)) {
                                     <ul class="choose">
                                         <li>
                                             <a class="<?php echo ($status === '') ? 'active' : ''; ?>"
-                                                href="javascript:void(0)" data-filter="status" data-value="">
+                                                href="javascript:void(0)" data-filter="status" data-value=""
+                                                aria-label="Lọc tất cả tình trạng">
                                                 Tất cả
                                             </a>
                                         </li>
                                         <li>
                                             <a class="<?php echo ($status === 'ongoing') ? 'active' : ''; ?>"
-                                                href="javascript:void(0)" data-filter="status" data-value="ongoing">
+                                                href="javascript:void(0)" data-filter="status" data-value="ongoing"
+                                                aria-label="Lọc truyện đang tiến hành">
                                                 Đang tiến hành
                                             </a>
                                         </li>
                                         <li>
                                             <a class="<?php echo ($status === 'completed') ? 'active' : ''; ?>"
-                                                href="javascript:void(0)" data-filter="status" data-value="completed">
+                                                href="javascript:void(0)" data-filter="status" data-value="completed"
+                                                aria-label="Lọc truyện hoàn thành">
                                                 Hoàn thành
                                             </a>
                                         </li>
                                         <li>
                                             <a class="<?php echo ($status === 'coming_soon') ? 'active' : ''; ?>"
-                                                href="javascript:void(0)" data-filter="status" data-value="coming_soon">
+                                                href="javascript:void(0)" data-filter="status" data-value="coming_soon"
+                                                aria-label="Lọc truyện sắp ra mắt">
                                                 Sắp ra mắt
                                             </a>
                                         </li>
@@ -214,31 +210,37 @@ if (!empty($keyword)) {
                                     <ul class="choose">
                                         <li>
                                             <a class="<?php echo ($country === '') ? 'active' : ''; ?>"
-                                                href="javascript:void(0)" data-filter="country" data-value="">
+                                                href="javascript:void(0)" data-filter="country" data-value=""
+                                                aria-label="Lọc tất cả quốc gia">
                                                 Tất cả
                                             </a>
                                         </li>
                                         <li>
                                             <a class="<?php echo ($country === 'China') ? 'active' : ''; ?>"
-                                                href="javascript:void(0)" data-filter="country" data-value="China">
+                                                title="Truyện Trung Quốc" href="javascript:void(0)"
+                                                data-filter="country" data-value="China"
+                                                aria-label="Lọc truyện Trung Quốc">
                                                 Trung Quốc
                                             </a>
                                         </li>
                                         <li>
                                             <a class="<?php echo ($country === 'Vietnam') ? 'active' : ''; ?>"
-                                                href="javascript:void(0)" data-filter="country" data-value="Vietnam">
+                                                title="Truyện Việt Nam" href="javascript:void(0)" data-filter="country"
+                                                data-value="Vietnam" aria-label="Lọc truyện Việt Nam">
                                                 Việt Nam
                                             </a>
                                         </li>
                                         <li>
                                             <a class="<?php echo ($country === 'Korea') ? 'active' : ''; ?>"
-                                                href="javascript:void(0)" data-filter="country" data-value="Korea">
+                                                title="Truyện Hàn Quốc" href="javascript:void(0)" data-filter="country"
+                                                data-value="Korea" aria-label="Lọc truyện Hàn Quốc">
                                                 Hàn Quốc
                                             </a>
                                         </li>
                                         <li>
                                             <a class="<?php echo ($country === 'Japan') ? 'active' : ''; ?>"
-                                                href="javascript:void(0)" data-filter="country" data-value="Japan">
+                                                title="Truyện Nhật Bản" href="javascript:void(0)" data-filter="country"
+                                                data-value="Japan" aria-label="Lọc truyện Nhật Bản">
                                                 Nhật Bản
                                             </a>
                                         </li>
@@ -246,19 +248,17 @@ if (!empty($keyword)) {
                                 </td>
                             </tr>
 
-                            <!-- Sort Filter -->
+                            <!-- ✅ FIXED: Sort Filter - Removed Follow options -->
                             <tr>
                                 <th>Sắp xếp</th>
                                 <td>
                                     <div class="select is-warning">
-                                        <select id="sort-select">
+                                        <select id="sort-select" aria-label="Chọn cách sắp xếp">
                                             <option value="0" <?php selected($sort, 0); ?>>Liên quan nhất</option>
                                             <option value="1" <?php selected($sort, 1); ?>>Lượt xem cao nhất</option>
                                             <option value="2" <?php selected($sort, 2); ?>>Lượt xem thấp nhất</option>
-                                            <option value="3" <?php selected($sort, 3); ?>>Theo dõi nhiều nhất</option>
-                                            <option value="4" <?php selected($sort, 4); ?>>Theo dõi ít nhất</option>
-                                            <option value="5" <?php selected($sort, 5); ?>>Mới nhất</option>
-                                            <option value="6" <?php selected($sort, 6); ?>>Cũ nhất</option>
+                                            <option value="3" <?php selected($sort, 3); ?>>Mới nhất</option>
+                                            <option value="4" <?php selected($sort, 4); ?>>Cũ nhất</option>
                                         </select>
                                     </div>
                                 </td>
@@ -342,9 +342,7 @@ if (!empty($keyword)) {
                                 <?php truyenqq_render_bookmark_badge($post_id); ?>
 
                                 <div class="top-notice">
-                                    <span class="time-ago">
-                                        <?php echo esc_html($time_ago); ?>
-                                    </span>
+                                    <span class="time-ago"><?php echo esc_html($time_ago); ?></span>
                                     <?php if ($badge_type): ?>
                                     <span class="type-label <?php echo esc_attr($badge_type); ?>">
                                         <?php echo esc_html($badge_text); ?>
@@ -395,9 +393,7 @@ if (!empty($keyword)) {
                                 <i class="fa fa-search"></i>
                                 <p>Không tìm thấy kết quả nào
                                     <?php if (!empty($keyword)): ?>
-                                    cho từ khóa "<strong>
-                                        <?php echo esc_html($keyword); ?>
-                                    </strong>"
+                                    cho từ khóa "<strong><?php echo esc_html($keyword); ?></strong>"
                                     <?php endif; ?>
                                 </p>
                                 <p class="suggestion">Thử tìm kiếm với từ khóa khác hoặc <a
@@ -416,8 +412,8 @@ if (!empty($keyword)) {
                 <?php if ($total_pages > 1): ?>
                 <nav class="page_redirect" aria-label="Phân trang">
                     <?php if ($current_page > 1): ?>
-                    <a href="javascript:void(0)" data-page="<?php echo $current_page - 1; ?>">
-                        <p><span>‹</span></p>
+                    <a href="javascript:void(0)" data-page="<?php echo $current_page - 1; ?>" aria-label="Trang trước">
+                        <p><span aria-hidden="true">‹</span></p>
                     </a>
                     <?php endif; ?>
 
@@ -428,7 +424,7 @@ if (!empty($keyword)) {
 
                         if ($start > 1):
                             ?>
-                    <a href="javascript:void(0)" data-page="1">
+                    <a href="javascript:void(0)" data-page="1" aria-label="Trang 1">
                         <p>1</p>
                     </a>
                     <?php if ($start > 2): ?>
@@ -440,16 +436,12 @@ if (!empty($keyword)) {
                         for ($i = $start; $i <= $end; $i++):
                             if ($i == $current_page):
                                 ?>
-                    <a href="javascript:void(0)">
-                        <p class="active">
-                            <?php echo $i; ?>
-                        </p>
+                    <a href="javascript:void(0)" aria-current="page">
+                        <p class="active"><?php echo $i; ?></p>
                     </a>
                     <?php else: ?>
-                    <a href="javascript:void(0)" data-page="<?php echo $i; ?>">
-                        <p>
-                            <?php echo $i; ?>
-                        </p>
+                    <a href="javascript:void(0)" data-page="<?php echo $i; ?>" aria-label="Trang <?php echo $i; ?>">
+                        <p><?php echo $i; ?></p>
                     </a>
                     <?php
                             endif;
@@ -462,19 +454,19 @@ if (!empty($keyword)) {
                                 ?>
                     <span class="dots">...</span>
                     <?php endif; ?>
-                    <a href="javascript:void(0)" data-page="<?php echo $total_pages; ?>">
-                        <p>
-                            <?php echo $total_pages; ?>
-                        </p>
+                    <a href="javascript:void(0)" data-page="<?php echo $total_pages; ?>"
+                        aria-label="Trang <?php echo $total_pages; ?>">
+                        <p><?php echo $total_pages; ?></p>
                     </a>
                     <?php endif; ?>
 
                     <?php if ($current_page < $total_pages): ?>
-                    <a href="javascript:void(0)" data-page="<?php echo $current_page + 1; ?>">
-                        <p><span>›</span></p>
+                    <a href="javascript:void(0)" data-page="<?php echo $current_page + 1; ?>"
+                        aria-label="Trang tiếp theo">
+                        <p><span aria-hidden="true">›</span></p>
                     </a>
-                    <a href="javascript:void(0)" data-page="<?php echo $total_pages; ?>">
-                        <p><span>»</span></p>
+                    <a href="javascript:void(0)" data-page="<?php echo $total_pages; ?>" aria-label="Trang cuối">
+                        <p><span aria-hidden="true">»</span></p>
                     </a>
                     <?php endif; ?>
                 </nav>

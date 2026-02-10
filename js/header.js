@@ -1,6 +1,33 @@
 (function () {
   "use strict";
 
+  // ========================================
+  // EXTRACT BASE PATH FROM REST URL
+  // ========================================
+  function getBasePath() {
+    try {
+      // TRUYENQQ_CONFIG.restUrl = "http://localhost/truyen_qqno/wordpress-6.8.3-vi/wordpress/wp-json/"
+      // Chúng ta cần lấy: "/truyen_qqno/wordpress-6.8.3-vi/wordpress/"
+
+      const restUrl = TRUYENQQ_CONFIG.restUrl;
+      const url = new URL(restUrl);
+
+      // Lấy pathname: "/truyen_qqno/wordpress-6.8.3-vi/wordpress/wp-json/"
+      let pathname = url.pathname;
+
+      // Bỏ "/wp-json/" ở cuối
+      pathname = pathname.replace(/\/wp-json\/?$/, "");
+
+      // Nếu không có gì thì trả về "/"
+      return pathname || "/";
+    } catch (error) {
+      console.error("Error extracting base path:", error);
+      return "/";
+    }
+  }
+
+  const BASE_PATH = getBasePath();
+
   const CONFIG = {
     searchAPI: TRUYENQQ_CONFIG.restUrl + "nettruyen/v1/search",
     genresAPI: TRUYENQQ_CONFIG.restUrl + "wp/v2/nettruyen_genre",
@@ -9,6 +36,7 @@
     maxSearchResults: 20,
     localStorageKey: "truyenqq_dark_mode",
     searchResultsPage: "/ket-qua-tim-kiem/",
+    basePath: BASE_PATH,
   };
 
   const elements = {
@@ -125,12 +153,22 @@
       return;
     }
 
+    // FIX: Kết hợp base path với search results page
+    // Ví dụ: "/truyen_qqno/wordpress-6.8.3-vi/wordpress" + "/ket-qua-tim-kiem/" + "?keyword=..."
+    let basePath = CONFIG.basePath;
+
+    // Đảm bảo base path không có trailing slash
+    if (basePath.endsWith("/")) {
+      basePath = basePath.slice(0, -1);
+    }
+
     const searchURL =
-      window.location.origin +
+      basePath +
       CONFIG.searchResultsPage +
       "?keyword=" +
       encodeURIComponent(query);
 
+    console.log("Redirecting to:", searchURL); // Debug log
     window.location.href = searchURL;
   }
 
@@ -602,6 +640,8 @@
       document.addEventListener("DOMContentLoaded", init);
       return;
     }
+
+    console.log("TruyenQQ Base Path:", CONFIG.basePath); // Debug log
 
     initDarkMode();
     initSearch();

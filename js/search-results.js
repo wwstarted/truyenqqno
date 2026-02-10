@@ -1,9 +1,9 @@
 /**
- * Search Results Page - AJAX Logic
+ * Search Results Page - AJAX Logic - FINAL VERSION
  * Based on The Loai (Genre) structure
  *
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.2 - FIXED SORT OPTIONS (Removed Follow Count)
  */
 
 (function () {
@@ -60,26 +60,39 @@
     initSortListener();
     initPaginationListeners();
 
-    console.log("Search Results initialized", state);
+    console.log("✅ Search Results initialized", state);
   }
 
   /**
    * Filter Toggle Show/Hide
    */
   function initFilterToggle() {
-    if (!filterToggleBtn || !filterBox) return;
+    if (!filterToggleBtn || !filterBox) {
+      console.warn("⚠️ Filter toggle elements not found");
+      return;
+    }
 
-    filterToggleBtn.addEventListener("click", function () {
-      const isActive = filterBox.classList.contains("show");
+    filterToggleBtn.addEventListener("click", function (e) {
+      e.preventDefault();
 
-      if (isActive) {
+      const isCurrentlyShown = filterBox.classList.contains("show");
+
+      if (isCurrentlyShown) {
+        // Hide filter
         filterBox.classList.remove("show");
         filterToggleBtn.classList.remove("active");
+        filterToggleBtn.setAttribute("aria-expanded", "false");
+        console.log("🔽 Filter hidden");
       } else {
+        // Show filter
         filterBox.classList.add("show");
         filterToggleBtn.classList.add("active");
+        filterToggleBtn.setAttribute("aria-expanded", "true");
+        console.log("🔼 Filter shown");
       }
     });
+
+    console.log("✅ Filter toggle initialized");
   }
 
   /**
@@ -116,6 +129,8 @@
       state.sort = this.value;
       state.currentPage = 1;
       loadComics();
+
+      console.log("📊 Sort changed to:", this.options[this.selectedIndex].text);
     });
   }
 
@@ -156,6 +171,13 @@
 
   /**
    * AJAX Load Comics
+   *
+   * ✅ UPDATED: Sort options mapping
+   * 0 = Liên quan nhất (Most Relevant)
+   * 1 = Lượt xem cao nhất (Views DESC)
+   * 2 = Lượt xem thấp nhất (Views ASC)
+   * 3 = Mới nhất (Newest)
+   * 4 = Cũ nhất (Oldest)
    */
   async function loadComics() {
     if (state.isLoading) return;
@@ -179,7 +201,7 @@
       if (state.status) apiUrl.searchParams.set("status", state.status);
       if (state.country) apiUrl.searchParams.set("country", state.country);
 
-      console.log("Fetching:", apiUrl.toString());
+      console.log("📡 Fetching:", apiUrl.toString());
 
       const response = await fetch(apiUrl.toString());
 
@@ -203,7 +225,7 @@
         showError("Không thể tải dữ liệu truyện");
       }
     } catch (error) {
-      console.error("AJAX Error:", error);
+      console.error("❌ AJAX Error:", error);
       showError("Đã xảy ra lỗi: " + error.message);
     } finally {
       state.isLoading = false;
@@ -222,7 +244,9 @@
             <i class="fa fa-search"></i>
             <p>Không tìm thấy kết quả nào ${
               state.keyword
-                ? 'cho từ khóa "<strong>' + state.keyword + '</strong>"'
+                ? 'cho từ khóa "<strong>' +
+                  escapeHtml(state.keyword) +
+                  '</strong>"'
                 : ""
             }</p>
             <p class="suggestion">Thử tìm kiếm với từ khóa khác hoặc <a href="${
@@ -239,9 +263,11 @@
         (comic) => `
       <li itemscope itemtype="http://schema.org/Book">
         <div class="book_avatar">
-          <a href="${comic.url}" title="${comic.title}" itemprop="url">
-            <img class="center" src="${comic.thumbnail}" 
-                 alt="${comic.title}" width="190" height="247" 
+          <a href="${escapeHtml(comic.url)}" title="${escapeHtml(
+            comic.title,
+          )}" itemprop="url">
+            <img class="center" src="${escapeHtml(comic.thumbnail)}" 
+                 alt="${escapeHtml(comic.title)}" width="190" height="247" 
                  loading="lazy" itemprop="image">
           </a>
           
@@ -252,10 +278,12 @@
           </span>
           
           <div class="top-notice">
-            <span class="time-ago">${comic.time_ago}</span>
+            <span class="time-ago">${escapeHtml(comic.time_ago)}</span>
             ${
               comic.badge_type
-                ? `<span class="type-label ${comic.badge_type}">${comic.badge_text}</span>`
+                ? `<span class="type-label ${escapeHtml(
+                    comic.badge_type,
+                  )}">${escapeHtml(comic.badge_text)}</span>`
                 : ""
             }
           </div>
@@ -264,21 +292,29 @@
         <div class="book_info">
           <div class="book_name">
             <h3 itemprop="name">
-              <a title="${comic.title}" href="${comic.url}">
-                ${comic.title}
+              <a title="${escapeHtml(comic.title)}" href="${escapeHtml(
+                comic.url,
+              )}">
+                ${escapeHtml(comic.title)}
               </a>
             </h3>
           </div>
           <div class="clear"></div>
           
           <div class="text_detail">
-            <span><i class="fa fa-bookmark"></i> ${comic.follow_count}</span>
-            <span><i class="fa fa-eye"></i> ${comic.view_count}</span>
+            <span><i class="fa fa-bookmark"></i> ${escapeHtml(
+              comic.follow_count,
+            )}</span>
+            <span><i class="fa fa-eye"></i> ${escapeHtml(
+              comic.view_count,
+            )}</span>
           </div>
           
           <div class="last_chapter">
-            <a href="${comic.url}" title="${comic.latest_chapter}">
-              ${comic.latest_chapter}
+            <a href="${escapeHtml(comic.url)}" title="${escapeHtml(
+              comic.latest_chapter,
+            )}">
+              ${escapeHtml(comic.latest_chapter)}
             </a>
           </div>
         </div>
@@ -319,12 +355,12 @@
     if (current_page > 1) {
       html += `<a href="javascript:void(0)" data-page="${
         current_page - 1
-      }"><p><span>‹</span></p></a>`;
+      }" aria-label="Trang trước"><p><span aria-hidden="true">‹</span></p></a>`;
     }
 
     // First + ...
     if (start > 1) {
-      html += `<a href="javascript:void(0)" data-page="1"><p>1</p></a>`;
+      html += `<a href="javascript:void(0)" data-page="1" aria-label="Trang 1"><p>1</p></a>`;
       if (start > 2) {
         html += `<span class="dots">...</span>`;
       }
@@ -333,9 +369,9 @@
     // Page numbers
     for (let i = start; i <= end; i++) {
       if (i === current_page) {
-        html += `<a href="javascript:void(0)"><p class="active">${i}</p></a>`;
+        html += `<a href="javascript:void(0)" aria-current="page"><p class="active">${i}</p></a>`;
       } else {
-        html += `<a href="javascript:void(0)" data-page="${i}"><p>${i}</p></a>`;
+        html += `<a href="javascript:void(0)" data-page="${i}" aria-label="Trang ${i}"><p>${i}</p></a>`;
       }
     }
 
@@ -344,15 +380,15 @@
       if (end < total_pages - 1) {
         html += `<span class="dots">...</span>`;
       }
-      html += `<a href="javascript:void(0)" data-page="${total_pages}"><p>${total_pages}</p></a>`;
+      html += `<a href="javascript:void(0)" data-page="${total_pages}" aria-label="Trang ${total_pages}"><p>${total_pages}</p></a>`;
     }
 
     // Next + Last
     if (current_page < total_pages) {
       html += `<a href="javascript:void(0)" data-page="${
         current_page + 1
-      }"><p><span>›</span></p></a>`;
-      html += `<a href="javascript:void(0)" data-page="${total_pages}"><p><span>»</span></p></a>`;
+      }" aria-label="Trang tiếp theo"><p><span aria-hidden="true">›</span></p></a>`;
+      html += `<a href="javascript:void(0)" data-page="${total_pages}" aria-label="Trang cuối"><p><span aria-hidden="true">»</span></p></a>`;
     }
 
     paginationContainer.innerHTML = html;
@@ -391,15 +427,19 @@
   function showLoadingState() {
     const main = document.querySelector("#main_homepage");
     if (main) main.classList.add("loading");
-    comicsGrid.style.opacity = "0.5";
-    comicsGrid.style.pointerEvents = "none";
+    if (comicsGrid) {
+      comicsGrid.style.opacity = "0.5";
+      comicsGrid.style.pointerEvents = "none";
+    }
   }
 
   function hideLoadingState() {
     const main = document.querySelector("#main_homepage");
     if (main) main.classList.remove("loading");
-    comicsGrid.style.opacity = "1";
-    comicsGrid.style.pointerEvents = "auto";
+    if (comicsGrid) {
+      comicsGrid.style.opacity = "1";
+      comicsGrid.style.pointerEvents = "auto";
+    }
   }
 
   /**
@@ -432,8 +472,15 @@
     }, 2000);
   }
 
+  /**
+   * Escape HTML to prevent XSS
+   */
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   // Initialize
   init();
 })();
-
-console.log("🔍 Search Results - Script loaded");
