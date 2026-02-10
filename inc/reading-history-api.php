@@ -114,7 +114,7 @@ function truyenqq_api_get_reading_history($request)
         $view_count = $view_stats ? $view_stats->total_display_views : 0;
 
 
-        $time_ago = human_time_diff(strtotime($row->last_read_at), current_time('timestamp')) . ' trước';
+        $time_ago = truyenqq_time_ago_vietnamese($row->last_read_at);
 
         $history[] = array(
             'id' => (int) $row->id,
