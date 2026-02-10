@@ -56,12 +56,12 @@ if (!$hot_comics->have_posts()) {
 }
 ?>
 
-<!-- ✅ Thêm H1 ẩn cho SEO -->
+
 <h1 class="seo-h1" style="position:absolute;left:-9999px;top:-9999px;">
     TruyenQQ - Đọc Truyện Tranh Online Miễn Phí - Manga Manhwa Manhua
 </h1>
 
-<!-- ✅ Thêm main tag và aria-label -->
+
 <main id="main-content" role="main" aria-label="Nội dung chính"></main>
 
 <section class="homepage-suggest">
@@ -106,9 +106,11 @@ if (!$hot_comics->have_posts()) {
                         }
 
 
-                        $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
-                        $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
+                        // Lấy thời gian cập nhật
+                        $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
 
+                        // Hiển thị time ago bằng tiếng Việt
+                        $time_ago = truyenqq_time_ago_vietnamese($updated_at);
                         $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                         if (empty($follow_count)) {
                             $follow_count = 0;
@@ -286,8 +288,11 @@ if (!$exclusive_comics->have_posts()) {
                         }
 
 
-                        $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
-                        $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
+                        // Lấy thời gian cập nhật
+                        $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
+
+                        // Hiển thị time ago bằng tiếng Việt
+                        $time_ago = truyenqq_time_ago_vietnamese($updated_at);
 
 
                         $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
@@ -472,8 +477,11 @@ $hot_comic_ids = $wpdb->get_col(
                     $latest_chapter = 'Chapter ' . $latest['name'];
                 }
 
-                $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
-                $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
+                // Lấy thời gian cập nhật
+                $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
+
+                // Hiển thị time ago bằng tiếng Việt
+                $time_ago = truyenqq_time_ago_vietnamese($updated_at);
 
                 $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
                 if (empty($follow_count)) {

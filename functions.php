@@ -524,7 +524,7 @@ add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $u
 }, 10, 3);
 
 
-
+require_once get_template_directory() . '/inc/helpers.php';
 require_once get_template_directory() . '/inc/auth-db-migration.php';
 require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
 require_once get_template_directory() . '/inc/class-truyenqq-auth-handler.php';

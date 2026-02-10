@@ -78,8 +78,11 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                             }
 
                             // Time ago
-                            $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_time('U');
-                            $time_ago = human_time_diff(strtotime($updated_at), current_time('timestamp')) . ' trước';
+                            // Lấy thời gian cập nhật
+                            $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
+
+                            // Hiển thị time ago bằng tiếng Việt
+                            $time_ago = truyenqq_time_ago_vietnamese($updated_at);
 
                             // ✅ NEW: Get follow count
                             $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
