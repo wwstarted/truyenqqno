@@ -236,7 +236,7 @@ if (!$exclusive_comics->have_posts()) {
 
 <section class="homepage-exclusive">
     <div class="container">
-        <h1 style="position:absolute;left:-9999px;">TruyenQQ - Đọc Truyện Tranh Online Miễn Phí</h1>
+        <!-- <h1 style="position:absolute;left:-9999px;">TruyenQQ - Đọc Truyện Tranh Online Miễn Phí</h1> -->
 
         <!-- Section Header -->
         <!-- <div class="section-header">

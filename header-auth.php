@@ -27,7 +27,7 @@
     <!-- WordPress Head Hook -->
     <?php wp_head(); ?>
 
-    <!-- Dark Mode Detection -->
+
     <script>
     (function() {
         const savedTheme = localStorage.getItem('theme');

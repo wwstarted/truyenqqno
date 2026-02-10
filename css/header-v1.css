@@ -468,7 +468,7 @@ body.dark-mode .search-results {
 }
 
 .search-results.active {
-  max-height: 560px;
+  max-height: 340px;
   overflow-y: auto;
 }
 
@@ -1714,7 +1714,7 @@ body.dark-mode .user-dropdown::before {
 }
 
 .search-results.active {
-  max-height: 560px;
+  max-height: 340px;
   overflow-y: auto;
 }
 
