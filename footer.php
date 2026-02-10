@@ -66,7 +66,7 @@
                     <div class="footer-contact">
                         <div class="contact-item">
                             <i class="fa fa-envelope"></i>
-                            <a href="mailto:marcander.tvd11@gmail.com">dungnoinhamnua.XUANANH@gmail.com</a>
+                            <a href="mailto:marcander.tvd11@gmail.com">marcander.tvd11@gmail.com</a>
                         </div>
                     </div>
                 </div>
