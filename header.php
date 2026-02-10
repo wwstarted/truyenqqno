@@ -258,6 +258,19 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                 </nav>
             </div>
         </div>
+
+        <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+            <div class="moble-menu-content">
+                <div class="mobile-menu-header">
+                    <span class="site-name">TruyenQQ</span>
+                    <button class="mobile-menu-close" id="mobile-menu-close">&times;</button>
+                </div>
+                <ul class="mobile-menu">
+                    <li><a href="<?php echo esc_url(home_url('/')); ?>"></a></li>
+                </ul>
+            </div>
+        </div>
+
     </header>
     <?php wp_footer(); ?>
 </body>
