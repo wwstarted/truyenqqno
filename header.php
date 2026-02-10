@@ -262,7 +262,7 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
         <div class="mobile-menu-overlay" id="mobile-menu-overlay">
             <div class="moble-menu-content">
                 <div class="mobile-menu-header">
-                    <span class="site-name">TruyenQQ</span>
+                    <span class="site-name">DUNG NOI NHAM NUA XUAN ANH</span>
                     <button class="mobile-menu-close" id="mobile-menu-close">&times;</button>
                 </div>
                 <ul class="mobile-menu">
