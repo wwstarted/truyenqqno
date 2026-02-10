@@ -480,6 +480,49 @@ function toyota_enqueue_assets()
             true
         );
     }
+
+    if (is_page_template('page-search-results.php')) {
+        // Enqueue base listing CSS (tái sử dụng style từ trang listing)
+        wp_enqueue_style(
+            'truyen-moi-cap-nhat-base',
+            get_template_directory_uri() . '/css/truyen-moi-cap-nhat.css',
+            array('toyota-global'),
+            '1.0.1'
+        );
+
+        // Enqueue search results specific CSS
+        wp_enqueue_style(
+            'search-results-css',
+            get_template_directory_uri() . '/css/search-results.css',
+            array('truyen-moi-cap-nhat-base'),
+            '1.0.0'
+        );
+
+        // Enqueue base listing JS
+        wp_enqueue_script(
+            'comics-listing-base',
+            get_template_directory_uri() . '/js/comics-listing-base.js',
+            array('jquery'),
+            '1.0.1',
+            true
+        );
+
+        // Enqueue search results JS
+        wp_enqueue_script(
+            'search-results-js',
+            get_template_directory_uri() . '/js/search-results.js',
+            array('comics-listing-base'),
+            '1.0.0',
+            true
+        );
+
+        // Localize script data
+        wp_localize_script('search-results-js', 'nettruyenSearchData', array(
+            'restUrl' => rest_url('nettruyen/v1/search-results'),
+            'nonce' => wp_create_nonce('wp_rest'),
+        ));
+    }
+
 }
 add_action('wp_enqueue_scripts', 'toyota_enqueue_assets');
 
@@ -2032,4 +2075,201 @@ function nettruyen_country_migration_page()
     </div>
 </div>
 <?php
+}
+
+add_action('rest_api_init', 'nettruyen_register_search_results_endpoint');
+
+function nettruyen_register_search_results_endpoint()
+{
+    register_rest_route('nettruyen/v1', '/search-results', array(
+        'methods' => 'GET',
+        'callback' => 'nettruyen_search_results_callback',
+        'permission_callback' => '__return_true',
+        'args' => array(
+            'keyword' => array(
+                'required' => false,
+                'type' => 'string',
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'page' => array(
+                'required' => false,
+                'type' => 'integer',
+                'default' => 1,
+            ),
+            'sort' => array(
+                'required' => false,
+                'type' => 'integer',
+                'default' => 0,
+            ),
+            'status' => array(
+                'required' => false,
+                'type' => 'string',
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'country' => array(
+                'required' => false,
+                'type' => 'string',
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+        ),
+    ));
+}
+
+/**
+ * API Callback: Return search results with filters
+ */
+function nettruyen_search_results_callback($request)
+{
+    global $wpdb;
+
+    $keyword = $request->get_param('keyword');
+    $page = max(1, $request->get_param('page'));
+    $sort = $request->get_param('sort');
+    $status = $request->get_param('status');
+    $country = $request->get_param('country');
+
+    $posts_per_page = 42;
+
+    // Build query args
+    $args = array(
+        'post_type' => 'nettruyen_comic',
+        'post_status' => 'publish',
+        'posts_per_page' => $posts_per_page,
+        'paged' => $page,
+    );
+
+    // Add search keyword
+    if (!empty($keyword)) {
+        $args['s'] = $keyword;
+    }
+
+    // Sort options
+    $sort_options = array(
+        0 => array('orderby' => 'relevance', 'order' => 'DESC'),
+        1 => array('orderby' => 'meta_value_num', 'order' => 'DESC', 'meta_key' => '_nettruyen_view_count'),
+        2 => array('orderby' => 'meta_value_num', 'order' => 'ASC', 'meta_key' => '_nettruyen_view_count'),
+        3 => array('orderby' => 'meta_value_num', 'order' => 'DESC', 'meta_key' => '_nettruyen_follow_count'),
+        4 => array('orderby' => 'meta_value_num', 'order' => 'ASC', 'meta_key' => '_nettruyen_follow_count'),
+        5 => array('orderby' => 'date', 'order' => 'DESC'),
+        6 => array('orderby' => 'date', 'order' => 'ASC'),
+    );
+
+    $sort_config = isset($sort_options[$sort]) ? $sort_options[$sort] : $sort_options[0];
+
+    if (isset($sort_config['meta_key'])) {
+        $args['meta_key'] = $sort_config['meta_key'];
+    }
+    $args['orderby'] = $sort_config['orderby'];
+    $args['order'] = $sort_config['order'];
+
+    // Status filter
+    if (!empty($status)) {
+        $args['meta_query'][] = array(
+            'key' => '_nettruyen_status',
+            'value' => $status,
+            'compare' => '='
+        );
+    }
+
+    // Country filter
+    if (!empty($country)) {
+        $args['tax_query'][] = array(
+            'taxonomy' => 'nettruyen_country',
+            'field' => 'slug',
+            'terms' => $country
+        );
+    }
+
+    // Execute query
+    $query = new WP_Query($args);
+    $comics = array();
+
+    // Get view stats table
+    $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
+    $hot_comic_ids = $wpdb->get_col(
+        "SELECT post_id FROM {$stats_table} 
+        WHERE total_display_views > 0 
+        ORDER BY total_display_views DESC 
+        LIMIT 20"
+    );
+
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+            $post_id = get_the_ID();
+
+            // Get comic data
+            $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
+            if (empty($thumbnail)) {
+                $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
+            }
+
+            $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
+            $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
+
+            $latest_chapter = 'Đang cập nhật';
+            if (!empty($manifest['chapters'])) {
+                $chapters = $manifest['chapters'];
+                $latest = end($chapters);
+                $latest_chapter = 'Chapter ' . $latest['name'];
+            }
+
+            $updated_at = !empty($manifest['updated_at'])
+                ? $manifest['updated_at']
+                : get_the_modified_date('Y-m-d H:i:s');
+
+            $time_ago = truyenqq_time_ago_vietnamese($updated_at);
+
+            $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
+            $view_count = 0;
+
+            $view_stats = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
+                    $post_id
+                )
+            );
+            if ($view_stats) {
+                $view_count = $view_stats->total_display_views;
+            }
+
+            $is_hot = in_array($post_id, $hot_comic_ids);
+            $is_new = (current_time('timestamp') - strtotime($updated_at)) <= (7 * 24 * 60 * 60);
+
+            $badge_type = '';
+            $badge_text = '';
+            if ($is_hot) {
+                $badge_type = 'hot';
+                $badge_text = 'Hot';
+            } elseif ($is_new) {
+                $badge_type = 'new';
+                $badge_text = 'New';
+            }
+
+            $comics[] = array(
+                'id' => $post_id,
+                'title' => get_the_title(),
+                'url' => get_permalink(),
+                'thumbnail' => $thumbnail ? $thumbnail : 'https://via.placeholder.com/190x247?text=No+Image',
+                'latest_chapter' => $latest_chapter,
+                'time_ago' => $time_ago,
+                'follow_count' => number_format((int) $follow_count),
+                'view_count' => number_format($view_count),
+                'badge_type' => $badge_type,
+                'badge_text' => $badge_text,
+            );
+        }
+    }
+
+    wp_reset_postdata();
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'comics' => $comics,
+        'pagination' => array(
+            'current_page' => $page,
+            'total_pages' => $query->max_num_pages,
+            'total_results' => $query->found_posts,
+        ),
+    ));
 }

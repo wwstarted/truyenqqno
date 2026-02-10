@@ -8,6 +8,7 @@
     searchDebounceDelay: 500,
     maxSearchResults: 20,
     localStorageKey: "truyenqq_dark_mode",
+    searchResultsPage: "/ket-qua-tim-kiem/",
   };
 
   const elements = {
@@ -15,10 +16,14 @@
     body: document.body,
     searchInput: document.getElementById("searchInput"),
     searchResults: document.getElementById("searchResults"),
+    searchSubmit: document.querySelector(".search-form .search-submit"),
     mobileSearchToggle: document.getElementById("mobileSearchToggle"),
     mobileSearchExpand: document.getElementById("mobileSearchExpand"),
     mobileSearchInput: document.getElementById("mobileSearchInput"),
     mobileSearchResults: document.getElementById("mobileSearchResults"),
+    mobileSearchSubmit: document.querySelector(
+      ".search-mobile-expand .search-submit",
+    ),
     mobileMenuToggle: document.getElementById("mobileMenuToggle"),
     mainMenu: document.getElementById("mainMenu"),
     genresList: document.getElementById("genresList"),
@@ -68,10 +73,25 @@
         }
       });
 
+      elements.searchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          redirectToSearchResults(elements.searchInput.value.trim());
+        }
+      });
+
       document.addEventListener("click", (e) => {
         if (!e.target.closest(".search-form")) {
           elements.searchResults.classList.remove("active");
         }
+      });
+    }
+
+    if (elements.searchSubmit) {
+      elements.searchSubmit.addEventListener("click", (e) => {
+        e.preventDefault();
+        const query = elements.searchInput.value.trim();
+        redirectToSearchResults(query);
       });
     }
 
@@ -81,7 +101,37 @@
 
     if (elements.mobileSearchInput) {
       elements.mobileSearchInput.addEventListener("input", handleMobileSearch);
+
+      elements.mobileSearchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          redirectToSearchResults(elements.mobileSearchInput.value.trim());
+        }
+      });
     }
+
+    if (elements.mobileSearchSubmit) {
+      elements.mobileSearchSubmit.addEventListener("click", (e) => {
+        e.preventDefault();
+        const query = elements.mobileSearchInput.value.trim();
+        redirectToSearchResults(query);
+      });
+    }
+  }
+
+  function redirectToSearchResults(query) {
+    if (!query) {
+      showToast("Vui lòng nhập từ khóa tìm kiếm");
+      return;
+    }
+
+    const searchURL =
+      window.location.origin +
+      CONFIG.searchResultsPage +
+      "?keyword=" +
+      encodeURIComponent(query);
+
+    window.location.href = searchURL;
   }
 
   function handleDesktopSearch(e) {
@@ -209,7 +259,6 @@
         const altTitle = item.alternative_title || "";
         const chapter = item.latest_chapter || "Đang cập nhật";
 
-        // ✅ Format numbers with proper handling
         const followCount = (item.follow_count || 0).toLocaleString("vi-VN");
         const viewCount = (item.view_count || 0).toLocaleString("vi-VN");
 
@@ -517,6 +566,32 @@
         updateHeaderAvatar(data.url);
       }
     });
+  }
+
+  // ========================================
+  // TOAST UTILITY
+  // ========================================
+  function showToast(message) {
+    let toastContainer = document.querySelector(".toast-container");
+
+    if (!toastContainer) {
+      toastContainer = document.createElement("div");
+      toastContainer.className = "toast-container";
+      document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => toast.classList.add("show"), 10);
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.remove(), 300);
+    }, 2000);
   }
 
   // ========================================
