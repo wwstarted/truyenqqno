@@ -1759,3 +1759,87 @@ body.dark-mode .search-result-info .comic-stats {
     gap: 10px;
   }
 }
+
+/* add css for hint message search */
+/* ============================================
+   SEARCH HINT STYLES
+   ============================================ */
+
+.search-hint {
+  padding: 30px 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.search-hint i {
+  font-size: 30px;
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  display: block;
+  animation: pulse-hint 2s ease-in-out infinite;
+}
+
+.search-hint p {
+  font-size: 15px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.search-hint strong {
+  color: var(--accent-color);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.search-hint small {
+  font-size: 13px;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 5px;
+}
+
+/* Hiệu ứng nhấp nháy nhẹ cho icon */
+@keyframes pulse-hint {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+/* Dark mode support */
+body.dark-mode .search-hint p {
+  color: #e0e0e0;
+}
+
+body.dark-mode .search-hint i {
+  color: #ff6b6b;
+}
+
+body.dark-mode .search-hint strong {
+  color: #ff6b6b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .search-hint {
+    padding: 25px 15px;
+  }
+
+  .search-hint i {
+    font-size: 26px;
+  }
+
+  .search-hint p {
+    font-size: 14px;
+  }
+
+  .search-hint strong {
+    font-size: 16px;
+  }
+}

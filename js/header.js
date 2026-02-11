@@ -28,7 +28,7 @@
     userInfoAPI: TRUYENQQ_CONFIG.restUrl + "nettruyen/v1/user/info",
     searchDebounceDelay: 500,
     maxSearchResults: 20,
-    minSearchLength: 5,
+    minSearchLength: 6, // ← Tối thiểu 6 ký tự để gọi API
     localStorageKey: "truyenqq_dark_mode",
     searchResultsPage: "/ket-qua-tim-kiem/",
     basePath: BASE_PATH,
@@ -148,7 +148,7 @@
       return;
     }
 
-    // ← BỎ CHECK MIN LENGTH - Luôn cho phép submit
+    // ← KHÔNG CHECK MIN LENGTH - Luôn cho phép submit
     let basePath = CONFIG.basePath;
 
     if (basePath.endsWith("/")) {
@@ -178,11 +178,11 @@
       return;
     }
 
-    // ← LOGIC MỚI: Nếu chưa đủ ký tự → Hiện loading NHƯNG KHÔNG gọi API
+    // ← HIỆN HINT nếu chưa đủ ký tự
     if (query.length < CONFIG.minSearchLength) {
-      elements.searchResults.innerHTML = getLoadingHTML();
+      elements.searchResults.innerHTML = getMinLengthHintHTML(query.length);
       elements.searchResults.classList.add("active");
-      return; // ← DỪNG Ở ĐÂY, không gọi API
+      return; // ← DỪNG, không gọi API
     }
 
     // ← Đủ ký tự → Hiện loading VÀ gọi API
@@ -207,11 +207,13 @@
       return;
     }
 
-    // ← LOGIC MỚI: Nếu chưa đủ ký tự → Hiện loading NHƯNG KHÔNG gọi API
+    // ← HIỆN HINT nếu chưa đủ ký tự
     if (query.length < CONFIG.minSearchLength) {
-      elements.mobileSearchResults.innerHTML = getLoadingHTML();
+      elements.mobileSearchResults.innerHTML = getMinLengthHintHTML(
+        query.length,
+      );
       elements.mobileSearchResults.classList.add("active");
-      return; // ← DỪNG Ở ĐÂY, không gọi API
+      return; // ← DỪNG, không gọi API
     }
 
     // ← Đủ ký tự → Hiện loading VÀ gọi API
@@ -271,10 +273,26 @@
     }
   }
 
+  // ========================================
+  // HTML TEMPLATES
+  // ========================================
+
+  // ← HINT MESSAGE khi chưa đủ ký tự
+  function getMinLengthHintHTML(currentLength) {
+    const remaining = CONFIG.minSearchLength - currentLength;
+    return `
+      <div class="search-hint">
+        <i class="fa fa-info-circle"></i>
+        <p>Nhập thêm <strong>${remaining}</strong> ký tự nữa để tìm kiếm</p>
+        <small>Tối thiểu ${CONFIG.minSearchLength} ký tự</small>
+      </div>
+    `;
+  }
+
   function getLoadingHTML() {
     return `
       <div class="search-loading">
-        <i class="fa fa-spinner"></i>
+        <i class="fa fa-spinner fa-spin"></i>
         <p>Đang tìm kiếm...</p>
       </div>
     `;
