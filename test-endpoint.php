@@ -313,7 +313,6 @@ $hot_comic_ids = $wpdb->get_col("SELECT post_id FROM {$stats_table} WHERE total_
 </section>
 
 <?php
-// Blog sections (giữ nguyên code cũ)
 include(get_template_directory() . '/template-parts/blog-sections.php');
 ?>
 

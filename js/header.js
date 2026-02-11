@@ -6,19 +6,13 @@
   // ========================================
   function getBasePath() {
     try {
-      // TRUYENQQ_CONFIG.restUrl = "http://localhost/truyen_qqno/wordpress-6.8.3-vi/wordpress/wp-json/"
-      // Chúng ta cần lấy: "/truyen_qqno/wordpress-6.8.3-vi/wordpress/"
-
       const restUrl = TRUYENQQ_CONFIG.restUrl;
       const url = new URL(restUrl);
 
-      // Lấy pathname: "/truyen_qqno/wordpress-6.8.3-vi/wordpress/wp-json/"
       let pathname = url.pathname;
 
-      // Bỏ "/wp-json/" ở cuối
       pathname = pathname.replace(/\/wp-json\/?$/, "");
 
-      // Nếu không có gì thì trả về "/"
       return pathname || "/";
     } catch (error) {
       console.error("Error extracting base path:", error);
@@ -34,6 +28,7 @@
     userInfoAPI: TRUYENQQ_CONFIG.restUrl + "nettruyen/v1/user/info",
     searchDebounceDelay: 500,
     maxSearchResults: 20,
+    minSearchLength: 5,
     localStorageKey: "truyenqq_dark_mode",
     searchResultsPage: "/ket-qua-tim-kiem/",
     basePath: BASE_PATH,
@@ -153,11 +148,9 @@
       return;
     }
 
-    // FIX: Kết hợp base path với search results page
-    // Ví dụ: "/truyen_qqno/wordpress-6.8.3-vi/wordpress" + "/ket-qua-tim-kiem/" + "?keyword=..."
+    // ← BỎ CHECK MIN LENGTH - Luôn cho phép submit
     let basePath = CONFIG.basePath;
 
-    // Đảm bảo base path không có trailing slash
     if (basePath.endsWith("/")) {
       basePath = basePath.slice(0, -1);
     }
@@ -168,7 +161,7 @@
       "?keyword=" +
       encodeURIComponent(query);
 
-    console.log("Redirecting to:", searchURL); // Debug log
+    console.log("Redirecting to:", searchURL);
     window.location.href = searchURL;
   }
 
@@ -179,11 +172,20 @@
       clearTimeout(searchTimeout);
     }
 
+    // ← Clear results nếu query rỗng
     if (!query) {
       elements.searchResults.classList.remove("active");
       return;
     }
 
+    // ← LOGIC MỚI: Nếu chưa đủ ký tự → Hiện loading NHƯNG KHÔNG gọi API
+    if (query.length < CONFIG.minSearchLength) {
+      elements.searchResults.innerHTML = getLoadingHTML();
+      elements.searchResults.classList.add("active");
+      return; // ← DỪNG Ở ĐÂY, không gọi API
+    }
+
+    // ← Đủ ký tự → Hiện loading VÀ gọi API
     elements.searchResults.innerHTML = getLoadingHTML();
     elements.searchResults.classList.add("active");
 
@@ -199,11 +201,20 @@
       clearTimeout(searchTimeout);
     }
 
+    // ← Clear results nếu query rỗng
     if (!query) {
       elements.mobileSearchResults.classList.remove("active");
       return;
     }
 
+    // ← LOGIC MỚI: Nếu chưa đủ ký tự → Hiện loading NHƯNG KHÔNG gọi API
+    if (query.length < CONFIG.minSearchLength) {
+      elements.mobileSearchResults.innerHTML = getLoadingHTML();
+      elements.mobileSearchResults.classList.add("active");
+      return; // ← DỪNG Ở ĐÂY, không gọi API
+    }
+
+    // ← Đủ ký tự → Hiện loading VÀ gọi API
     elements.mobileSearchResults.innerHTML = getLoadingHTML();
     elements.mobileSearchResults.classList.add("active");
 
@@ -330,9 +341,6 @@
     return `<div class="search-results-list">${itemsHTML}</div>`;
   }
 
-  // ========================================
-  // MOBILE MENU
-  // ========================================
   function initMobileMenu() {
     if (elements.mobileMenuToggle) {
       elements.mobileMenuToggle.addEventListener("click", toggleMobileMenu);
@@ -417,9 +425,6 @@
     });
   }
 
-  // ========================================
-  // GENRES LOADING
-  // ========================================
   async function loadGenres() {
     if (!elements.genresList) return;
 
@@ -451,9 +456,6 @@
     }
   }
 
-  // ========================================
-  // USER MENU
-  // ========================================
   function initUserMenu() {
     if (elements.userAvatar && elements.userProfile) {
       elements.userAvatar.addEventListener("click", handleUserMenuToggle);
@@ -530,9 +532,6 @@
     }
   }
 
-  // ========================================
-  // AVATAR UPDATE FUNCTIONALITY
-  // ========================================
   function updateHeaderAvatar(avatarUrl) {
     console.log("TruyenQQ Header: Updating avatar to:", avatarUrl);
 
@@ -641,7 +640,7 @@
       return;
     }
 
-    console.log("TruyenQQ Base Path:", CONFIG.basePath); // Debug log
+    console.log("TruyenQQ Base Path:", CONFIG.basePath);
 
     initDarkMode();
     initSearch();
