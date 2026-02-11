@@ -1862,8 +1862,8 @@ body.dark-mode .search-hint strong {
   /* Fix search submit button position khi padding thay đổi */
   .search-mobile-expand .search-submit,
   .search-form .search-submit {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
   }
 }
 
