@@ -1433,3 +1433,79 @@ body.dark-mode .user-dropdown::before {
     display: none !important;
   }
 }
+
+/* fix zoom in ios mobile */
+
+@media (max-width: 1024px) {
+  .search-input,
+  #searchInput,
+  #mobileSearchInput {
+    font-size: 16px !important;
+    padding: 14px 50px 14px 20px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .search-input::placeholder {
+    font-size: 16px;
+  }
+
+  /* Fix search submit button position khi padding thay đổi */
+  .search-mobile-expand .search-submit,
+  .search-form .search-submit {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 767px) {
+  .search-input,
+  #searchInput,
+  #mobileSearchInput {
+    font-size: 16px !important;
+    padding: 12px 48px 12px 16px;
+    border-radius: 24px;
+  }
+
+  /* Adjust search icon button */
+  .search-submit {
+    width: 40px;
+    height: 40px;
+    right: 4px;
+  }
+}
+
+/* ============================================
+   Additional Mobile Input Optimizations
+   ============================================ */
+
+/* Prevent iOS blue highlight on tap */
+.search-input,
+.search-submit,
+.search-icon-btn {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Smooth scroll when keyboard opens */
+@media (max-width: 767px) {
+  body.keyboard-open {
+    position: fixed;
+    width: 100%;
+  }
+
+  /* Fix search results positioning khi keyboard mở */
+  .search-results-fullscreen.active {
+    height: calc(100vh - 160px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-input,
+  #searchInput,
+  #mobileSearchInput {
+    font-size: 16px !important;
+    padding: 11px 44px 11px 14px;
+  }
+}
