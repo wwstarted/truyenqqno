@@ -103,13 +103,13 @@ if (!empty($chapters) && is_array($chapters)) {
 
     $latest_chapter = $chapters[0];
     if (isset($latest_chapter['slug'])) {
-        $latest_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$latest_chapter['slug']}.html");
+        $latest_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$latest_chapter['slug']}");
     }
 
 
     $first_chapter = end($chapters);
     if (isset($first_chapter['slug'])) {
-        $first_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$first_chapter['slug']}.html");
+        $first_chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$first_chapter['slug']}");
     }
 }
 
@@ -317,7 +317,7 @@ endif; ?>
                         if (empty($chapter_slug))
                             continue;
 
-                        $chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$chapter_slug}.html");
+                        $chapter_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$chapter_slug}");
                         ?>
                 <div class="works-chapter-item">
                     <div class="col-md-10 col-sm-10 col-xs-8 name-chap">

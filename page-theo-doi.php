@@ -4,20 +4,24 @@
  * 
  * @package TruyenQQ
  * @version 1.0.1
- * ✅ UPDATED: Added comic-stats to Độc Quyền section
  */
 
-if (!is_user_logged_in()) {
+// if (!is_user_logged_in()) {
+//     wp_redirect(home_url('/dang-nhap?redirect_to=' . urlencode($_SERVER['REQUEST_URI'])));
+//     exit;
+// }
+
+if (!defined('TRUYENQQ_AUTH_ENABLED')) {
+    define('TRUYENQQ_AUTH_ENABLED', false);
+}
+
+if (TRUYENQQ_AUTH_ENABLED && !is_user_logged_in()) {
     wp_redirect(home_url('/dang-nhap?redirect_to=' . urlencode($_SERVER['REQUEST_URI'])));
     exit;
 }
 
 get_header();
 
-/**
- * Section: Độc Quyền Truyện QQ
- * ✅ UPDATED: Added follow count + view count stats
- */
 $args = array(
     'post_type' => 'nettruyen_comic',
     'post_status' => 'publish',
@@ -142,7 +146,6 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                                     </a>
                                 </h3>
 
-                                <!-- ✅ NEW: Stats -->
                                 <div class="comic-stats">
                                     <span class="stat-item">
                                         <i class="fa fa-bookmark"></i>

@@ -4,20 +4,19 @@
  * 
  * @package TruyenQQ
  * @version 1.0.2
- * ✅ UPDATED: Added comic-stats to Độc Quyền section
  */
 
-if (!is_user_logged_in()) {
+if (!defined('TRUYENQQ_AUTH_ENABLED')) {
+    define('TRUYENQQ_AUTH_ENABLED', false);
+}
+
+if (TRUYENQQ_AUTH_ENABLED && !is_user_logged_in()) {
     wp_redirect(home_url('/dang-nhap?redirect_to=' . urlencode($_SERVER['REQUEST_URI'])));
     exit;
 }
 
 get_header();
 
-/**
- * Section: Độc Quyền Truyện QQ
- * ✅ UPDATED: Added follow count + view count stats
- */
 $args = array(
     'post_type' => 'nettruyen_comic',
     'post_status' => 'publish',
@@ -34,23 +33,23 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 ?>
 
 <?php if ($exclusive_comics->have_posts()): ?>
-    <section class="homepage-exclusive">
-        <div class="container">
-            <!-- Section Header -->
-            <div class="section-header">
-                <h2 class="section-title">
-                    <a href="/truyen-dich-qq.html" title="Độc Quyền Truyện QQ">
-                        <i class="fa fa-book"></i>
-                        <span>Độc Quyền Truyện QQ</span>
-                    </a>
-                </h2>
-            </div>
+<section class="homepage-exclusive">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="section-header">
+            <h2 class="section-title">
+                <a href="/truyen-dich-qq.html" title="Độc Quyền Truyện QQ">
+                    <i class="fa fa-book"></i>
+                    <span>Độc Quyền Truyện QQ</span>
+                </a>
+            </h2>
+        </div>
 
-            <!-- Swiper Carousel -->
-            <div class="exclusive-carousel">
-                <div class="swiper exclusive-swiper">
-                    <div class="swiper-wrapper">
-                        <?php
+        <!-- Swiper Carousel -->
+        <div class="exclusive-carousel">
+            <div class="swiper exclusive-swiper">
+                <div class="swiper-wrapper">
+                    <?php
                         $index = 0;
                         while ($exclusive_comics->have_posts()):
                             $exclusive_comics->the_post();
@@ -108,75 +107,75 @@ $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
                             $is_hot = ($index <= 10);
                             ?>
 
-                            <div class="swiper-slide">
-                                <div class="comic-card">
-                                    <!-- Thumbnail -->
-                                    <div class="comic-avatar">
-                                        <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                                            <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>"
-                                                loading="lazy">
-                                        </a>
+                    <div class="swiper-slide">
+                        <div class="comic-card">
+                            <!-- Thumbnail -->
+                            <div class="comic-avatar">
+                                <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+                                    <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>"
+                                        loading="lazy">
+                                </a>
 
-                                        <!-- Bookmark Button -->
-                                        <?php truyenqq_render_bookmark_badge($post_id); ?>
+                                <!-- Bookmark Button -->
+                                <?php truyenqq_render_bookmark_badge($post_id); ?>
 
-                                        <!-- Top Notice: Time + Hot Badge -->
-                                        <div class="top-notice">
-                                            <span class="time-ago">
-                                                <?php echo esc_html($time_ago); ?>
-                                            </span>
-                                            <?php if ($is_hot): ?>
-                                                <span class="hot-badge">Hot</span>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-
-                                    <!-- Comic Info -->
-                                    <div class="comic-info">
-                                        <h3 class="comic-name">
-                                            <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                                                <?php the_title(); ?>
-                                            </a>
-                                        </h3>
-                                        <div class="comic-stats">
-                                            <span class="stat-item">
-                                                <i class="fa fa-bookmark"></i>
-                                                <?php echo esc_html($follow_count_formatted); ?>
-                                            </span>
-                                            <span class="stat-item">
-                                                <i class="fa fa-eye"></i>
-                                                <?php echo esc_html($view_count_formatted); ?>
-                                            </span>
-                                        </div>
-
-                                        <!-- Latest Chapter -->
-                                        <div class="latest-chapter">
-                                            <a href="<?php the_permalink(); ?>"
-                                                title="Đọc <?php echo esc_attr($latest_chapter); ?>">
-                                                <?php echo esc_html($latest_chapter); ?>
-                                            </a>
-                                        </div>
-                                    </div>
+                                <!-- Top Notice: Time + Hot Badge -->
+                                <div class="top-notice">
+                                    <span class="time-ago">
+                                        <?php echo esc_html($time_ago); ?>
+                                    </span>
+                                    <?php if ($is_hot): ?>
+                                    <span class="hot-badge">Hot</span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
 
-                        <?php endwhile;
-                        wp_reset_postdata(); ?>
-                    </div>
-                </div>
+                            <!-- Comic Info -->
+                            <div class="comic-info">
+                                <h3 class="comic-name">
+                                    <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+                                        <?php the_title(); ?>
+                                    </a>
+                                </h3>
+                                <div class="comic-stats">
+                                    <span class="stat-item">
+                                        <i class="fa fa-bookmark"></i>
+                                        <?php echo esc_html($follow_count_formatted); ?>
+                                    </span>
+                                    <span class="stat-item">
+                                        <i class="fa fa-eye"></i>
+                                        <?php echo esc_html($view_count_formatted); ?>
+                                    </span>
+                                </div>
 
-                <!-- Navigation Buttons -->
-                <div class="swiper-nav">
-                    <button class="swiper-button-prev">
-                        <i class="fa fa-angle-left"></i>
-                    </button>
-                    <button class="swiper-button-next">
-                        <i class="fa fa-angle-right"></i>
-                    </button>
+                                <!-- Latest Chapter -->
+                                <div class="latest-chapter">
+                                    <a href="<?php the_permalink(); ?>"
+                                        title="Đọc <?php echo esc_attr($latest_chapter); ?>">
+                                        <?php echo esc_html($latest_chapter); ?>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php endwhile;
+                        wp_reset_postdata(); ?>
                 </div>
             </div>
+
+            <!-- Navigation Buttons -->
+            <div class="swiper-nav">
+                <button class="swiper-button-prev">
+                    <i class="fa fa-angle-left"></i>
+                </button>
+                <button class="swiper-button-next">
+                    <i class="fa fa-angle-right"></i>
+                </button>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
 <?php endif; ?>
 
 <!-- Reading History Section -->

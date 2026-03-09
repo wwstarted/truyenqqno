@@ -578,3 +578,395 @@ body.dark-mode .toast {
     opacity 0.3s ease,
     transform 0.3s ease;
 }
+
+/* =====================================================
+   BOOKMARKS PAGE (.bookmarks-page)
+   Mirror của .reading-history-page + bookmark-badge đúng vị trí
+===================================================== */
+
+.bookmarks-page {
+  padding: 40px 0;
+  background-color: var(--bg-primary);
+}
+
+.bookmarks-page .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.bookmarks-page .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.bookmarks-page .section-title {
+  margin: 0;
+}
+
+.bookmarks-page .section-title a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .bookmarks-page .section-title a {
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.bookmarks-page .section-title a:hover {
+  color: var(--accent-color);
+}
+
+.bookmarks-page .section-title i {
+  color: var(--accent-color);
+  font-size: 26px;
+}
+
+/* ── Grid: 6 cột giống homepage ── */
+.bookmarks-page .comics-grid {
+  display: grid !important;
+  grid-template-columns: repeat(6, 1fr) !important;
+  gap: 20px !important;
+  margin-bottom: 30px !important;
+}
+
+.bookmarks-page .comic-item {
+  width: 100%;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* ── Card ── */
+.bookmarks-page .comic-card {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 380px;
+}
+
+body.dark-mode .bookmarks-page .comic-card {
+  background-color: var(--bg-secondary-dark, #1a1a1a);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.bookmarks-page .comic-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+}
+
+body.dark-mode .bookmarks-page .comic-card:hover {
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+}
+
+/* ── Avatar (ảnh bìa) ── */
+.bookmarks-page .comic-avatar {
+  position: relative;
+  width: 100%;
+  padding-top: 130%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.bookmarks-page .comic-avatar a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bookmarks-page .comic-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.bookmarks-page .comic-card:hover .comic-avatar img {
+  transform: scale(1.1);
+}
+
+/* ── bookmark-badge: TOP-RIGHT, ngoài top-notice ── */
+.bookmarks-page .bookmark-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+body.dark-mode .bookmarks-page .bookmark-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.bookmarks-page .bookmark-badge:hover {
+  background-color: var(--accent-color);
+  transform: scale(1.1);
+}
+
+.bookmarks-page .bookmark-badge.active {
+  background-color: var(--accent-color);
+}
+
+.bookmarks-page .bookmark-badge.active i {
+  font-weight: 900;
+}
+
+/* ── Remove button (hiện khi hover) ── */
+.remove-bookmark {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(244, 67, 54, 0.9);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 3;
+}
+
+.bookmarks-page .comic-card:hover .remove-bookmark {
+  opacity: 1;
+}
+
+.remove-bookmark:hover {
+  background-color: #f44336;
+  transform: scale(1.1);
+}
+
+/* ── top-notice (time-ago ở bottom) ── */
+.bookmarks-page .top-notice {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 30px 10px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  z-index: 1;
+}
+
+.bookmarks-page .time-ago {
+  font-size: 11px;
+  color: #fff;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ── comic-info ── */
+.bookmarks-page .comic-info {
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.bookmarks-page .comic-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bookmarks-page .comic-name a {
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .bookmarks-page .comic-name a {
+  color: var(--text-primary-dark, #e0e0e0);
+}
+
+.bookmarks-page .comic-name a:hover {
+  color: var(--accent-color);
+}
+
+.bookmarks-page .comic-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+}
+
+body.dark-mode .bookmarks-page .comic-stats {
+  color: var(--text-secondary-dark, #999);
+}
+
+.bookmarks-page .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bookmarks-page .stat-item i {
+  font-size: 12px;
+}
+
+.bookmarks-page .latest-chapter a {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--accent-color);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.bookmarks-page .latest-chapter a:hover {
+  color: var(--hover-color);
+  text-decoration: underline;
+}
+
+/* ── Ẩn bookmark-info hoàn toàn ── */
+.bookmarks-page .bookmark-info {
+  display: none !important;
+}
+
+/* =====================================================
+   RESPONSIVE - BOOKMARKS PAGE
+===================================================== */
+
+@media (max-width: 1023px) {
+  .bookmarks-page {
+    padding: 30px 0;
+  }
+
+  .bookmarks-page .section-title a {
+    font-size: 22px;
+  }
+
+  .bookmarks-page .comics-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 18px !important;
+  }
+
+  .bookmarks-page .comic-card {
+    min-height: 340px;
+  }
+
+  .bookmarks-page .comic-name {
+    font-size: 14px;
+    min-height: 40px;
+  }
+
+  .bookmarks-page .comic-stats {
+    font-size: 12px;
+    gap: 12px;
+  }
+
+  .bookmarks-page .latest-chapter a {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .bookmarks-page {
+    padding: 25px 0;
+  }
+
+  .bookmarks-page .container {
+    padding: 0 15px;
+  }
+
+  .bookmarks-page .section-title a {
+    font-size: 20px;
+  }
+
+  .bookmarks-page .comics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 15px !important;
+  }
+
+  .bookmarks-page .comic-card {
+    border-radius: 6px;
+    min-height: 320px;
+  }
+
+  .bookmarks-page .comic-info {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .bookmarks-page .comic-name {
+    font-size: 13px;
+    min-height: 36px;
+  }
+
+  .bookmarks-page .comic-stats {
+    font-size: 11px;
+    gap: 10px;
+  }
+
+  .bookmarks-page .latest-chapter a {
+    font-size: 11px;
+  }
+
+  .bookmarks-page .bookmark-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    top: 6px;
+    right: 6px;
+  }
+
+  .bookmarks-page .time-ago {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 390px) {
+  .bookmarks-page .comics-grid {
+    gap: 12px !important;
+  }
+
+  .bookmarks-page .comic-name {
+    font-size: 12px;
+    min-height: 34px;
+  }
+}

@@ -1,11 +1,17 @@
 <?php
 /**
  * Header Template - TruyenQQ
- * Updated with User Menu Logic
+ * Updated: dùng wp_nav_menu() + TruyenQQ_Nav_Walker
  */
 
+/**
+ * CONFIG: Bật/tắt chức năng Auth
+ * true  = bật auth bình thường
+ * false = tắt auth (ẩn nút, không check login)
+ */
+define('TRUYENQQ_AUTH_ENABLED', false);
 
-$is_user_logged_in = is_user_logged_in();
+$is_user_logged_in = TRUYENQQ_AUTH_ENABLED ? is_user_logged_in() : false;
 $current_user = wp_get_current_user();
 $display_name = $is_user_logged_in ? $current_user->display_name : 'Khách';
 $user_email = $is_user_logged_in ? $current_user->user_email : '';
@@ -13,7 +19,6 @@ $user_email = $is_user_logged_in ? $current_user->user_email : '';
 $avatar_url = '';
 
 if ($is_user_logged_in) {
-
     $custom_avatar_id = get_user_meta($current_user->ID, 'avatar', true);
 
     if (!empty($custom_avatar_id)) {
@@ -24,13 +29,14 @@ if ($is_user_logged_in) {
     }
 
     if (empty($avatar_url)) {
-        $avatar_url = get_avatar_url($current_user->ID, array('size' => 100));
+        $avatar_url = get_avatar_url($current_user->ID, ['size' => 100]);
     }
 }
 
 if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar') !== false) {
     $avatar_url = 'https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -56,7 +62,6 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
     visibility: visible;
     opacity: 1;
 }
-
 
 .homepage-suggest .swiper-wrapper,
 .homepage-exclusive .swiper-wrapper {
@@ -99,6 +104,8 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
     <header class="site-header">
         <div class="header-top">
             <div class="container">
+
+                <!-- Logo -->
                 <div class="header-logo">
                     <a href="<?php echo home_url('/'); ?>" title="Truyện tranh online">
                         <img src="https://st.truyenqqno.com/template/frontend/images/logo.png" alt="TruyenQQ"
@@ -108,23 +115,30 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                     </a>
                 </div>
 
+                <!-- Dark mode toggle -->
                 <button class="dark-mode-toggle" id="darkModeToggle" title="Chế độ tối/sáng">
                     <i class="fa fa-lightbulb-o"></i>
                 </button>
 
+                <!-- Header actions -->
                 <div class="header-actions">
                     <button class="search-icon-btn mobile-tablet-only" id="mobileSearchToggle">
                         <i class="fa fa-search"></i>
                     </button>
 
+                    <?php
+                    $show_auth_buttons = TRUYENQQ_AUTH_ENABLED && !$is_user_logged_in;
+                    ?>
                     <div class="auth-buttons" id="authButtons"
-                        style="<?php echo $is_user_logged_in ? 'display: none;' : 'display: flex;'; ?>">
-                        <button class="btn-register"
-                            onclick="window.location.href='<?php echo home_url('/dang-ky'); ?>'">
+                        style="<?php echo $show_auth_buttons ? 'display: none;' : 'display: flex;'; ?>">
+                        <button class="btn-register" onclick="<?php echo TRUYENQQ_AUTH_ENABLED
+                            ? "window.location.href='" . home_url('/dang-ky') . "'"
+                            : 'return false'; ?>">
                             Đăng ký
                         </button>
-                        <button class="btn-login"
-                            onclick="window.location.href='<?php echo home_url('/dang-nhap'); ?>'">
+                        <button class="btn-login" onclick="<?php echo TRUYENQQ_AUTH_ENABLED
+                            ? "window.location.href='" . home_url('/dang-nhap') . "'"
+                            : 'return false'; ?>">
                             Đăng nhập
                         </button>
                     </div>
@@ -140,7 +154,6 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                                 </div>
                                 <div class="notification-dropdown" id="notificationDropdown">
                                     <div class="notification-header">
-                                        <!-- <h4>Thông báo</h4> -->
                                         <div class="notification-title">Thông báo</div>
                                     </div>
                                     <ul class="notification-list" id="notificationList">
@@ -192,8 +205,9 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div><!-- /.header-actions -->
 
+                <!-- Search desktop -->
                 <div class="search-form desktop-only">
                     <input type="text" class="search-input" id="searchInput" placeholder="Bạn muốn tìm truyện gì">
                     <button class="search-submit">
@@ -201,9 +215,11 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                     </button>
                     <div class="search-results" id="searchResults"></div>
                 </div>
-            </div>
-        </div>
 
+            </div><!-- /.container -->
+        </div><!-- /.header-top -->
+
+        <!-- Search mobile expand -->
         <div class="search-mobile-expand" id="mobileSearchExpand">
             <div class="container">
                 <input type="text" class="search-input" id="mobileSearchInput" placeholder="Bạn muốn tìm truyện gì">
@@ -214,9 +230,26 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
             <div class="search-results-fullscreen" id="mobileSearchResults"></div>
         </div>
 
+        <!-- Navigation -->
         <div class="header-bottom">
             <div class="container">
                 <nav class="main-navigation">
+                    <?php
+                    $has_menu = has_nav_menu('primary');
+
+                    if ($has_menu):
+                        wp_nav_menu([
+                            'theme_location' => 'primary',
+                            'menu_class' => 'nav-menu',
+                            'menu_id' => 'mainMenu',
+                            'container' => false,
+                            'walker' => new TruyenQQ_Nav_Walker(),
+                            'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+                            'fallback_cb' => false,
+                        ]);
+                    else:
+
+                        ?>
                     <ul class="nav-menu" id="mainMenu">
                         <li>
                             <a href="<?php echo home_url('/'); ?>">Trang chủ</a>
@@ -228,7 +261,9 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                             <a href="#" class="dropdown-toggle">Thể Loại <i class="fa fa-caret-down"></i></a>
                             <div class="mega-menu">
                                 <div class="mega-menu-content" id="genresList">
-                                    <div class="loading-genres"><i class="fa fa-spinner fa-spin"></i> Đang tải...</div>
+                                    <div class="loading-genres">
+                                        <i class="fa fa-spinner fa-spin"></i> Đang tải...
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -249,17 +284,19 @@ if (!$is_user_logged_in || empty($avatar_url) || strpos($avatar_url, 'gravatar')
                         </li>
                         <li><a href="#">Con Gái</a></li>
                         <li><a href="#">Con Trai</a></li>
-                        <li><a href="<?php echo esc_url(home_url('/tim-kiem-nang-cao')); ?>">Tìm Truyện</a></li>
-                        <li><a href="<?php echo esc_url(home_url('/lich-su')); ?>">Lịch Sử</a></li>
-                        <li><a href="<?php echo esc_url(home_url('/theo-doi')); ?>">Theo Dõi</a></li>
+                        <li><a href="<?php echo home_url('/tim-kiem-nang-cao'); ?>">Tìm Truyện</a></li>
+                        <li><a href="<?php echo home_url('/lich-su'); ?>">Lịch Sử</a></li>
+                        <li><a href="<?php echo home_url('/theo-doi'); ?>">Theo Dõi</a></li>
                         <li><a href="https://discord.gg/t8dQUwsrsj" target="_blank">Discord</a></li>
                         <li><a href="https://www.facebook.com/truyenqqq" target="_blank">Fanpage</a></li>
                     </ul>
+                    <?php endif; ?>
                 </nav>
             </div>
-        </div>
+        </div><!-- /.header-bottom -->
 
     </header>
+
     <?php wp_footer(); ?>
 </body>
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * Authentication Handler Class
- * Xử lý Register, Login, Logout, Reset Password + OAuth (Google & Facebook)
+
  * 
  * @package TruyenQQ
  * @version 1.1.1 - OAUTH INTEGRATED 

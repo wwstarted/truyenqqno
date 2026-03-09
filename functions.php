@@ -1,7 +1,6 @@
 <?php
 /**
  * Toyota Theme Functions
- * FIXED: Removed duplicate user info API, added media upload permission
  * 
  * @package Toyota_Theme
  * @version 1.0.1 - FIXED
@@ -282,6 +281,14 @@ function toyota_enqueue_assets()
             '1.0.1',
             true
         );
+
+        wp_localize_script('theo-doi-js', 'truyenqqConfig', array(
+            'apiBase' => esc_url_raw(rest_url('nettruyen/v1')),
+            'nonce' => wp_create_nonce('wp_rest'),
+            'homeUrl' => esc_url(home_url()),
+            'isLoggedIn' => is_user_logged_in(),
+            'authEnabled' => defined('TRUYENQQ_AUTH_ENABLED') ? TRUYENQQ_AUTH_ENABLED : true, // ← thêm dòng này
+        ));
     }
 
     if (is_page_template('page-lich-su.php')) {
@@ -319,14 +326,16 @@ function toyota_enqueue_assets()
             'apiBase' => esc_url_raw(rest_url('nettruyen/v1')),
             'nonce' => wp_create_nonce('wp_rest'),
             'homeUrl' => esc_url(home_url()),
-            'isLoggedIn' => is_user_logged_in()
+            'isLoggedIn' => is_user_logged_in(),
+            'authEnabled' => defined('TRUYENQQ_AUTH_ENABLED') ? TRUYENQQ_AUTH_ENABLED : true,
         ));
 
         wp_localize_script('reading-history-js', 'truyenqqConfig', array(
             'apiBase' => esc_url_raw(rest_url('nettruyen/v1')),
             'nonce' => wp_create_nonce('wp_rest'),
             'homeUrl' => esc_url(home_url()),
-            'isLoggedIn' => is_user_logged_in()
+            'isLoggedIn' => is_user_logged_in(),
+            'authEnabled' => defined('TRUYENQQ_AUTH_ENABLED') ? TRUYENQQ_AUTH_ENABLED : true,
         ));
     }
 
@@ -633,6 +642,11 @@ add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $u
 }, 10, 3);
 
 
+
+require_once get_template_directory() . '/widgets/truyenqq.php';
+// Walker class cho nav menu
+require_once get_template_directory() . '/inc/class-truyenqq-nav-walker.php';
+
 require_once get_template_directory() . '/inc/helpers.php';
 require_once get_template_directory() . '/inc/auth-db-migration.php';
 require_once get_template_directory() . '/inc/class-truyenqq-otp-manager.php';
@@ -849,6 +863,9 @@ function toyota_theme_setup()
     register_nav_menus(array(
         'primary' => __('Primary Menu', 'toyota-theme'),
         'footer' => __('Footer Menu', 'toyota-theme'),
+        'footer-genres' => __('Footer - Thể Loại', 'toyota-theme'),
+        'footer-ranking' => __('Footer - Xếp Hạng', 'toyota-theme'),
+        'footer-support' => __('Footer - Hỗ Trợ', 'toyota-theme'),
     ));
 }
 add_action('after_setup_theme', 'toyota_theme_setup');
@@ -2368,3 +2385,27 @@ function nettruyen_search_results_callback($request)
         ),
     ));
 }
+
+// rewrite rules for comics
+
+add_filter('register_post_type_args', function ($args, $post_type) {
+    if ($post_type === 'nettruyen_comic') {
+        $args['rewrite'] = array(
+            'slug' => 'truyen-tranh',
+            'with_front' => false,
+        );
+    }
+    return $args;
+}, 99, 2);
+
+// rewrite rules for chapters
+
+function nettruyen_remove_trailing_slash_html($redirect_url, $requested_url)
+{
+
+    if (preg_match('/\.html\/?$/', $requested_url)) {
+        return false;
+    }
+    return $redirect_url;
+}
+add_filter('redirect_canonical', 'nettruyen_remove_trailing_slash_html', 10, 2);

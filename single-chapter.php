@@ -72,7 +72,7 @@ if (class_exists('NetTruyen_View_Tracker')) {
  
  
  
-$current_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$chapter_slug}.html");
+$current_url = home_url("/truyen-tranh/{$comic_slug}-chap-{$chapter_slug}");
 $comic_url = get_permalink($post_id);
 
  

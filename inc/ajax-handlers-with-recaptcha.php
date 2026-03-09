@@ -1,7 +1,6 @@
 <?php
 /**
  * AJAX Authentication Handlers with reCAPTCHA & OAuth Support
- * FIXED: Removed duplicate /user/info endpoint
  * 
  * @package TruyenQQ
  * @version 1.0.5 - FIXED DUPLICATE ENDPOINT

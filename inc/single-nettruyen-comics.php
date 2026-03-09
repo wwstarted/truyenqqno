@@ -7,7 +7,7 @@
  * 
  * @package TruyenQQ
  * @version 2.1.0
- * ✅ FIXED: empty("0") issue - now handles chapter 0 correctly
+
  */
 
 /**
@@ -18,7 +18,7 @@
 function nettruyen_add_chapter_rewrite_rules()
 {
     add_rewrite_rule(
-        '^truyen-tranh/([^/]+)-chap-([^\.]+)\.html$',
+        '^truyen-tranh/([^/]+)-chap-([^/]+)/?$',
         'index.php?nettruyen_comic=$matches[1]&chapter=$matches[2]',
         'top'
     );
@@ -133,7 +133,7 @@ add_action('switch_theme', 'nettruyen_deactivate_rewrite_rules');
 function nettruyen_get_chapter_url($post_id, $chapter_slug)
 {
     $comic_slug = get_post_field('post_name', $post_id);
-    return home_url("/truyen-tranh/{$comic_slug}-chap-{$chapter_slug}.html");
+    return home_url("/truyen-tranh/{$comic_slug}-chap-{$chapter_slug}");
 }
 
 /**

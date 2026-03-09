@@ -1,72 +1,80 @@
 <?php get_header(); ?>
 
 <?php
-/**
- * Section: Truyện Hay (Hot Comics Carousel)
- * Hiển thị 16 truyện hot nhất theo view count
- * 
- * @package TruyenQQ
- * @version 1.1.0
- */
-
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
-
-$args = array(
-    'post_type' => 'nettruyen_comic',
-    'post_status' => 'publish',
-    'posts_per_page' => 16,
-    'orderby' => 'meta_value_num',
-    'meta_key' => '_nettruyen_total_views',
-    'order' => 'DESC'
-);
 
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
-
-$hot_comics_ids = $wpdb->get_col(
-    "SELECT post_id 
-    FROM {$stats_table} 
-    WHERE total_display_views > 0 
-    ORDER BY total_display_views DESC 
-    LIMIT 16"
-);
-
-if (empty($hot_comics_ids)) {
-    $args = array(
-        'post_type' => 'nettruyen_comic',
-        'post_status' => 'publish',
-        'posts_per_page' => 16,
-        'orderby' => 'date',
-        'order' => 'DESC'
-    );
-    $hot_comics = new WP_Query($args);
-} else {
-    $args = array(
-        'post_type' => 'nettruyen_comic',
-        'post_status' => 'publish',
-        'post__in' => $hot_comics_ids,
-        'orderby' => 'post__in',
-        'posts_per_page' => 16
-    );
-    $hot_comics = new WP_Query($args);
-}
-
-if (!$hot_comics->have_posts()) {
-    return;
-}
 ?>
-
 
 <h1 class="seo-h1" style="position:absolute;left:-9999px;top:-9999px;">
     TruyenQQ - Đọc Truyện Tranh Online Miễn Phí - Manga Manhwa Manhua
 </h1>
 
-
 <main id="main-content" role="main" aria-label="Nội dung chính"></main>
+
+<?php
+/* =====================================================
+   SECTION 1: TRUYỆN HAY
+   Widget area: "Homepage - Truyện Hay"
+   Fallback: code cứng top_views
+===================================================== */
+
+if (is_active_sidebar('homepage-suggest-section')) {
+
+    dynamic_sidebar('homepage-suggest-section');
+
+} else {
+
+    // Fallback: lấy top 16 truyện hot nhất
+    $hot_comics_ids = $wpdb->get_col(
+        "SELECT post_id
+        FROM {$stats_table}
+        WHERE total_display_views > 0
+        ORDER BY total_display_views DESC
+        LIMIT 16"
+    );
+
+    if (empty($hot_comics_ids)) {
+        $hot_comics = new WP_Query([
+            'post_type' => 'nettruyen_comic',
+            'post_status' => 'publish',
+            'posts_per_page' => 16,
+            'orderby' => 'date',
+            'order' => 'DESC',
+            'no_found_rows' => true,
+        ]);
+    } else {
+        $hot_comics = new WP_Query([
+            'post_type' => 'nettruyen_comic',
+            'post_status' => 'publish',
+            'post__in' => $hot_comics_ids,
+            'orderby' => 'post__in',
+            'posts_per_page' => 16,
+            'no_found_rows' => true,
+        ]);
+    }
+
+    if ($hot_comics->have_posts()):
+
+        // Batch fetch view stats — 1 query thay vì N+1
+        $post_ids_batch = wp_list_pluck($hot_comics->posts, 'ID');
+        $placeholders = implode(',', array_fill(0, count($post_ids_batch), '%d'));
+        $view_stats_batch = [];
+
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT post_id, total_display_views FROM {$stats_table} WHERE post_id IN ({$placeholders})",
+                ...$post_ids_batch
+            )
+        );
+        foreach ($rows as $row) {
+            $view_stats_batch[(int) $row->post_id] = (int) $row->total_display_views;
+        }
+        ?>
 
 <section class="homepage-suggest">
     <div class="container">
-        <!-- Section Header -->
         <div class="section-header">
             <h2 class="section-title">
                 <i class="fa fa-star"></i>
@@ -74,113 +82,70 @@ if (!$hot_comics->have_posts()) {
             </h2>
         </div>
 
-        <!-- Swiper Carousel -->
         <div class="truyen-hay-carousel">
             <div class="swiper truyen-hay-swiper">
                 <div class="swiper-wrapper">
                     <?php
-                    $index = 0;
-                    while ($hot_comics->have_posts()):
-                        $hot_comics->the_post();
-                        $post_id = get_the_ID();
-                        $index++;
+                            $index = 0;
+                            while ($hot_comics->have_posts()):
+                                $hot_comics->the_post();
+                                $post_id = get_the_ID();
+                                $index++;
 
+                                $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
+                                if (empty($thumbnail))
+                                    $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
+                                if (empty($thumbnail))
+                                    $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
 
-                        $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
-                        if (empty($thumbnail)) {
-                            $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
-                        }
-                        if (empty($thumbnail)) {
-                            $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
-                        }
+                                $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
+                                $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
+                                $latest_chapter = 'Đang cập nhật';
+                                if (!empty($manifest['chapters'])) {
+                                    $latest = end($manifest['chapters']);
+                                    $latest_chapter = 'Chương ' . $latest['name'];
+                                }
 
-
-                        $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
-                        $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
-
-                        $latest_chapter = 'Đang cập nhật';
-                        if (!empty($manifest['chapters'])) {
-                            $chapters = $manifest['chapters'];
-                            $latest = end($chapters);
-                            $latest_chapter = 'Chương ' . $latest['name'];
-                        }
-
-
-
-                        $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
-
-
-                        $time_ago = truyenqq_time_ago_vietnamese($updated_at);
-                        $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
-                        if (empty($follow_count)) {
-                            $follow_count = 0;
-                        }
-
-                        $view_count = 0;
-                        $view_stats = $wpdb->get_row(
-                            $wpdb->prepare(
-                                "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
-                                $post_id
-                            )
-                        );
-                        if ($view_stats) {
-                            $view_count = $view_stats->total_display_views;
-                        }
-
-
-                        $follow_count_formatted = number_format($follow_count);
-                        $view_count_formatted = number_format($view_count);
-
-                        $is_hot = ($index <= 10);
-                        ?>
-
+                                $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
+                                $time_ago = truyenqq_time_ago_vietnamese($updated_at);
+                                $follow_count = (int) get_post_meta($post_id, '_nettruyen_follow_count', true);
+                                $view_count = $view_stats_batch[$post_id] ?? 0;
+                                $is_hot = ($index <= 10);
+                                ?>
                     <div class="swiper-slide">
                         <div class="comic-card">
-                            <!-- Thumbnail -->
                             <div class="comic-avatar">
                                 <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
                                     <img src="<?php echo esc_url($thumbnail); ?>"
                                         alt="<?php echo esc_attr(get_the_title() . ' - Đọc truyện tranh online miễn phí tại TruyenQQ'); ?>"
                                         width="190" height="247" loading="lazy" decoding="async">
                                 </a>
-
-                                <!-- Bookmark Button -->
                                 <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
                                     <i class="fa fa-bookmark-o"></i>
                                 </span>
-
-                                <!-- Top Notice: Time + Hot Badge -->
                                 <div class="top-notice">
-                                    <span class="time-ago">
-                                        <?php echo esc_html($time_ago); ?>
-                                    </span>
+                                    <span class="time-ago"><?php echo esc_html($time_ago); ?></span>
                                     <?php if ($is_hot): ?>
                                     <span class="hot-badge">Hot</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
-
-                            <!-- Comic Info -->
                             <div class="comic-info">
                                 <h3 class="comic-name">
                                     <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
                                         <?php the_title(); ?>
                                     </a>
                                 </h3>
-
-                                <!-- ✅ NEW: Stats -->
                                 <div class="comic-stats">
                                     <span class="stat-item">
                                         <i class="fa fa-bookmark"></i>
-                                        <?php echo esc_html($follow_count_formatted); ?>
+                                        <?php echo number_format($follow_count); ?>
                                     </span>
                                     <span class="stat-item">
                                         <i class="fa fa-eye"></i>
-                                        <?php echo esc_html($view_count_formatted); ?>
+                                        <?php echo number_format($view_count); ?>
                                     </span>
                                 </div>
-
-                                <!-- Latest Chapter -->
                                 <div class="latest-chapter">
                                     <a href="<?php the_permalink(); ?>"
                                         title="Đọc <?php echo esc_attr($latest_chapter); ?>">
@@ -190,182 +155,136 @@ if (!$hot_comics->have_posts()) {
                             </div>
                         </div>
                     </div>
-
                     <?php endwhile;
-                    wp_reset_postdata(); ?>
+                            wp_reset_postdata(); ?>
                 </div>
             </div>
 
-            <!-- Navigation Buttons -->
             <div class="swiper-nav">
-                <button class="swiper-button-prev">
-                    <i class="fa fa-angle-left"></i>
-                </button>
-                <button class="swiper-button-next">
-                    <i class="fa fa-angle-right"></i>
-                </button>
+                <button class="swiper-button-prev"><i class="fa fa-angle-left"></i></button>
+                <button class="swiper-button-next"><i class="fa fa-angle-right"></i></button>
             </div>
         </div>
     </div>
 </section>
 
-<?php
-/**
- * Section: Độc Quyền Truyện QQ
- * Hiển thị 16 truyện ngẫu nhiên (sẽ update logic sau)
- * ✅ UPDATED: Added comic-stats (follow + view count)
- * 
- * @package TruyenQQ
- * @version 1.1.0
- */
-
-$args = array(
-    'post_type' => 'nettruyen_comic',
-    'post_status' => 'publish',
-    'posts_per_page' => 16,
-    'orderby' => 'rand',
-    'order' => 'DESC'
-);
-
-$exclusive_comics = new WP_Query($args);
-
-if (!$exclusive_comics->have_posts()) {
-    return;
-}
+<?php endif;
+} // end section 1
 ?>
+
+<?php
+/* =====================================================
+   SECTION 2: ĐỘC QUYỀN TRUYỆN QQ
+   Widget area: "Homepage - Độc Quyền QQ"
+   Fallback: code cứng newest
+===================================================== */
+
+if (is_active_sidebar('homepage-exclusive-section')) {
+
+    dynamic_sidebar('homepage-exclusive-section');
+
+} else {
+
+    $exclusive_comics = new WP_Query([
+        'post_type' => 'nettruyen_comic',
+        'post_status' => 'publish',
+        'posts_per_page' => 16,
+        'orderby' => 'modified',
+        'order' => 'DESC',
+        'no_found_rows' => true,
+    ]);
+
+    if ($exclusive_comics->have_posts()):
+
+        // Batch fetch view stats
+        $post_ids_batch = wp_list_pluck($exclusive_comics->posts, 'ID');
+        $placeholders = implode(',', array_fill(0, count($post_ids_batch), '%d'));
+        $view_stats_batch = [];
+
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT post_id, total_display_views FROM {$stats_table} WHERE post_id IN ({$placeholders})",
+                ...$post_ids_batch
+            )
+        );
+        foreach ($rows as $row) {
+            $view_stats_batch[(int) $row->post_id] = (int) $row->total_display_views;
+        }
+        ?>
 
 <section class="homepage-exclusive">
     <div class="container">
-        <!-- <h1 style="position:absolute;left:-9999px;">TruyenQQ - Đọc Truyện Tranh Online Miễn Phí</h1> -->
-
-        <!-- Section Header -->
-        <!-- <div class="section-header">
-            <h2 class="section-title">
-                <a href="/truyen-dich-qq.html" title="Độc Quyền Truyện QQ">
-                    <i class="fa fa-book"></i>
-                    <span>Độc Quyền Truyện QQ</span>
-                </a>
-            </h2>
-        </div> -->
-
         <div class="section-header">
             <h2 class="section-title">
                 <i class="fa fa-book"></i>
                 <span>Độc Quyền Truyện QQ</span>
             </h2>
-            <a href="/truyen-dich-qq.html" class="section-link" aria-label="Xem tất cả truyện độc quyền"></a>
         </div>
 
-        <!-- Swiper Carousel -->
         <div class="exclusive-carousel">
             <div class="swiper exclusive-swiper">
                 <div class="swiper-wrapper">
                     <?php
-                    $index = 0;
-                    while ($exclusive_comics->have_posts()):
-                        $exclusive_comics->the_post();
-                        $post_id = get_the_ID();
-                        $index++;
+                            $index = 0;
+                            while ($exclusive_comics->have_posts()):
+                                $exclusive_comics->the_post();
+                                $post_id = get_the_ID();
+                                $index++;
 
+                                $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
+                                if (empty($thumbnail))
+                                    $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
+                                if (empty($thumbnail))
+                                    $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
 
-                        $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
-                        if (empty($thumbnail)) {
-                            $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
-                        }
-                        if (empty($thumbnail)) {
-                            $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
-                        }
+                                $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
+                                $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
+                                $latest_chapter = 'Đang cập nhật';
+                                if (!empty($manifest['chapters'])) {
+                                    $latest = end($manifest['chapters']);
+                                    $latest_chapter = 'Chương ' . $latest['name'];
+                                }
 
-
-                        $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
-                        $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
-
-                        $latest_chapter = 'Đang cập nhật';
-                        if (!empty($manifest['chapters'])) {
-                            $chapters = $manifest['chapters'];
-                            $latest = end($chapters);
-                            $latest_chapter = 'Chương ' . $latest['name'];
-                        }
-
-
-
-                        $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
-
-
-                        $time_ago = truyenqq_time_ago_vietnamese($updated_at);
-
-
-                        $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
-                        if (empty($follow_count)) {
-                            $follow_count = 0;
-                        }
-
-
-                        $view_count = 0;
-                        $view_stats = $wpdb->get_row(
-                            $wpdb->prepare(
-                                "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
-                                $post_id
-                            )
-                        );
-                        if ($view_stats) {
-                            $view_count = $view_stats->total_display_views;
-                        }
-
-
-                        $follow_count_formatted = number_format($follow_count);
-                        $view_count_formatted = number_format($view_count);
-
-                        $is_hot = ($index <= 10);
-                        ?>
-
+                                $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
+                                $time_ago = truyenqq_time_ago_vietnamese($updated_at);
+                                $follow_count = (int) get_post_meta($post_id, '_nettruyen_follow_count', true);
+                                $view_count = $view_stats_batch[$post_id] ?? 0;
+                                $is_hot = ($index <= 10);
+                                ?>
                     <div class="swiper-slide">
                         <div class="comic-card">
-                            <!-- Thumbnail -->
                             <div class="comic-avatar">
                                 <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
                                     <img src="<?php echo esc_url($thumbnail); ?>"
                                         alt="<?php echo esc_attr(get_the_title() . ' - Đọc truyện tranh online miễn phí tại TruyenQQ'); ?>"
                                         width="190" height="247" loading="lazy" decoding="async">
                                 </a>
-
-                                <!-- Bookmark Button -->
                                 <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
                                     <i class="fa fa-bookmark-o"></i>
                                 </span>
-
-                                <!-- Top Notice: Time + Hot Badge -->
                                 <div class="top-notice">
-                                    <span class="time-ago">
-                                        <?php echo esc_html($time_ago); ?>
-                                    </span>
+                                    <span class="time-ago"><?php echo esc_html($time_ago); ?></span>
                                     <?php if ($is_hot): ?>
                                     <span class="hot-badge">Hot</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
-
-                            <!-- Comic Info -->
                             <div class="comic-info">
                                 <h3 class="comic-name">
                                     <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
                                         <?php the_title(); ?>
                                     </a>
                                 </h3>
-
-                                <!-- ✅ NEW: Stats -->
                                 <div class="comic-stats">
                                     <span class="stat-item">
                                         <i class="fa fa-bookmark"></i>
-                                        <?php echo esc_html($follow_count_formatted); ?>
+                                        <?php echo number_format($follow_count); ?>
                                     </span>
                                     <span class="stat-item">
                                         <i class="fa fa-eye"></i>
-                                        <?php echo esc_html($view_count_formatted); ?>
+                                        <?php echo number_format($view_count); ?>
                                     </span>
                                 </div>
-
-                                <!-- Latest Chapter -->
                                 <div class="latest-chapter">
                                     <a href="<?php the_permalink(); ?>"
                                         title="Đọc <?php echo esc_attr($latest_chapter); ?>">
@@ -375,74 +294,85 @@ if (!$exclusive_comics->have_posts()) {
                             </div>
                         </div>
                     </div>
-
                     <?php endwhile;
-                    wp_reset_postdata(); ?>
+                            wp_reset_postdata(); ?>
                 </div>
             </div>
 
-            <!-- Navigation Buttons -->
             <div class="swiper-nav">
-                <button class="swiper-button-prev">
-                    <i class="fa fa-angle-left"></i>
-                </button>
-                <button class="swiper-button-next">
-                    <i class="fa fa-angle-right"></i>
-                </button>
+                <button class="swiper-button-prev"><i class="fa fa-angle-left"></i></button>
+                <button class="swiper-button-next"><i class="fa fa-angle-right"></i></button>
             </div>
         </div>
     </div>
 </section>
 
-<?php
-/**
- * Section: Truyện Mới Cập Nhật
- * Hiển thị 42 truyện mới nhất theo ngày cập nhật
- * Grid layout: Desktop (6x7), Tablet (4x11), Mobile (2x21)
- * 
- * @package TruyenQQ
- * @version 1.0.0
- */
-
-require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
-
-$args = array(
-    'post_type' => 'nettruyen_comic',
-    'post_status' => 'publish',
-    'posts_per_page' => 42,
-    'orderby' => 'modified',
-    'order' => 'DESC'
-);
-
-$new_comics = new WP_Query($args);
-
-if (!$new_comics->have_posts()) {
-    return;
-}
-
-global $wpdb;
-$stats_table = $wpdb->prefix . 'nettruyen_view_stats';
-$hot_comic_ids = $wpdb->get_col(
-    "SELECT post_id 
-    FROM {$stats_table} 
-    WHERE total_display_views > 0 
-    ORDER BY total_display_views DESC 
-    LIMIT 20"
-);
+<?php endif;
+    wp_reset_postdata();
+} // end section 2
 ?>
+
+<?php
+/* =====================================================
+   SECTION 3: TRUYỆN MỚI CẬP NHẬT
+   Widget area: "Homepage - Truyện Mới Cập Nhật"
+   Fallback: code cứng newest 42 truyện
+===================================================== */
+
+if (is_active_sidebar('homepage-new-update-section')) {
+
+    dynamic_sidebar('homepage-new-update-section');
+
+} else {
+
+    $new_comics = new WP_Query([
+        'post_type' => 'nettruyen_comic',
+        'post_status' => 'publish',
+        'posts_per_page' => 42,
+        'orderby' => 'modified',
+        'order' => 'DESC',
+        'no_found_rows' => true,
+    ]);
+
+    if ($new_comics->have_posts()):
+
+        // Batch fetch view stats
+        $post_ids_batch = wp_list_pluck($new_comics->posts, 'ID');
+        $placeholders = implode(',', array_fill(0, count($post_ids_batch), '%d'));
+        $view_stats_batch = [];
+
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT post_id, total_display_views FROM {$stats_table} WHERE post_id IN ({$placeholders})",
+                ...$post_ids_batch
+            )
+        );
+        foreach ($rows as $row) {
+            $view_stats_batch[(int) $row->post_id] = (int) $row->total_display_views;
+        }
+
+        // Hot IDs cho badge — 1 query batch
+        $hot_comic_ids = $wpdb->get_col(
+            "SELECT post_id FROM {$stats_table}
+             WHERE total_display_views > 0
+             ORDER BY total_display_views DESC
+             LIMIT 20"
+        );
+
+        $now = current_time('timestamp');
+        ?>
 
 <section class="homepage-new-update">
     <div class="container">
-        <!-- Section Header -->
         <div class="section-header">
             <h2 class="section-title">
-                <a href="/truyen-moi-cap-nhat.html" title="Truyện mới cập nhật">
+                <a href="<?php echo esc_url(home_url('/truyen-moi-cap-nhat')); ?>" title="Truyện mới cập nhật">
                     <i class="fa fa-cloud-download"></i>
                     <span>Truyện mới cập nhật</span>
                 </a>
             </h2>
             <div class="filter-button">
-                <a href="<?php echo esc_url(home_url('/tim-kiem-nang-cao')) ?>" title="Lọc truyện">
+                <a href="<?php echo esc_url(home_url('/tim-kiem-nang-cao')); ?>" title="Lọc truyện">
                     <button type="button">
                         <i class="fa fa-filter"></i>
                     </button>
@@ -450,92 +380,57 @@ $hot_comic_ids = $wpdb->get_col(
             </div>
         </div>
 
-        <!-- Grid Layout -->
         <div class="comics-grid">
             <?php
-            $index = 0;
-            while ($new_comics->have_posts()):
-                $new_comics->the_post();
-                $post_id = get_the_ID();
-                $index++;
+                    while ($new_comics->have_posts()):
+                        $new_comics->the_post();
+                        $post_id = get_the_ID();
 
-                $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
-                if (empty($thumbnail)) {
-                    $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
-                }
-                if (empty($thumbnail)) {
-                    $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
-                }
+                        $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
+                        if (empty($thumbnail))
+                            $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
+                        if (empty($thumbnail))
+                            $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
 
-                $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
-                $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
+                        $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
+                        $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
+                        $latest_chapter = 'Đang cập nhật';
+                        if (!empty($manifest['chapters'])) {
+                            $latest = end($manifest['chapters']);
+                            $latest_chapter = 'Chapter ' . $latest['name'];
+                        }
 
-                $latest_chapter = 'Đang cập nhật';
-                if (!empty($manifest['chapters'])) {
-                    $chapters = $manifest['chapters'];
-                    $latest = end($chapters);
-                    $latest_chapter = 'Chapter ' . $latest['name'];
-                }
+                        $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
+                        $time_ago = truyenqq_time_ago_vietnamese($updated_at);
+                        $follow_count = (int) get_post_meta($post_id, '_nettruyen_follow_count', true);
+                        $view_count = $view_stats_batch[$post_id] ?? 0;
 
+                        $is_hot = in_array($post_id, $hot_comic_ids);
+                        $is_new = ($now - strtotime($updated_at)) <= (7 * 24 * 60 * 60);
 
-                $updated_at = !empty($manifest['updated_at']) ? $manifest['updated_at'] : get_the_modified_date('Y-m-d H:i:s');
-
-
-                $time_ago = truyenqq_time_ago_vietnamese($updated_at);
-
-                $follow_count = get_post_meta($post_id, '_nettruyen_follow_count', true);
-                if (empty($follow_count)) {
-                    $follow_count = 0;
-                }
-
-                $view_count = 0;
-                $view_stats = $wpdb->get_row(
-                    $wpdb->prepare(
-                        "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
-                        $post_id
-                    )
-                );
-                if ($view_stats) {
-                    $view_count = $view_stats->total_display_views;
-                }
-
-                $follow_count_formatted = number_format($follow_count);
-                $view_count_formatted = number_format($view_count);
-
-                $is_hot = in_array($post_id, $hot_comic_ids);
-                $is_new = (current_time('timestamp') - strtotime($updated_at)) <= (7 * 24 * 60 * 60);
-                $badge_type = '';
-                $badge_text = '';
-                if ($is_hot) {
-                    $badge_type = 'hot';
-                    $badge_text = 'Hot';
-                } elseif ($is_new) {
-                    $badge_type = 'new';
-                    $badge_text = 'New';
-                }
-                ?>
-
+                        $badge_type = '';
+                        $badge_text = '';
+                        if ($is_hot) {
+                            $badge_type = 'hot';
+                            $badge_text = 'Hot';
+                        } elseif ($is_new) {
+                            $badge_type = 'new';
+                            $badge_text = 'New';
+                        }
+                        ?>
             <div class="comic-item">
                 <div class="comic-card">
-                    <!-- Thumbnail -->
                     <div class="comic-avatar">
                         <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-
                             <img src="<?php echo esc_url($thumbnail); ?>"
                                 alt="<?php echo esc_attr(get_the_title() . ' - Đọc truyện tranh online miễn phí tại TruyenQQ'); ?>"
                                 width="190" height="247" loading="lazy" decoding="async">
                         </a>
-
-                        <!-- Bookmark Button -->
                         <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
                             <i class="fa fa-bookmark-o"></i>
                         </span>
-
-                        <!-- Top Notice: Time + Badge -->
                         <div class="top-notice">
-                            <span class="time-ago">
-                                <?php echo esc_html($time_ago); ?>
-                            </span>
+                            <span class="time-ago"><?php echo esc_html($time_ago); ?></span>
                             <?php if ($badge_type): ?>
                             <span class="type-label <?php echo esc_attr($badge_type); ?>">
                                 <?php echo esc_html($badge_text); ?>
@@ -543,28 +438,22 @@ $hot_comic_ids = $wpdb->get_col(
                             <?php endif; ?>
                         </div>
                     </div>
-
-                    <!-- Comic Info -->
                     <div class="comic-info">
                         <h3 class="comic-name">
                             <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
                                 <?php the_title(); ?>
                             </a>
                         </h3>
-
-                        <!-- Stats -->
                         <div class="comic-stats">
                             <span class="stat-item">
                                 <i class="fa fa-bookmark"></i>
-                                <?php echo esc_html($follow_count_formatted); ?>
+                                <?php echo number_format($follow_count); ?>
                             </span>
                             <span class="stat-item">
                                 <i class="fa fa-eye"></i>
-                                <?php echo esc_html($view_count_formatted); ?>
+                                <?php echo number_format($view_count); ?>
                             </span>
                         </div>
-
-                        <!-- Latest Chapter -->
                         <div class="latest-chapter">
                             <a href="<?php the_permalink(); ?>" title="Đọc <?php echo esc_attr($latest_chapter); ?>">
                                 <?php echo esc_html($latest_chapter); ?>
@@ -573,18 +462,22 @@ $hot_comic_ids = $wpdb->get_col(
                     </div>
                 </div>
             </div>
-
             <?php endwhile;
-            wp_reset_postdata(); ?>
+                    wp_reset_postdata(); ?>
         </div>
 
-        <!-- View More Button -->
         <div class="view-more-section">
             <a href="<?php echo esc_url(home_url('/truyen-moi-cap-nhat')); ?>" class="view-more-btn">
                 Xem thêm nhiều truyện
             </a>
         </div>
+
+        <?php echo do_shortcode('[msc_comments]'); ?>
     </div>
 </section>
+
+<?php endif;
+} // end section 3
+?>
 
 <?php get_footer(); ?>
