@@ -1,7 +1,7 @@
 <?php
 /**
- * Template: Truyện Theo Tác Giả
- * Taxonomy: nettruyen_author
+ * Template: Truyện Theo Quốc Gia
+ * Taxonomy: nettruyen_country
  *
  * @package TruyenQQ
  * @version 1.0.0
@@ -9,11 +9,11 @@
 
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
 
-$current_author = get_queried_object();
-$author_slug = $current_author->slug;
-$author_name = $current_author->name;
-$author_desc = $current_author->description;
-$author_count = $current_author->count; // tổng số truyện
+$current_country = get_queried_object();
+$country_slug = $current_country->slug;
+$country_name = $current_country->name;
+$country_desc = $current_country->description;
+$country_count = $current_country->count;
 
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 $posts_per_page = 42;
@@ -23,10 +23,12 @@ $sort = isset($_GET['sort']) ? absint($_GET['sort']) : 2;
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
+/*
+ * ── Direct SQL query ──────────────────────────────────────────────────────
+ * Dùng $wpdb thay vì WP_Query để tránh bị ảnh hưởng bởi pre_get_posts hooks.
+ */
+$term_id = (int) $current_country->term_id;
 
-$term_id = (int) $current_author->term_id;
-
-// ORDER BY theo sort
 switch ($sort) {
     case 0:
         $orderby_sql = 'p.post_date DESC';
@@ -54,27 +56,25 @@ $view_join_sql = ($sort === 4 || $sort === 5)
 
 $offset = ($paged - 1) * $posts_per_page;
 
-// Tổng số truyện (để tính pagination)
 $total_posts = (int) $wpdb->get_var($wpdb->prepare(
     "SELECT COUNT(DISTINCT p.ID)
      FROM {$wpdb->posts} p
      INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
      INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-     WHERE tt.taxonomy = 'nettruyen_author'
+     WHERE tt.taxonomy  = 'nettruyen_country'
        AND tt.term_id   = %d
        AND p.post_type  = 'nettruyen_comic'
        AND p.post_status = 'publish'",
     $term_id
 ));
 
-// Lấy post IDs của trang hiện tại
 $comic_post_ids = $wpdb->get_col($wpdb->prepare(
     "SELECT DISTINCT p.ID
      FROM {$wpdb->posts} p
      INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
      INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
      {$view_join_sql}
-     WHERE tt.taxonomy = 'nettruyen_author'
+     WHERE tt.taxonomy  = 'nettruyen_country'
        AND tt.term_id   = %d
        AND p.post_type  = 'nettruyen_comic'
        AND p.post_status = 'publish'
@@ -85,7 +85,6 @@ $comic_post_ids = $wpdb->get_col($wpdb->prepare(
     $offset
 ));
 
-// Hot comics
 $hot_comic_ids = $wpdb->get_col(
     "SELECT post_id FROM {$stats_table}
      WHERE total_display_views > 0
@@ -96,7 +95,6 @@ $hot_comic_ids = $wpdb->get_col(
 $total_pages = ($total_posts > 0) ? (int) ceil($total_posts / $posts_per_page) : 0;
 $current_page = max(1, $paged);
 
-// og_image: lấy từ truyện đầu tiên trong danh sách
 $og_image = get_template_directory_uri() . '/images/default-og.jpg';
 if (!empty($comic_post_ids)) {
     $first_thumb = get_post_meta($comic_post_ids[0], '_nettruyen_thumbnail', true);
@@ -105,23 +103,19 @@ if (!empty($comic_post_ids)) {
 }
 
 /* ── SEO ── */
-$author_url = get_term_link($current_author);
-
-$title_parts = array('Truyện của ' . $author_name);
-if ($paged > 1) {
+$title_parts = array('Truyện ' . $country_name);
+if ($paged > 1)
     $title_parts[] = 'Trang ' . $paged;
-}
 $page_title = implode(' - ', $title_parts) . ' | TruyenQQ';
 
-$meta_description = 'Đọc toàn bộ truyện tranh của tác giả ' . $author_name . ' mới nhất, cập nhật liên tục tại TruyenQQ.';
-if (!empty($author_desc)) {
-    $meta_description .= ' ' . wp_trim_words(wp_strip_all_tags($author_desc), 20, '...');
+$meta_description = 'Đọc toàn bộ truyện tranh ' . $country_name . ' mới nhất, cập nhật liên tục tại TruyenQQ.';
+if (!empty($country_desc)) {
+    $meta_description .= ' ' . wp_trim_words(wp_strip_all_tags($country_desc), 20, '...');
 }
-if ($paged > 1) {
+if ($paged > 1)
     $meta_description .= ' - Trang ' . $paged;
-}
 
-$canonical_url = get_term_link($current_author);
+$canonical_url = get_term_link($current_country);
 if ($paged > 1) {
     $canonical_url = trailingslashit($canonical_url) . 'page/' . $paged . '/';
 }
@@ -130,11 +124,11 @@ $prev_url = '';
 $next_url = '';
 if ($paged > 1) {
     $prev_url = ($paged == 2)
-        ? get_term_link($current_author)
-        : trailingslashit(get_term_link($current_author)) . 'page/' . ($paged - 1) . '/';
+        ? get_term_link($current_country)
+        : trailingslashit(get_term_link($current_country)) . 'page/' . ($paged - 1) . '/';
 }
 if ($paged < $total_pages) {
-    $next_url = trailingslashit(get_term_link($current_author)) . 'page/' . ($paged + 1) . '/';
+    $next_url = trailingslashit(get_term_link($current_country)) . 'page/' . ($paged + 1) . '/';
 }
 ?>
 <!DOCTYPE html>
@@ -175,7 +169,7 @@ if ($paged < $total_pages) {
 <body <?php body_class(); ?>>
     <?php get_header(); ?>
 
-    <main id="main-content" role="main" aria-label="Danh sách truyện theo tác giả">
+    <main id="main-content" role="main" aria-label="Danh sách truyện theo quốc gia">
         <div id="main_homepage" data-ajax-enabled="true">
 
             <!-- Breadcrumb -->
@@ -188,9 +182,7 @@ if ($paged < $total_pages) {
                         <meta itemprop="position" content="1">
                     </li>
                     <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-                        <a itemprop="item" href="<?php echo esc_url($author_url); ?>">
-                            <span itemprop="name">Tác giả <?php echo esc_html($author_name); ?></span>
-                        </a>
+                        <span itemprop="name">Truyện <?php echo esc_html($country_name); ?></span>
                         <meta itemprop="position" content="2">
                     </li>
                     <?php if ($paged > 1): ?>
@@ -206,41 +198,41 @@ if ($paged < $total_pages) {
             <header class="homepage_tags">
                 <h1>
                     <p class="text_list_update">
-                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                        Truyện của <?php echo esc_html($author_name); ?>
+                        <i class="fa fa-globe" aria-hidden="true"></i>
+                        Truyện <?php echo esc_html($country_name); ?>
                         <?php if ($paged > 1): ?> - Trang <?php echo $paged; ?><?php endif; ?>
                     </p>
                 </h1>
             </header>
 
-            <section class="author-listing" aria-label="Thông tin tác giả và danh sách truyện">
+            <section class="author-listing" aria-label="Thông tin quốc gia và danh sách truyện">
 
-                <!-- ── Author Info Box ── -->
+                <!-- Country Info Box -->
                 <div class="author-info-box">
                     <div class="author-info-avatar">
                         <div class="author-avatar-circle">
-                            <span><?php echo mb_strtoupper(mb_substr($author_name, 0, 1, 'UTF-8'), 'UTF-8'); ?></span>
+                            <span><?php echo esc_html(mb_strtoupper(mb_substr($country_name, 0, 1, 'UTF-8'), 'UTF-8')); ?></span>
                         </div>
                     </div>
                     <div class="author-info-body">
-                        <h2 class="author-info-name"><?php echo esc_html($author_name); ?></h2>
+                        <h2 class="author-info-name"><?php echo esc_html($country_name); ?></h2>
                         <div class="author-info-meta">
                             <span class="author-meta-item">
                                 <i class="fa fa-book"></i>
-                                <strong><?php echo number_format($author_count); ?></strong> bộ truyện
+                                <strong><?php echo number_format($country_count); ?></strong> bộ truyện
                             </span>
                         </div>
-                        <?php if (!empty($author_desc)): ?>
-                        <p class="author-info-desc"><?php echo wp_kses_post($author_desc); ?></p>
+                        <?php if (!empty($country_desc)): ?>
+                        <p class="author-info-desc"><?php echo wp_kses_post($country_desc); ?></p>
                         <?php endif; ?>
                     </div>
                     <!-- Sort -->
                     <div class="author-info-sort">
-                        <label class="author-sort-label" for="author-sort">
+                        <label class="author-sort-label" for="country-sort">
                             <i class="fa fa-sort-amount-desc"></i> Sắp xếp
                         </label>
                         <div class="select is-warning">
-                            <select id="author-sort" aria-label="Chọn cách sắp xếp">
+                            <select id="country-sort" aria-label="Chọn cách sắp xếp">
                                 <option value="0" <?php selected($sort, 0); ?>>Ngày đăng giảm dần</option>
                                 <option value="1" <?php selected($sort, 1); ?>>Ngày đăng tăng dần</option>
                                 <option value="2" <?php selected($sort, 2); ?>>Ngày cập nhật giảm dần</option>
@@ -261,12 +253,10 @@ if ($paged < $total_pages) {
                                 $post_id = (int) $post_id;
 
                                 $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
-                                if (empty($thumbnail)) {
+                                if (empty($thumbnail))
                                     $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
-                                }
-                                if (empty($thumbnail)) {
+                                if (empty($thumbnail))
                                     $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
-                                }
 
                                 $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                                 $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
@@ -289,11 +279,9 @@ if ($paged < $total_pages) {
                                     "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
                                     $post_id
                                 ));
-                                if ($view_stats) {
+                                if ($view_stats)
                                     $view_count = $view_stats->total_display_views;
-                                }
 
-                                $post_obj = get_post($post_id);
                                 $permalink = get_permalink($post_id);
                                 $post_title = get_the_title($post_id);
 
@@ -379,7 +367,6 @@ if ($paged < $total_pages) {
                         $range = 2;
                         $start = max(1, $current_page - $range);
                         $end = min($total_pages, $current_page + $range);
-
                         if ($start > 1):
                             ?>
                     <a href="javascript:void(0)" data-page="1">

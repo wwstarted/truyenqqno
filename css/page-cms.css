@@ -1,0 +1,768 @@
+/* =====================================================
+   CMS PAGE - TEMPLATE STYLES
+   Dùng cho: About, Chính Sách, Điều Khoản,...
+   Tương thích: Dark Mode, Responsive, Design System TruyenQQ
+===================================================== */
+
+/* =====================================================
+   WRAPPER
+===================================================== */
+
+.cms-page {
+  max-width: 860px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 30px 20px 60px;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+/* =====================================================
+   BREADCRUMB
+===================================================== */
+
+.cms-breadcrumb {
+  font-size: 13px;
+  margin-bottom: 24px;
+  margin-top: 10px;
+  color: var(--text-muted);
+}
+
+.cms-breadcrumb a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.cms-breadcrumb a:hover {
+  color: var(--hover-color);
+  text-decoration: underline;
+}
+
+/* RankMath breadcrumb */
+.cms-breadcrumb .rank-math-breadcrumb p {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.cms-breadcrumb .rank-math-breadcrumb .separator {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* =====================================================
+   ARTICLE WRAPPER
+===================================================== */
+
+.cms-article {
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
+}
+
+/* =====================================================
+   MAIN CONTENT
+===================================================== */
+
+.cms-content {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+/* --- Paragraphs --- */
+.cms-content p {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.85;
+  color: var(--text-primary);
+}
+
+body.dark-mode .cms-content p {
+  color: #ccc;
+}
+
+/* --- Headings --- */
+.cms-content h1,
+.cms-content h1.wp-block-heading {
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 20px 0;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  padding-bottom: 16px;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(
+      90deg,
+      var(--accent-color),
+      var(--hover-color),
+      transparent
+    )
+    1;
+}
+
+body.dark-mode .cms-content h1,
+body.dark-mode .cms-content h1.wp-block-heading {
+  color: #f0f0f0;
+}
+
+.cms-content h2,
+.cms-content h2.wp-block-heading {
+  font-size: 28px;
+  font-weight: 650;
+  line-height: 1.3;
+  margin: 36px 0 14px;
+  color: var(--text-primary);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  transition:
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+body.dark-mode .cms-content h2,
+body.dark-mode .cms-content h2.wp-block-heading {
+  color: #f0f0f0;
+  border-bottom-color: #2e2e2e;
+}
+
+.cms-content h3,
+.cms-content h3.wp-block-heading {
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.35;
+  margin: 28px 0 12px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease;
+}
+
+.cms-content h3::before,
+.cms-content h3.wp-block-heading::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(180deg, var(--accent-color), var(--hover-color));
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+body.dark-mode .cms-content h3,
+body.dark-mode .cms-content h3.wp-block-heading {
+  color: #e8e8e8;
+}
+
+.cms-content h4,
+.cms-content h4.wp-block-heading {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 22px 0 10px;
+  color: var(--accent-color);
+  transition: color 0.3s ease;
+}
+
+.cms-content h5,
+.cms-content h5.wp-block-heading {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 18px 0 8px;
+  color: var(--text-primary);
+}
+
+.cms-content h6,
+.cms-content h6.wp-block-heading {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 16px 0 8px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* --- Links --- */
+.cms-content a {
+  color: var(--accent-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.cms-content a:hover {
+  color: var(--hover-color);
+}
+
+/* --- Lists --- */
+.cms-content ul,
+.cms-content ol {
+  margin: 0 0 16px 0;
+  padding-left: 24px;
+}
+
+.cms-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.cms-content ul li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+.cms-content ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+}
+
+body.dark-mode .cms-content ul li {
+  color: #ccc;
+}
+
+.cms-content ol {
+  list-style: decimal;
+}
+
+.cms-content ol li {
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.7;
+  padding-left: 6px;
+}
+
+body.dark-mode .cms-content ol li {
+  color: #ccc;
+}
+
+.cms-content ol li::marker {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.cms-content ul ul,
+.cms-content ol ol,
+.cms-content ul ol,
+.cms-content ol ul {
+  margin: 8px 0 4px;
+}
+
+/* --- Blockquote --- */
+.cms-content blockquote {
+  background-color: var(--bg-secondary);
+  border-left: 4px solid var(--accent-color);
+  border-radius: 0 8px 8px 0;
+  padding: 18px 22px;
+  margin: 24px 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  position: relative;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+body.dark-mode .cms-content blockquote {
+  background-color: rgba(74, 158, 255, 0.06);
+  color: #ccc;
+}
+
+.cms-content blockquote p {
+  margin: 0;
+  color: inherit;
+}
+
+.cms-content blockquote cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+.cms-content blockquote cite::before {
+  content: "— ";
+}
+
+/* --- Code --- */
+.cms-content code {
+  background-color: var(--bg-secondary);
+  color: var(--accent-color);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: "Courier New", Courier, monospace;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode .cms-content code {
+  background-color: rgba(74, 158, 255, 0.1);
+  border-color: rgba(74, 158, 255, 0.2);
+}
+
+.cms-content pre {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode .cms-content pre {
+  background-color: #1a1a1a;
+  border-color: #333;
+}
+
+.cms-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-primary);
+}
+
+/* --- Tables --- */
+.cms-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.cms-content thead {
+  background: linear-gradient(135deg, var(--accent-color), var(--hover-color));
+  color: #fff;
+}
+
+.cms-content thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+
+.cms-content tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.cms-content tbody tr:last-child {
+  border-bottom: none;
+}
+
+.cms-content tbody tr:hover {
+  background-color: rgba(74, 158, 255, 0.06);
+}
+
+body.dark-mode .cms-content tbody tr:hover {
+  background-color: rgba(74, 158, 255, 0.08);
+}
+
+.cms-content tbody td {
+  padding: 11px 16px;
+  color: var(--text-primary);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+body.dark-mode .cms-content tbody td {
+  color: #ccc;
+  border-bottom-color: #2a2a2a;
+}
+
+/* --- Images --- */
+.cms-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 20px auto;
+  box-shadow: var(--shadow);
+}
+
+.cms-content figure {
+  margin: 24px 0;
+  text-align: center;
+}
+
+.cms-content figcaption {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* --- HR --- */
+.cms-content hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--border-color),
+    transparent
+  );
+  margin: 32px 0;
+}
+
+body.dark-mode .cms-content hr {
+  background: linear-gradient(90deg, transparent, #333, transparent);
+}
+
+/* --- Strong / Em --- */
+.cms-content strong,
+.cms-content b {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+body.dark-mode .cms-content strong,
+body.dark-mode .cms-content b {
+  color: #e8e8e8;
+}
+
+/* --- Gutenberg blocks --- */
+.cms-content .wp-block-image {
+  margin: 24px 0;
+}
+.cms-content .wp-block-quote {
+  margin: 24px 0;
+}
+.cms-content .wp-block-table {
+  overflow-x: auto;
+  margin: 24px 0;
+}
+
+.cms-content .wp-block-separator {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--border-color),
+    transparent
+  );
+  margin: 32px 0;
+}
+
+.cms-content .wp-block-callout,
+.cms-content .notice-box {
+  background-color: rgba(74, 158, 255, 0.08);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 24px 0;
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode .cms-content .wp-block-callout,
+body.dark-mode .cms-content .notice-box {
+  background-color: rgba(74, 158, 255, 0.1);
+  border-color: rgba(74, 158, 255, 0.3);
+  color: #ccc;
+}
+
+/* =====================================================
+   FOOTER NAV — Khám phá TruyenQQ
+===================================================== */
+
+.cms-footer-nav {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border-color);
+  transition: border-color 0.3s ease;
+}
+
+body.dark-mode .cms-footer-nav {
+  border-top-color: #2a2a2a;
+}
+
+.cms-footer-nav-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 16px;
+}
+
+.cms-footer-nav-label i {
+  color: var(--accent-color);
+  font-size: 14px;
+}
+
+.cms-footer-nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* --- Nav chip --- */
+.cms-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+body.dark-mode .cms-nav-link {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #2e2e2e;
+  color: #ccc;
+}
+
+.cms-nav-link i {
+  font-size: 12px;
+  color: var(--accent-color);
+  transition: color 0.25s ease;
+}
+
+.cms-nav-link:hover {
+  background: linear-gradient(135deg, var(--accent-color), var(--hover-color));
+  border-color: transparent;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+  text-decoration: none;
+}
+
+.cms-nav-link:hover i {
+  color: #fff;
+}
+
+/* --- Accent chip (Ngẫu nhiên) --- */
+.cms-nav-link--accent {
+  background: linear-gradient(135deg, var(--accent-color), var(--hover-color));
+  border-color: transparent;
+  color: #fff;
+}
+
+.cms-nav-link--accent i {
+  color: #fff;
+}
+
+body.dark-mode .cms-nav-link--accent {
+  background: linear-gradient(135deg, var(--accent-color), var(--hover-color));
+  border-color: transparent;
+  color: #fff;
+}
+
+.cms-nav-link--accent:hover {
+  background: linear-gradient(135deg, var(--hover-color), var(--accent-color));
+  box-shadow: 0 4px 14px rgba(74, 158, 255, 0.45);
+  transform: translateY(-2px);
+}
+
+/* =====================================================
+   RESPONSIVE — TABLET (≤1024px)
+===================================================== */
+
+@media (max-width: 1024px) {
+  .cms-page {
+    padding: 24px 20px 50px;
+  }
+
+  .cms-content h1,
+  .cms-content h1.wp-block-heading {
+    font-size: 36px;
+  }
+
+  .cms-content h2,
+  .cms-content h2.wp-block-heading {
+    font-size: 24px;
+  }
+
+  .cms-content h3,
+  .cms-content h3.wp-block-heading {
+    font-size: 19px;
+  }
+}
+
+/* =====================================================
+   RESPONSIVE — MOBILE (≤767px)
+===================================================== */
+
+@media (max-width: 767px) {
+  .cms-page {
+    padding: 16px 16px 44px;
+  }
+
+  .cms-breadcrumb {
+    font-size: 12px;
+    margin-top: 6px;
+    margin-bottom: 18px;
+  }
+
+  .cms-content {
+    font-size: 14px;
+  }
+
+  .cms-content p {
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+
+  .cms-content h1,
+  .cms-content h1.wp-block-heading {
+    font-size: 28px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+
+  .cms-content h2,
+  .cms-content h2.wp-block-heading {
+    font-size: 21px;
+    margin: 28px 0 12px;
+    padding-bottom: 8px;
+  }
+
+  .cms-content h3,
+  .cms-content h3.wp-block-heading {
+    font-size: 17px;
+    margin: 22px 0 10px;
+  }
+
+  .cms-content h3::before,
+  .cms-content h3.wp-block-heading::before {
+    height: 17px;
+    width: 3px;
+  }
+
+  .cms-content h4,
+  .cms-content h4.wp-block-heading {
+    font-size: 15px;
+    margin: 18px 0 8px;
+  }
+
+  .cms-content h5,
+  .cms-content h5.wp-block-heading {
+    font-size: 14px;
+  }
+
+  .cms-content ul li,
+  .cms-content ol li {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .cms-content blockquote {
+    padding: 14px 16px;
+    font-size: 14px;
+    margin: 18px 0;
+  }
+
+  .cms-content table {
+    font-size: 13px;
+  }
+
+  .cms-content thead th,
+  .cms-content tbody td {
+    padding: 9px 12px;
+  }
+
+  /* Footer nav mobile */
+  .cms-footer-nav {
+    margin-top: 36px;
+    padding-top: 22px;
+  }
+
+  .cms-footer-nav-label {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .cms-footer-nav-links {
+    gap: 8px;
+  }
+
+  .cms-nav-link {
+    padding: 7px 13px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .cms-nav-link i {
+    font-size: 11px;
+  }
+}
+
+/* =====================================================
+   RESPONSIVE — SMALL MOBILE (≤480px)
+===================================================== */
+
+@media (max-width: 480px) {
+  .cms-page {
+    padding: 14px 14px 36px;
+  }
+
+  .cms-content h1,
+  .cms-content h1.wp-block-heading {
+    font-size: 24px;
+  }
+
+  .cms-content h2,
+  .cms-content h2.wp-block-heading {
+    font-size: 19px;
+  }
+
+  .cms-content h3,
+  .cms-content h3.wp-block-heading {
+    font-size: 16px;
+  }
+
+  .cms-content blockquote {
+    padding: 12px 14px;
+  }
+
+  .cms-footer-nav-links {
+    gap: 7px;
+  }
+
+  .cms-nav-link {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

@@ -252,10 +252,6 @@ function nettruyen_debug_query_vars()
 }
 add_action('wp_footer', 'nettruyen_debug_query_vars');
 
-/**
- * Manual flush rewrite rules (for emergency use via URL)
- * Visit: yourdomain.com/?flush_rewrite=1 (admin only)
- */
 function nettruyen_manual_flush_rewrite()
 {
     if (current_user_can('administrator') && isset($_GET['flush_rewrite'])) {

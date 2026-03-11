@@ -7,16 +7,17 @@
  * @version 2.0.0
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH'))
+    exit;
 
 class TruyenQQ_New_Update_Widget extends TruyenQQ_Base_Comic_Widget
 {
-    protected $default_count      = 42;
-    protected $min_count          = 6;
-    protected $max_count          = 60;
+    protected $default_count = 42;
+    protected $min_count = 6;
+    protected $max_count = 60;
     protected $default_query_type = 'newest';
-    protected $default_icon       = 'cloud-download';
-    protected $default_title      = 'Truyện mới cập nhật';
+    protected $default_icon = 'cloud-download';
+    protected $default_title = 'Truyện mới cập nhật';
 
     public function __construct()
     {
@@ -25,7 +26,7 @@ class TruyenQQ_New_Update_Widget extends TruyenQQ_Base_Comic_Widget
             'Comic Section — Mới Cập Nhật (TruyenQQ)',
             array(
                 'description' => 'Section grid Truyện Mới Cập Nhật. Hỗ trợ filter button và view more.',
-                'classname'   => 'truyenqq-new-update-widget',
+                'classname' => 'truyenqq-new-update-widget',
             )
         );
     }
@@ -38,9 +39,9 @@ class TruyenQQ_New_Update_Widget extends TruyenQQ_Base_Comic_Widget
     {
         $this->render_base_form($instance, true);
 
-        $show_filter    = isset($instance['show_filter'])    ? (bool) $instance['show_filter']    : true;
+        $show_filter = isset($instance['show_filter']) ? (bool) $instance['show_filter'] : true;
         $show_view_more = isset($instance['show_view_more']) ? (bool) $instance['show_view_more'] : true;
-        $view_more_url  = $instance['view_more_url'] ?? '/truyen-moi-cap-nhat';
+        $view_more_url = $instance['view_more_url'] ?? '/truyen-moi-cap-nhat';
         ?>
 
 <p>
@@ -78,9 +79,9 @@ class TruyenQQ_New_Update_Widget extends TruyenQQ_Base_Comic_Widget
     {
         $instance = $this->sanitize_base($new_instance);
 
-        $instance['show_filter']    = !empty($new_instance['show_filter'])    ? 1 : 0;
+        $instance['show_filter'] = !empty($new_instance['show_filter']) ? 1 : 0;
         $instance['show_view_more'] = !empty($new_instance['show_view_more']) ? 1 : 0;
-        $instance['view_more_url']  = sanitize_text_field($new_instance['view_more_url'] ?? '/truyen-moi-cap-nhat');
+        $instance['view_more_url'] = sanitize_text_field($new_instance['view_more_url'] ?? '/truyen-moi-cap-nhat');
 
         return $instance;
     }
@@ -91,25 +92,26 @@ class TruyenQQ_New_Update_Widget extends TruyenQQ_Base_Comic_Widget
 
     public function widget($args, $instance)
     {
-        $title          = !empty($instance['title'])         ? $instance['title']         : $this->default_title;
-        $icon           = !empty($instance['icon'])          ? $instance['icon']          : $this->default_icon;
-        $show_filter    = isset($instance['show_filter'])    ? (bool) $instance['show_filter']    : true;
+        $title = !empty($instance['title']) ? $instance['title'] : $this->default_title;
+        $icon = !empty($instance['icon']) ? $instance['icon'] : $this->default_icon;
+        $show_filter = isset($instance['show_filter']) ? (bool) $instance['show_filter'] : true;
         $show_view_more = isset($instance['show_view_more']) ? (bool) $instance['show_view_more'] : true;
-        $view_more_url  = !empty($instance['view_more_url']) ? $instance['view_more_url'] : '/truyen-moi-cap-nhat';
+        $view_more_url = !empty($instance['view_more_url']) ? $instance['view_more_url'] : '/truyen-moi-cap-nhat';
 
         if (strpos($view_more_url, 'http') !== 0) {
             $view_more_url = home_url($view_more_url);
         }
 
         $query_args = $this->build_query_args($instance);
-        $comics     = new WP_Query($query_args);
+        $comics = new WP_Query($query_args);
 
-        if (!$comics->have_posts()) return;
+        if (!$comics->have_posts())
+            return;
 
-        $post_ids   = wp_list_pluck($comics->posts, 'ID');
+        $post_ids = wp_list_pluck($comics->posts, 'ID');
         $view_stats = $this->get_view_stats_batch($post_ids);
-        $hot_ids    = $this->get_hot_ids(20);
-        $now        = current_time('timestamp');
+        $hot_ids = $this->get_hot_ids(20);
+        $now = current_time('timestamp');
         ?>
 
 <section class="homepage-new-update">
@@ -135,8 +137,8 @@ class TruyenQQ_New_Update_Widget extends TruyenQQ_Base_Comic_Widget
             <?php
                     while ($comics->have_posts()):
                         $comics->the_post();
-                        $post_id    = get_the_ID();
-                        $meta       = $this->get_comic_meta($post_id);
+                        $post_id = get_the_ID();
+                        $meta = $this->get_comic_meta($post_id);
                         $view_count = $view_stats[$post_id] ?? 0;
 
                         $is_hot = in_array($post_id, $hot_ids);
@@ -144,9 +146,14 @@ class TruyenQQ_New_Update_Widget extends TruyenQQ_Base_Comic_Widget
 
                         $badge_type = '';
                         $badge_text = '';
-                        if ($is_hot)      { $badge_type = 'hot'; $badge_text = 'Hot'; }
-                        elseif ($is_new)  { $badge_type = 'new'; $badge_text = 'New'; }
-                    ?>
+                        if ($is_hot) {
+                            $badge_type = 'hot';
+                            $badge_text = 'Hot';
+                        } elseif ($is_new) {
+                            $badge_type = 'new';
+                            $badge_text = 'New';
+                        }
+                        ?>
             <div class="comic-item">
                 <div class="comic-card">
                     <div class="comic-avatar">
@@ -192,7 +199,8 @@ class TruyenQQ_New_Update_Widget extends TruyenQQ_Base_Comic_Widget
                     </div>
                 </div>
             </div>
-            <?php endwhile; wp_reset_postdata(); ?>
+            <?php endwhile;
+                    wp_reset_postdata(); ?>
         </div>
 
         <?php if ($show_view_more): ?>

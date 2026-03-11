@@ -67,8 +67,6 @@ class TruyenQQ_Comic_Section_Widget extends TruyenQQ_Base_Comic_Widget
         if (!$comics->have_posts())
             return;
 
-        // ── Unique swiper class per widget instance ──────────
-        // Tránh conflict nếu 2 widget cùng loại trên trang
         $swiper_class = 'exclusive-swiper-' . $this->number;
 
         // ── Batch fetch view stats — 1 query thay vì N ──────
@@ -77,19 +75,19 @@ class TruyenQQ_Comic_Section_Widget extends TruyenQQ_Base_Comic_Widget
 
         $index = 0;
         ?>
-<section class="homepage-exclusive">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">
-                <i class="fa fa-<?php echo esc_attr($icon); ?>"></i>
-                <span><?php echo esc_html($title); ?></span>
-            </h2>
-        </div>
+        <section class="homepage-exclusive">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fa fa-<?php echo esc_attr($icon); ?>"></i>
+                        <span><?php echo esc_html($title); ?></span>
+                    </h2>
+                </div>
 
-        <div class="exclusive-carousel">
-            <div class="swiper <?php echo esc_attr($swiper_class); ?>">
-                <div class="swiper-wrapper">
-                    <?php
+                <div class="exclusive-carousel">
+                    <div class="swiper <?php echo esc_attr($swiper_class); ?>">
+                        <div class="swiper-wrapper">
+                            <?php
                             while ($comics->have_posts()):
                                 $comics->the_post();
                                 $post_id = get_the_ID();
@@ -99,106 +97,106 @@ class TruyenQQ_Comic_Section_Widget extends TruyenQQ_Base_Comic_Widget
                                 $view_count = $view_stats[$post_id] ?? 0;
                                 $is_hot = ($index <= 10);
                                 ?>
-                    <div class="swiper-slide">
-                        <div class="comic-card">
-                            <div class="comic-avatar">
-                                <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                                    <img src="<?php echo esc_url($meta['thumbnail']); ?>"
-                                        alt="<?php echo esc_attr(get_the_title() . ' - TruyenQQ'); ?>" width="190"
-                                        height="247" loading="lazy" decoding="async">
-                                </a>
-                                <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
-                                    <i class="fa fa-bookmark-o"></i>
-                                </span>
-                                <div class="top-notice">
-                                    <span class="time-ago"><?php echo esc_html($meta['time_ago']); ?></span>
-                                    <?php if ($is_hot): ?>
-                                    <span class="hot-badge">Hot</span>
-                                    <?php endif; ?>
+                                <div class="swiper-slide">
+                                    <div class="comic-card">
+                                        <div class="comic-avatar">
+                                            <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+                                                <img src="<?php echo esc_url($meta['thumbnail']); ?>"
+                                                    alt="<?php echo esc_attr(get_the_title() . ' - TruyenQQ'); ?>" width="190"
+                                                    height="247" loading="lazy" decoding="async">
+                                            </a>
+                                            <span class="bookmark-badge" title="Theo dõi" data-post-id="<?php echo $post_id; ?>">
+                                                <i class="fa fa-bookmark-o"></i>
+                                            </span>
+                                            <div class="top-notice">
+                                                <span class="time-ago"><?php echo esc_html($meta['time_ago']); ?></span>
+                                                <?php if ($is_hot): ?>
+                                                    <span class="hot-badge">Hot</span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                        <div class="comic-info">
+                                            <h3 class="comic-name">
+                                                <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+                                                    <?php the_title(); ?>
+                                                </a>
+                                            </h3>
+                                            <div class="comic-stats">
+                                                <span class="stat-item">
+                                                    <i class="fa fa-bookmark"></i>
+                                                    <?php echo number_format($meta['follow_count']); ?>
+                                                </span>
+                                                <span class="stat-item">
+                                                    <i class="fa fa-eye"></i>
+                                                    <?php echo number_format($view_count); ?>
+                                                </span>
+                                            </div>
+                                            <div class="latest-chapter">
+                                                <a href="<?php the_permalink(); ?>"
+                                                    title="Đọc <?php echo esc_attr($meta['latest_chapter']); ?>">
+                                                    <?php echo esc_html($meta['latest_chapter']); ?>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="comic-info">
-                                <h3 class="comic-name">
-                                    <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                                        <?php the_title(); ?>
-                                    </a>
-                                </h3>
-                                <div class="comic-stats">
-                                    <span class="stat-item">
-                                        <i class="fa fa-bookmark"></i>
-                                        <?php echo number_format($meta['follow_count']); ?>
-                                    </span>
-                                    <span class="stat-item">
-                                        <i class="fa fa-eye"></i>
-                                        <?php echo number_format($view_count); ?>
-                                    </span>
-                                </div>
-                                <div class="latest-chapter">
-                                    <a href="<?php the_permalink(); ?>"
-                                        title="Đọc <?php echo esc_attr($meta['latest_chapter']); ?>">
-                                        <?php echo esc_html($meta['latest_chapter']); ?>
-                                    </a>
-                                </div>
-                            </div>
+                            <?php endwhile;
+                            wp_reset_postdata(); ?>
                         </div>
                     </div>
-                    <?php endwhile;
-                            wp_reset_postdata(); ?>
+
+                    <div class="swiper-nav">
+                        <button class="swiper-button-prev"><i class="fa fa-angle-left"></i></button>
+                        <button class="swiper-button-next"><i class="fa fa-angle-right"></i></button>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="swiper-nav">
-                <button class="swiper-button-prev"><i class="fa fa-angle-left"></i></button>
-                <button class="swiper-button-next"><i class="fa fa-angle-right"></i></button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<?php
+        <?php
         $nav_selector = '.exclusive-swiper-' . $this->number;
         ?>
-<script>
-(function() {
-    function initExclusiveSwiper() {
-        if (typeof Swiper === 'undefined') return;
-        var el = document.querySelector('<?php echo esc_js($nav_selector); ?>');
-        if (!el) return;
-        new Swiper('<?php echo esc_js($nav_selector); ?>', {
-            loop: true,
-            slidesPerView: 2,
-            spaceBetween: 15,
-            speed: 400,
-            slidesPerGroup: 1,
-            navigation: {
-                nextEl: el.closest('.exclusive-carousel').querySelector('.swiper-button-next'),
-                prevEl: el.closest('.exclusive-carousel').querySelector('.swiper-button-prev'),
-            },
-            breakpoints: {
-                390: {
-                    slidesPerView: 2,
-                    spaceBetween: 15
-                },
-                768: {
-                    slidesPerView: 4,
-                    spaceBetween: 20
-                },
-                1024: {
-                    slidesPerView: 6,
-                    spaceBetween: 20
-                },
-            },
-            grabCursor: true,
-            watchOverflow: true,
-        });
-    }
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initExclusiveSwiper);
-    } else {
-        initExclusiveSwiper();
-    }
-})();
-</script>
-<?php
+        <script>
+            (function () {
+                function initExclusiveSwiper() {
+                    if (typeof Swiper === 'undefined') return;
+                    var el = document.querySelector('<?php echo esc_js($nav_selector); ?>');
+                    if (!el) return;
+                    new Swiper('<?php echo esc_js($nav_selector); ?>', {
+                        loop: true,
+                        slidesPerView: 2,
+                        spaceBetween: 15,
+                        speed: 400,
+                        slidesPerGroup: 1,
+                        navigation: {
+                            nextEl: el.closest('.exclusive-carousel').querySelector('.swiper-button-next'),
+                            prevEl: el.closest('.exclusive-carousel').querySelector('.swiper-button-prev'),
+                        },
+                        breakpoints: {
+                            390: {
+                                slidesPerView: 2,
+                                spaceBetween: 15
+                            },
+                            768: {
+                                slidesPerView: 4,
+                                spaceBetween: 20
+                            },
+                            1024: {
+                                slidesPerView: 6,
+                                spaceBetween: 20
+                            },
+                        },
+                        grabCursor: true,
+                        watchOverflow: true,
+                    });
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initExclusiveSwiper);
+                } else {
+                    initExclusiveSwiper();
+                }
+            })();
+        </script>
+        <?php
     }
 }

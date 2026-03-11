@@ -4,7 +4,10 @@
  * File: inc/create-bookmarks-table.php
  * 
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
+ * 
+ * CHANGELOG:
+ * - v1.0.1: Thêm hook tạo bảng follow_stats khi switch theme
  */
 
 if (!defined('ABSPATH')) {
@@ -121,4 +124,15 @@ if (!wp_next_scheduled('truyenqq_daily_bookmark_update')) {
 }
 
 
-add_action('after_switch_theme', 'truyenqq_create_bookmarks_table');
+// ── v1.0.1: Tạo cả 2 bảng khi switch theme ──────────────────────────────────
+add_action('after_switch_theme', function () {
+
+    // Bảng bookmarks (cũ - giữ nguyên)
+    truyenqq_create_bookmarks_table();
+
+    // Bảng follow_stats (mới)
+    if (class_exists('NetTruyen_Follow_Migration')) {
+        NetTruyen_Follow_Migration::run();
+    }
+});
+// ── Kết thúc v1.0.1 ──────────────────────────────────────────────────────────

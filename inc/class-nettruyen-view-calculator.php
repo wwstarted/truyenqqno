@@ -234,4 +234,61 @@ class NetTruyen_View_Calculator
 
         return $real_views;
     }
+
+    /**
+     * Tính fake follow count cho một truyện
+     * 
+     * Công thức: base = total_chapters * 5
+     * + chapter bonus (nhiều chapter = nhiều follow)
+     * + time bonus (lâu online = tích lũy follow)
+     * + random factor ±20%
+     * 
+     * Tỷ lệ follow/view giữ ở mức realistic ~5-8%
+     * 
+     * @param int $post_id ID truyện
+     * @return int Fake follow count
+     */
+    public static function calculate_fake_follows($post_id)
+    {
+        // --- Lấy total_chapters ---
+        $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
+        $total_chapters = 0;
+
+        if (!empty($manifest_json)) {
+            $manifest = json_decode($manifest_json, true);
+            $total_chapters = !empty($manifest['chapters']) ? count($manifest['chapters']) : 0;
+        }
+
+        if ($total_chapters === 0) {
+            $chapter_count = get_post_meta($post_id, '_nettruyen_chapter_count', true);
+            $total_chapters = (!empty($chapter_count) && is_numeric($chapter_count))
+                ? (int) $chapter_count
+                : 5;
+        }
+
+        $total_chapters = max(1, $total_chapters); // cho phép xuống tới 1 thay vì 5
+
+        // --- Công thức ---
+
+        // Base: giảm từ *5 xuống *3
+        $base = $total_chapters * 3;
+
+        // Chapter bonus — giảm từ 1.3/1.15 xuống 1.15/1.08
+        if ($total_chapters > 100) {
+            $base *= 1.15;
+        } elseif ($total_chapters > 50) {
+            $base *= 1.08;
+        }
+
+        $post_date = get_post_field('post_date', $post_id);
+        $days_online = max(1, (time() - strtotime($post_date)) / DAY_IN_SECONDS);
+        $base *= (1 + ($days_online / 1200));
+
+
+        $base *= rand(70, 115) / 100;
+
+
+        $offset = ($post_id * 7 + $total_chapters * 13) % 151;
+        return (int) round(max(50, $base)) + $offset;
+    }
 }

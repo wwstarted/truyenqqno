@@ -28,7 +28,7 @@
     userInfoAPI: TRUYENQQ_CONFIG.restUrl + "nettruyen/v1/user/info",
     searchDebounceDelay: 500,
     maxSearchResults: 20,
-    minSearchLength: 6, // ← Tối thiểu 6 ký tự để gọi API
+    minSearchLength: 6,
     localStorageKey: "truyenqq_dark_mode",
     searchResultsPage: "/ket-qua-tim-kiem/",
     basePath: BASE_PATH,
@@ -56,25 +56,74 @@
     iconNotification: document.querySelector(".icon-notification"),
     userAvatarImg: document.getElementById("userAvatarImg"),
     userDropdownAvatar: document.getElementById("userDropdownAvatar"),
+    headerBottom: document.querySelector(".header-bottom"),
   };
 
   // ========================================
   // DARK MODE
   // ========================================
+
+  /**
+   * initDarkMode — chạy ngay khi DOM sẵn sàng.
+   *
+   * Flow chống FOUC (UPDATED):
+   * 1. Inline script trong <head> (blocking, sync) đã add 'dark-mode' vào <html>
+   *    → CSS html.dark-mode { --bg-primary, --bg-secondary... } active ngay từ paint đầu tiên
+   *    → Toàn bộ content (card, section, dropdown) dùng đúng vars tối — KHÔNG flash.
+   * 2. Hàm này sync 'dark-mode' từ <html> xuống <body> để các selector body.dark-mode hoạt động.
+   *    KHÔNG remove class khỏi <html> — cần giữ để vars html.dark-mode luôn hoạt động.
+   */
   function initDarkMode() {
     const savedMode = localStorage.getItem(CONFIG.localStorageKey);
-    if (savedMode === "dark") {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    const shouldBeDark = savedMode === "dark" || (!savedMode && prefersDark);
+
+    if (shouldBeDark) {
       elements.body.classList.add("dark-mode");
+      // Đảm bảo html cũng có class (trường hợp inline script bị block)
+      document.documentElement.classList.add("dark-mode");
+    } else {
+      elements.body.classList.remove("dark-mode");
+      document.documentElement.classList.remove("dark-mode");
     }
+
+    // Chỉ remove dark-mode-loading (class cũ không còn dùng nữa, giữ để backward compat)
+    document.documentElement.classList.remove("dark-mode-loading");
+
     if (elements.darkModeToggle) {
       elements.darkModeToggle.addEventListener("click", toggleDarkMode);
     }
   }
 
+  // function toggleDarkMode() {
+  //   const isDark = elements.body.classList.toggle("dark-mode");
+
+  //   // Sync html.dark-mode để vars html.dark-mode luôn đúng
+  //   document.documentElement.classList.toggle("dark-mode", isDark);
+
+  //   // Lưu nhất quán với giá trị 'dark' / 'light'
+  //   localStorage.setItem(CONFIG.localStorageKey, isDark ? "dark" : "light");
+
+  //   elements.darkModeToggle.style.transform = "rotate(360deg)";
+  //   setTimeout(() => {
+  //     elements.darkModeToggle.style.transform = "";
+  //   }, 300);
+  // }
+
   function toggleDarkMode() {
-    elements.body.classList.toggle("dark-mode");
-    const isDark = elements.body.classList.contains("dark-mode");
+    document.documentElement.classList.add("theme-switching");
+
+    const isDark = elements.body.classList.toggle("dark-mode");
+    document.documentElement.classList.toggle("dark-mode", isDark);
     localStorage.setItem(CONFIG.localStorageKey, isDark ? "dark" : "light");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.documentElement.classList.remove("theme-switching");
+      });
+    });
+
     elements.darkModeToggle.style.transform = "rotate(360deg)";
     setTimeout(() => {
       elements.darkModeToggle.style.transform = "";
@@ -148,7 +197,6 @@
       return;
     }
 
-    // ← KHÔNG CHECK MIN LENGTH - Luôn cho phép submit
     let basePath = CONFIG.basePath;
 
     if (basePath.endsWith("/")) {
@@ -161,7 +209,6 @@
       "?keyword=" +
       encodeURIComponent(query);
 
-    console.log("Redirecting to:", searchURL);
     window.location.href = searchURL;
   }
 
@@ -172,20 +219,17 @@
       clearTimeout(searchTimeout);
     }
 
-    // ← Clear results nếu query rỗng
     if (!query) {
       elements.searchResults.classList.remove("active");
       return;
     }
 
-    // ← HIỆN HINT nếu chưa đủ ký tự
     if (query.length < CONFIG.minSearchLength) {
       elements.searchResults.innerHTML = getMinLengthHintHTML(query.length);
       elements.searchResults.classList.add("active");
-      return; // ← DỪNG, không gọi API
+      return;
     }
 
-    // ← Đủ ký tự → Hiện loading VÀ gọi API
     elements.searchResults.innerHTML = getLoadingHTML();
     elements.searchResults.classList.add("active");
 
@@ -201,22 +245,19 @@
       clearTimeout(searchTimeout);
     }
 
-    // ← Clear results nếu query rỗng
     if (!query) {
       elements.mobileSearchResults.classList.remove("active");
       return;
     }
 
-    // ← HIỆN HINT nếu chưa đủ ký tự
     if (query.length < CONFIG.minSearchLength) {
       elements.mobileSearchResults.innerHTML = getMinLengthHintHTML(
         query.length,
       );
       elements.mobileSearchResults.classList.add("active");
-      return; // ← DỪNG, không gọi API
+      return;
     }
 
-    // ← Đủ ký tự → Hiện loading VÀ gọi API
     elements.mobileSearchResults.innerHTML = getLoadingHTML();
     elements.mobileSearchResults.classList.add("active");
 
@@ -276,8 +317,6 @@
   // ========================================
   // HTML TEMPLATES
   // ========================================
-
-  // ← HINT MESSAGE khi chưa đủ ký tự
   function getMinLengthHintHTML(currentLength) {
     const remaining = CONFIG.minSearchLength - currentLength;
     return `
@@ -374,6 +413,9 @@
 
   function toggleMobileMenu() {
     const isActive = elements.mainMenu.classList.toggle("active");
+    if (isActive && elements.headerBottom) {
+      elements.headerBottom.style.marginTop = "0";
+    }
 
     const icon = elements.mobileMenuToggle.querySelector("i");
     if (icon) {
@@ -414,15 +456,30 @@
   // SCROLL BEHAVIOR
   // ========================================
   let lastScroll = 0;
+  let scrollAccumulator = 0;
+  const SCROLL_THRESHOLD = 60;
 
   function handleScroll() {
-    const currentScroll = window.pageYOffset;
-    const header = document.querySelector(".site-header");
+    const currentScroll = Math.max(0, window.pageYOffset);
+    const headerBottom = elements.headerBottom;
 
-    if (currentScroll > lastScroll && currentScroll > 100) {
-      header.style.transform = "translateY(-100%)";
-    } else {
-      header.style.transform = "translateY(0)";
+    if (!headerBottom) return;
+
+    if (elements.mainMenu && elements.mainMenu.classList.contains("active")) {
+      lastScroll = currentScroll;
+      scrollAccumulator = 0;
+      return;
+    }
+
+    const scrollDiff = currentScroll - lastScroll;
+    scrollAccumulator += scrollDiff;
+
+    if (scrollAccumulator > SCROLL_THRESHOLD && currentScroll > 100) {
+      headerBottom.style.marginTop = `-${headerBottom.offsetHeight}px`;
+      scrollAccumulator = 0;
+    } else if (scrollAccumulator < -SCROLL_THRESHOLD || currentScroll <= 50) {
+      headerBottom.style.marginTop = "0";
+      scrollAccumulator = 0;
     }
 
     lastScroll = currentScroll;
@@ -551,8 +608,6 @@
   }
 
   function updateHeaderAvatar(avatarUrl) {
-    console.log("TruyenQQ Header: Updating avatar to:", avatarUrl);
-
     if (elements.userAvatarImg) {
       elements.userAvatarImg.src = avatarUrl;
       elements.userAvatarImg.onerror = function () {
@@ -568,8 +623,6 @@
           "https://th.bing.com/th/id/OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa?w=159&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3";
       };
     }
-
-    console.log("TruyenQQ Header: Avatar updated successfully");
   }
 
   async function refreshUserAvatar() {
@@ -616,7 +669,6 @@
     }
 
     window.TruyenQQ_Events.on("avatar:updated", function (data) {
-      console.log("TruyenQQ Header: Received avatar update event", data);
       if (data && data.url) {
         updateHeaderAvatar(data.url);
       }
@@ -658,14 +710,13 @@
       return;
     }
 
-    console.log("TruyenQQ Base Path:", CONFIG.basePath);
-
     initDarkMode();
     initSearch();
     initMobileMenu();
     initUserMenu();
     initGlobalEvents();
     loadGenres();
+    initScrollBehavior();
 
     window.addEventListener("resize", handleResize);
 
@@ -673,8 +724,6 @@
       updateAvatar: updateHeaderAvatar,
       refreshAvatar: refreshUserAvatar,
     };
-
-    console.log("TruyenQQ Header initialized successfully");
   }
 
   init();

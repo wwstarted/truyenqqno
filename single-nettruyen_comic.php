@@ -128,7 +128,6 @@ $meta_description = wp_trim_words($meta_description, 30, '...');
 $comic_title = get_the_title();
 ?>
 
-<!-- ✅ SEO: Meta Tags -->
 <link rel="canonical" href="<?php the_permalink(); ?>">
 <meta name="description" content="<?php echo esc_attr($meta_description); ?>">
 

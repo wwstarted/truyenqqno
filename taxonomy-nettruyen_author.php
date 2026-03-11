@@ -4,7 +4,7 @@
  * Taxonomy: nettruyen_author
  *
  * @package TruyenQQ
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 require_once get_template_directory() . '/inc/class-nettruyen-view-tracker.php';
@@ -13,20 +13,17 @@ $current_author = get_queried_object();
 $author_slug = $current_author->slug;
 $author_name = $current_author->name;
 $author_desc = $current_author->description;
-$author_count = $current_author->count; // tổng số truyện
+$author_count = $current_author->count;
 
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 $posts_per_page = 42;
-
 $sort = isset($_GET['sort']) ? absint($_GET['sort']) : 2;
 
 global $wpdb;
 $stats_table = $wpdb->prefix . 'nettruyen_view_stats';
 
-
 $term_id = (int) $current_author->term_id;
 
-// ORDER BY theo sort
 switch ($sort) {
     case 0:
         $orderby_sql = 'p.post_date DESC';
@@ -45,7 +42,7 @@ switch ($sort) {
         break;
     default:
         $orderby_sql = 'p.post_modified DESC';
-        break; // sort=2
+        break;
 }
 
 $view_join_sql = ($sort === 4 || $sort === 5)
@@ -54,27 +51,25 @@ $view_join_sql = ($sort === 4 || $sort === 5)
 
 $offset = ($paged - 1) * $posts_per_page;
 
-// Tổng số truyện (để tính pagination)
 $total_posts = (int) $wpdb->get_var($wpdb->prepare(
     "SELECT COUNT(DISTINCT p.ID)
      FROM {$wpdb->posts} p
      INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
      INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-     WHERE tt.taxonomy = 'nettruyen_author'
+     WHERE tt.taxonomy  = 'nettruyen_author'
        AND tt.term_id   = %d
        AND p.post_type  = 'nettruyen_comic'
        AND p.post_status = 'publish'",
     $term_id
 ));
 
-// Lấy post IDs của trang hiện tại
 $comic_post_ids = $wpdb->get_col($wpdb->prepare(
     "SELECT DISTINCT p.ID
      FROM {$wpdb->posts} p
      INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
      INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
      {$view_join_sql}
-     WHERE tt.taxonomy = 'nettruyen_author'
+     WHERE tt.taxonomy  = 'nettruyen_author'
        AND tt.term_id   = %d
        AND p.post_type  = 'nettruyen_comic'
        AND p.post_status = 'publish'
@@ -85,7 +80,6 @@ $comic_post_ids = $wpdb->get_col($wpdb->prepare(
     $offset
 ));
 
-// Hot comics
 $hot_comic_ids = $wpdb->get_col(
     "SELECT post_id FROM {$stats_table}
      WHERE total_display_views > 0
@@ -95,47 +89,7 @@ $hot_comic_ids = $wpdb->get_col(
 
 $total_pages = ($total_posts > 0) ? (int) ceil($total_posts / $posts_per_page) : 0;
 $current_page = max(1, $paged);
-
-// og_image: lấy từ truyện đầu tiên trong danh sách
-$og_image = get_template_directory_uri() . '/images/default-og.jpg';
-if (!empty($comic_post_ids)) {
-    $first_thumb = get_post_meta($comic_post_ids[0], '_nettruyen_thumbnail', true);
-    if (!empty($first_thumb))
-        $og_image = $first_thumb;
-}
-
-/* ── SEO ── */
 $author_url = get_term_link($current_author);
-
-$title_parts = array('Truyện của ' . $author_name);
-if ($paged > 1) {
-    $title_parts[] = 'Trang ' . $paged;
-}
-$page_title = implode(' - ', $title_parts) . ' | TruyenQQ';
-
-$meta_description = 'Đọc toàn bộ truyện tranh của tác giả ' . $author_name . ' mới nhất, cập nhật liên tục tại TruyenQQ.';
-if (!empty($author_desc)) {
-    $meta_description .= ' ' . wp_trim_words(wp_strip_all_tags($author_desc), 20, '...');
-}
-if ($paged > 1) {
-    $meta_description .= ' - Trang ' . $paged;
-}
-
-$canonical_url = get_term_link($current_author);
-if ($paged > 1) {
-    $canonical_url = trailingslashit($canonical_url) . 'page/' . $paged . '/';
-}
-
-$prev_url = '';
-$next_url = '';
-if ($paged > 1) {
-    $prev_url = ($paged == 2)
-        ? get_term_link($current_author)
-        : trailingslashit(get_term_link($current_author)) . 'page/' . ($paged - 1) . '/';
-}
-if ($paged < $total_pages) {
-    $next_url = trailingslashit(get_term_link($current_author)) . 'page/' . ($paged + 1) . '/';
-}
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -143,31 +97,6 @@ if ($paged < $total_pages) {
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title><?php echo esc_html($page_title); ?></title>
-    <meta name="description" content="<?php echo esc_attr($meta_description); ?>">
-    <link rel="canonical" href="<?php echo esc_url($canonical_url); ?>">
-
-    <?php if ($prev_url): ?>
-    <link rel="prev" href="<?php echo esc_url($prev_url); ?>">
-    <?php endif; ?>
-    <?php if ($next_url): ?>
-    <link rel="next" href="<?php echo esc_url($next_url); ?>">
-    <?php endif; ?>
-
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="<?php echo esc_attr(implode(' - ', $title_parts)); ?>">
-    <meta property="og:description" content="<?php echo esc_attr($meta_description); ?>">
-    <meta property="og:url" content="<?php echo esc_url($canonical_url); ?>">
-    <meta property="og:image" content="<?php echo esc_url($og_image); ?>">
-    <meta property="og:site_name" content="TruyenQQ">
-    <meta property="og:locale" content="vi_VN">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<?php echo esc_attr(implode(' - ', $title_parts)); ?>">
-    <meta name="twitter:description" content="<?php echo esc_attr($meta_description); ?>">
-    <meta name="twitter:image" content="<?php echo esc_url($og_image); ?>">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <?php wp_head(); ?>
 </head>
@@ -261,19 +190,16 @@ if ($paged < $total_pages) {
                                 $post_id = (int) $post_id;
 
                                 $thumbnail = get_post_meta($post_id, '_nettruyen_thumbnail', true);
-                                if (empty($thumbnail)) {
+                                if (empty($thumbnail))
                                     $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
-                                }
-                                if (empty($thumbnail)) {
+                                if (empty($thumbnail))
                                     $thumbnail = 'https://via.placeholder.com/190x247?text=No+Image';
-                                }
 
                                 $manifest_json = get_post_meta($post_id, '_nettruyen_chapter_manifest_json', true);
                                 $manifest = !empty($manifest_json) ? json_decode($manifest_json, true) : null;
                                 $latest_chapter = 'Đang cập nhật';
                                 if (!empty($manifest['chapters'])) {
-                                    $chapters = $manifest['chapters'];
-                                    $latest = end($chapters);
+                                    $latest = end($manifest['chapters']);
                                     $latest_chapter = 'Chapter ' . $latest['name'];
                                 }
 
@@ -281,19 +207,16 @@ if ($paged < $total_pages) {
                                     ? $manifest['updated_at']
                                     : get_post_modified_time('Y-m-d H:i:s', false, $post_id);
                                 $time_ago = truyenqq_time_ago_vietnamese($updated_at);
-
                                 $follow_count = (int) get_post_meta($post_id, '_nettruyen_follow_count', true);
 
                                 $view_count = 0;
-                                $view_stats = $wpdb->get_row($wpdb->prepare(
+                                $view_row = $wpdb->get_row($wpdb->prepare(
                                     "SELECT total_display_views FROM {$stats_table} WHERE post_id = %d",
                                     $post_id
                                 ));
-                                if ($view_stats) {
-                                    $view_count = $view_stats->total_display_views;
-                                }
+                                if ($view_row)
+                                    $view_count = $view_row->total_display_views;
 
-                                $post_obj = get_post($post_id);
                                 $permalink = get_permalink($post_id);
                                 $post_title = get_the_title($post_id);
 
@@ -380,8 +303,7 @@ if ($paged < $total_pages) {
                         $start = max(1, $current_page - $range);
                         $end = min($total_pages, $current_page + $range);
 
-                        if ($start > 1):
-                            ?>
+                        if ($start > 1): ?>
                     <a href="javascript:void(0)" data-page="1">
                         <p>1</p>
                     </a>

@@ -113,8 +113,8 @@ ul {
   box-shadow: var(--header-shadow);
   transition:
     background-color 0.3s ease,
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
+    box-shadow 0.3s ease;
+  /* transform 0.3s ease; */
 }
 
 /* =====================================================
@@ -587,7 +587,9 @@ body.dark-mode .search-result-avatar {
   padding: 0;
   position: relative;
   z-index: 999;
-  transition: background-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    margin-top 0.3s ease;
   border-top: 1px solid var(--border-color);
 }
 
